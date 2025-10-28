@@ -1,11 +1,8 @@
 -- ==============================
 -- lua/plugins/project.lua
 -- ==============================
--- GOALS:
 -- - Auto-detect project root (git / common markers)
 -- - Integrate with Telescope (project picker)
--- - Keep config minimal
-
 return {
 	{
 		"ahmedkhalf/project.nvim", -- this plugin sets cwd using project root patterns

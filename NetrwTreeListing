@@ -1,0 +1,12 @@
+../
+plugins/
+| colorscheme.lua
+| dap.lua
+| formatting.lua
+| gitsigns.lua
+| lsp-config.lua
+| mini-modules.lua
+| project.lua
+| telescope.lua
+| treesitter.lua
+| trouble.lua

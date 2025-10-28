@@ -1,7 +1,6 @@
 -- ==============================
 -- lua/plugins/dap.lua
 -- ==============================
--- GOALS:
 -- - Make JS/TS debugging easy on macOS (Node + Chrome via vscode-js-debug)
 -- - Small, annotated setup with a friendly UI and inline values
 -- - Auto-install the JS adapter via Mason; keep highlights transparent
