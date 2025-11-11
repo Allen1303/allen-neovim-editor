@@ -82,7 +82,7 @@ local ascii_art = {
 -- Menu items with proper icons
 local menu_items = {
 	{
-		icon = "󰈞",
+		icon = "🔎",
 		desc = "Find file",
 		key = "f",
 		action = function()
@@ -90,7 +90,7 @@ local menu_items = {
 		end,
 	},
 	{
-		icon = "󰈔",
+		icon = "📑",
 		desc = "New file",
 		key = "n",
 		action = function()
@@ -98,7 +98,7 @@ local menu_items = {
 		end,
 	},
 	{
-		icon = "󰋚",
+		icon = "🗂️",
 		desc = "Recent files",
 		key = "r",
 		action = function()
@@ -106,7 +106,7 @@ local menu_items = {
 		end,
 	},
 	{
-		icon = "󰺮",
+		icon = "📝",
 		desc = "Find text",
 		key = "g",
 		action = function()
@@ -114,7 +114,7 @@ local menu_items = {
 		end,
 	},
 	{
-		icon = "󰒓",
+		icon = "⚙️",
 		desc = "Config",
 		key = "c",
 		action = function()
@@ -122,7 +122,7 @@ local menu_items = {
 		end,
 	},
 	{
-		icon = "󰦛",
+		icon = "🔄",
 		desc = "Restore Session",
 		key = "s",
 		action = function()
@@ -130,12 +130,11 @@ local menu_items = {
 		end,
 	},
 	{
-		icon = "󰙅",
+		icon = "📁",
 		desc = "File Explorer",
 		key = "e",
 		action = function()
 			local mini_files_ok = pcall(require, "mini.files")
-
 			if mini_files_ok then
 				require("mini.files").open()
 			else
@@ -144,16 +143,36 @@ local menu_items = {
 		end,
 	},
 	{
-		icon = "󰒲",
+		icon = "🌐",
+		desc = "Live Server",
+		key = "v",
+		action = function()
+			-- Check if live-server is available
+			if vim.fn.executable("live-server") == 1 then
+				vim.notify("Starting Live Server...", vim.log.levels.INFO)
+				vim.fn.jobstart("live-server", {
+					detach = true,
+					on_exit = function(_, code)
+						if code == 0 then
+							vim.notify("Live Server stopped", vim.log.levels.INFO)
+						end
+					end,
+				})
+			else
+				vim.notify("Live Server not installed. Run: npm install -g live-server", vim.log.levels.WARN)
+			end
+		end,
+	},
+	{
+		icon = "💤",
 		desc = "Lazy",
 		key = "l",
 		action = function()
 			vim.cmd("Lazy")
 		end,
 	},
-
 	{
-		icon = "󰈆",
+		icon = "📤",
 		desc = "Quit",
 		key = "q",
 		action = function()
@@ -161,6 +180,7 @@ local menu_items = {
 		end,
 	},
 }
+
 -- Get current day of week
 local function get_day_of_week()
 	local days = { "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday" }
@@ -174,16 +194,40 @@ local function get_theme_colors()
 
 	-- Catppuccin
 	if colorscheme:match("catppuccin") then
-		return { header = "#89B4FA", icon = "#F38BA8", desc = "#CDD6F4", key = "#F38BA8", footer = "#6C7086" }
+		return {
+			header = "#89B4FA",
+			icon = "#89B4FA",
+			desc = "#CDD6F4",
+			key = "#F38BA8",
+			footer = "#6C7086",
+		}
 	-- OneDark
 	elseif colorscheme:match("onedark") then
-		return { header = "#61AFEF", icon = "#E06C75", desc = "#ABB2BF", key = "#E06C75", footer = "#5C6370" }
+		return {
+			header = "#61AFEF",
+			icon = "#61AFEF",
+			desc = "#ABB2BF",
+			key = "#E06C75",
+			footer = "#5C6370",
+		}
 	-- Tokyo Night
 	elseif colorscheme:match("tokyonight") then
-		return { header = "#7AA2F7", icon = "#F7768E", desc = "#C0CAF5", key = "#F7768E", footer = "#565F89" }
+		return {
+			header = "#7AA2F7",
+			icon = "#7AA2F7",
+			desc = "#C0CAF5",
+			key = "#F7768E",
+			footer = "#565F89",
+		}
 	-- Default fallback
 	else
-		return { header = "#61AFEF", icon = "#E06C75", desc = "#ABB2BF", key = "#E06C75", footer = "#5C6370" }
+		return {
+			header = "#61AFEF",
+			icon = "#61AFEF",
+			desc = "#ABB2BF",
+			key = "#E06C75",
+			footer = "#5C6370",
+		}
 	end
 end
 
@@ -328,12 +372,12 @@ local function apply_highlights(buf, start_line)
 			local icon_len = #icon_str
 			local icon_end = icon_len + 2 -- icon + spacing
 
-			-- Highlight icon (same color as key)
+			-- Highlight icon with DashboardIcon color
 			if icon_end <= #line_text then
 				vim.api.nvim_buf_set_extmark(buf, ns_id, line_idx, 0, {
 					end_line = line_idx,
 					end_col = icon_end,
-					hl_group = "DashboardKey",
+					hl_group = "DashboardIcon",
 				})
 			end
 

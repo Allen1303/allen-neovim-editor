@@ -18,6 +18,8 @@ require("config.autocmds")
 -- Floating terminal (native)
 require("config.floating_terminal")
 require("config.dashboard").setup()
+-- Live server integration
+require("config.live-server").setup()
 
 -- Bootstrap lazy.nvim (package manager) -------------------------------------------------------------------------
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim" -- this variable holds the install path for lazy.nvim

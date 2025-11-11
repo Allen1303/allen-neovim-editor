@@ -15,7 +15,7 @@ M.config = {
 
 	layouts = {
 		float = { width = 0.80, height = 0.80, anchor = "center" }, -- big centered toggle
-		run = { width = 0.55, height = 0.40, anchor = "right", right_margin = 5 }, -- smaller right-anchored run
+		run = { width = 0.50, height = 0.35, anchor = "right", right_margin = 5 }, -- smaller right-anchored run
 	},
 }
 

@@ -25,7 +25,7 @@ vim.opt.virtualedit = "block" -- this option lets the cursor move past end-of-li
 -- Editing behavior ------------------------------------------------------
 
 vim.opt.expandtab = true -- this option converts tabs to spaces (standard for most codebases)
-vim.opt.shiftwidth = 2 -- this option sets indentation width when shifting (>> and <<)
+vim.opt.shiftwidth = 4 -- this option sets indentation width when shifting (>> and <<)
 vim.opt.tabstop = 2 -- this option renders a tab character as N spaces
 vim.opt.softtabstop = 2 -- this option makes <BS>/<Tab> feel natural with spaces
 vim.opt.smartindent = true -- this option adds simple smart indentation on new lines

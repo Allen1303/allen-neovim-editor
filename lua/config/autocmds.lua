@@ -107,7 +107,7 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.wo.wrap = true
 		vim.wo.linebreak = true
 		vim.wo.spell = true
-		vim.wo.conceallevel = 4
+		vim.wo.conceallevel = 2
 		vim.bo.shiftwidth = 4
 		vim.bo.tabstop = 4
 		vim.bo.expandtab = true
