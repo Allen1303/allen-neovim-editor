@@ -122,10 +122,11 @@ return {
 				group = vim.api.nvim_create_augroup("Allen_EslintFix", { clear = true }),
 				pattern = { "*.js", "*.jsx", "*.ts", "*.tsx" },
 				callback = function()
-					-- Guard: only run if eslint is actually attached to this buffer
 					local clients = vim.lsp.get_clients({ bufnr = 0, name = "eslint" })
 					if #clients > 0 then
-						vim.cmd("EslintFixAll")
+						pcall(function()
+							vim.cmd("EslintFixAll")
+						end)
 					end
 				end,
 			})

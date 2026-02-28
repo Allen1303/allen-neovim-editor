@@ -117,17 +117,223 @@ return {
 		end,
 	},
 
-	-- Text-objects & surround (lazy on VeryLazy)
-	{ "nvim-mini/mini.surround", version = false, event = "VeryLazy", config = true },
-	{ "nvim-mini/mini.ai", version = false, event = "VeryLazy", config = true },
-	{ "nvim-mini/mini.operators", version = false, event = "VeryLazy", config = true },
-	{ "nvim-mini/mini.pairs", version = false, event = "InsertEnter", config = true }, -- this plugin auto-inserts matching pairs ()[]{}''""
+	-- =========================================================================
+	-- GAP 1 CLOSED: mini.surround — custom pairs replacing bare  config = true
+	-- =========================================================================
+	{
+		"nvim-mini/mini.surround",
+		version = false,
+		event = "VeryLazy",
+		config = function()
+			require("mini.surround").setup({
+				-- sa sd sr sf sF sh sn — all default keys kept as-is
+				mappings = {
+					add = "sa",
+					delete = "sd",
+					replace = "sr",
+					find = "sf",
+					find_left = "sF",
+					highlight = "sh",
+					update_n_lines = "sn",
+					suffix_last = "l",
+					suffix_next = "n",
+				},
+
+				n_lines = 30, -- search up to 30 lines for a surrounding pair
+				highlight_duration = 500, -- flash duration in ms when using sh
+
+				-- cover_or_next: if cursor isn't inside a pair, search forward
+				-- instead of doing nothing — much more ergonomic
+				search_method = "cover_or_next",
+
+				custom_surroundings = {
+
+					-- t: HTML/JSX tag  (sat prompts for tag name, sdt strips nearest tag)
+					-- input pattern matches <tag ...>content</tag> as a balanced pair
+					t = {
+						input = { "<(%a[%a%d]*)%f[%s>].-</%1>", "^<.->().-()</.->$" },
+						output = function()
+							local tag = vim.fn.input("Tag: ")
+							if tag == "" then
+								return nil
+							end
+							return { left = "<" .. tag .. ">", right = "</" .. tag .. ">" }
+						end,
+					},
+
+					-- $: template expression  (sa$ → ${}, sd$ strips it)
+					["$"] = {
+						input = { "%${(.-)}" },
+						output = { left = "${", right = "}" },
+					},
+
+					-- l: console.log wrapper  (sal wraps, sdl unwraps)
+					l = {
+						input = { "console%.log%((.-)%)" },
+						output = { left = "console.log(", right = ")" },
+					},
+
+					-- c: /* block comment */  (sac wraps, sdc strips)
+					c = {
+						input = { "/%* ?(.-)%*/" },
+						output = { left = "/* ", right = " */" },
+					},
+				},
+			})
+		end,
+	},
+
+	-- =========================================================================
+	-- GAP 2 CLOSED: mini.ai — custom text objects replacing bare  config = true
+	-- =========================================================================
+	{
+		"nvim-mini/mini.ai",
+		version = false,
+		event = "VeryLazy",
+		config = function()
+			local ai = require("mini.ai")
+
+			ai.setup({
+				-- cover_or_next mirrors the surround search_method:
+				-- if cursor is outside an object, find the next one forward
+				search_method = "cover_or_next",
+
+				n_lines = 50, -- how many lines to search around cursor for an object
+
+				mappings = {
+					around = "a",
+					inside = "i",
+					around_next = "an",
+					inside_next = "in",
+					around_last = "al",
+					inside_last = "il",
+					goto_left = "g[", -- jump cursor to left  edge of object
+					goto_right = "g]", -- jump cursor to right edge of object
+				},
+
+				custom_textobjects = {
+
+					-- e: entire buffer  (dae = delete all, yae = yank all, vae = select all)
+					-- returns fixed from/to positions spanning the whole file
+					e = function()
+						local from = { line = 1, col = 1 }
+						local to = {
+							line = vim.fn.line("$"),
+							col = math.max(vim.fn.getline("$"):len(), 1),
+						}
+						return { from = from, to = to }
+					end,
+
+					-- a: function ARGUMENT  (dia = delete one arg, caa = change + its comma)
+					-- gen_spec.argument handles the comma-aware boundary logic automatically
+					a = ai.gen_spec.argument({
+						brackets = { "(", "[", "{" },
+						separator = ",",
+						-- don't split on commas that sit inside nested quotes or brackets
+						exclude_regions = { '"', "'", "`", "(", "[", "{" },
+					}),
+
+					-- f: function CALL parens + body  (dif = delete args, caf = change whole call)
+					-- gen_spec.function_call targets the parens of a call, not the definition
+					f = ai.gen_spec.function_call(),
+
+					-- F: function DEFINITION body  (diF = delete body, viF = select body)
+					-- treesitter-based so it understands language structure precisely
+					-- pcall guards against buffers where treesitter isn't active
+					F = function(ai_type)
+						local ok, ts = pcall(ai.gen_spec.treesitter, {
+							a = "@function.outer",
+							i = "@function.inner",
+						})
+						if not ok then
+							return nil
+						end
+						return ts(ai_type)
+					end,
+
+					-- c: class definition  (dic = delete class body, vac = select whole class)
+					c = function(ai_type)
+						local ok, ts = pcall(ai.gen_spec.treesitter, {
+							a = "@class.outer",
+							i = "@class.inner",
+						})
+						if not ok then
+							return nil
+						end
+						return ts(ai_type)
+					end,
+
+					-- t: HTML/JSX tag  (dit = delete tag content, vat = tag + content)
+					-- treesitter gives accurate tag matching even for nested components
+					t = function(ai_type)
+						local ok, ts = pcall(ai.gen_spec.treesitter, {
+							a = "@block.outer",
+							i = "@block.inner",
+						})
+						if not ok then
+							return nil
+						end
+						return ts(ai_type)
+					end,
+				},
+			})
+		end,
+	},
+
+	-- =========================================================================
+	-- GAP 3 CLOSED: mini.operators — explicit setup replacing bare  config = true
+	-- =========================================================================
+	{
+		"nvim-mini/mini.operators",
+		version = false,
+		event = "VeryLazy",
+		config = function()
+			require("mini.operators").setup({
+				-- All five operators use their default keys.
+				-- Each supports dot-repeat and takes any motion or text object.
+
+				-- gx{motion}: EXCHANGE — two consecutive gx calls swap the regions
+				-- gx is doubled for linewise exchange (gxx = exchange current line)
+				exchange = { prefix = "gx" },
+
+				-- gr{motion}: REPLACE with register content (default register = unnamed)
+				-- gr is doubled for linewise (grr = replace current line)
+				-- tip: yiw first, then griw on each target — register is preserved
+				replace = { prefix = "gr" },
+
+				-- gs{motion}: SORT lines or delimited words covered by the motion
+				-- gs is doubled for linewise sort (gss = sort current line's words)
+				-- uses default Lua string sort (case-sensitive, alphabetical)
+				sort = {
+					prefix = "gs",
+					-- reindent_linewise keeps indent level stable after a line sort
+					func = nil, -- nil = use default sort; override with custom fn if needed
+				},
+
+				-- gm{motion}: MULTIPLY (duplicate) the covered text in place
+				-- gm is doubled for linewise duplicate (gmm = duplicate current line)
+				multiply = { prefix = "gm" },
+
+				-- g={motion}: EVALUATE the covered text as a Lua expression
+				-- replaces the text with its computed result
+				-- g== evaluates the current line
+				evaluate = {
+					prefix = "g=",
+					-- func receives the selected text as a string and must return a string
+					func = nil, -- nil = default Lua loadstring evaluator
+				},
+			})
+		end,
+	},
+
+	-- mini.pairs: auto-close — no custom config needed, defaults cover all pairs
+	{ "nvim-mini/mini.pairs", version = false, event = "InsertEnter", config = true },
 
 	-- Comments: gc / gcc / gb motions (tiny & fast)
 	{
 		"nvim-mini/mini.comment",
 		version = false,
-		event = "VeryLazy", -- load when things are calm
+		event = "VeryLazy",
 		config = function()
 			require("mini.comment").setup() -- defaults: gcc (line), gc{motion}, gb (block)
 		end,
@@ -137,7 +343,7 @@ return {
 	{
 		"nvim-mini/mini.indentscope",
 		version = false,
-		event = { "BufReadPre", "BufNewFile" }, -- show scopes as you open/edit files
+		event = { "BufReadPre", "BufNewFile" },
 		init = function()
 			vim.b.miniindentscope_disable = false -- per-buffer toggle (leave enabled by default)
 		end,
@@ -154,13 +360,12 @@ return {
 				group = grp,
 				callback = function()
 					local set = vim.api.nvim_set_hl
-					-- Keep them faint; no solid backgrounds
 					set(
 						0,
 						"MiniIndentscopeSymbol",
 						{ bg = "NONE", fg = vim.api.nvim_get_hl_by_name("Comment", true).foreground or nil }
 					)
-					set(0, "MiniIndentscopePrefix", { bg = "NONE", fg = "NONE" }) -- no special color for the virtual prefix
+					set(0, "MiniIndentscopePrefix", { bg = "NONE", fg = "NONE" })
 				end,
 			})
 			vim.api.nvim_exec_autocmds("ColorScheme", {})

@@ -31,6 +31,7 @@ set_keymaps("n", "<leader>w", "<cmd>update<CR>", "File save (only if modified)")
 set_keymaps("n", "<leader>q", "<cmd>quit<CR>", "Window: quit")
 set_keymaps("n", "<leader>Q", "<cmd>qall!<CR>", "Session: quit all (force)")
 set_keymaps("n", "Y", "y$", "Yank to end of line (like D/C)")
+set_keymaps({ "n", "v" }, "<leader>d", '"_d', "Delete without yanking")
 set_keymaps("n", "Q", "<Nop>", "Disable Ex mode")
 
 -- ╭──────────────────────────────╮
