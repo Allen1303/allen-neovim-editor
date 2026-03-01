@@ -21,6 +21,8 @@ end
 -- Prevent accidental <Space> from doing anything in Normal/Visual --------
 set_keymaps({ "n", "v" }, "<Space>", "<Nop>", "No-op for space in normal/visual modes")
 
+-- Better visual Block ergonomics for editing text objetcs
+set_keymaps("n", "<leader>v", "<C-v>", "Visual block mode")
 -- ╭──────────────────────────────╮
 -- │ 1) Quality-of-life basics    │
 -- ╰──────────────────────────────╯
