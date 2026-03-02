@@ -3,7 +3,6 @@
 -- ==============================
 -- GOAL: Provide great defaults with Catppuccin (plus Tokyonight as a spare),
 --       apply the theme early, and keep transparency consistent.
-
 -- this local function safely applies a colorscheme without throwing UI errors
 local function safe_colorscheme(name)
 	local ok = pcall(vim.cmd.colorscheme, name)
@@ -11,7 +10,6 @@ local function safe_colorscheme(name)
 		vim.notify(("Colorscheme '%s' not found, falling back to default."):format(name), vim.log.levels.WARN)
 	end
 end
-
 return {
 	-- Catppuccin: polished theme with broad plugin integrations
 	{
@@ -62,7 +60,6 @@ return {
 			safe_colorscheme("catppuccin") -- this call sets the active theme (with fallback handling)
 		end,
 	},
-
 	-- Tokyonight: excellent alternate theme (kept installed for easy switching)
 	{
 		"folke/tokyonight.nvim",
@@ -76,7 +73,7 @@ return {
 			},
 		},
 	},
-	-- Onedark Theme  excellent alternate theme (kept installed for easy switching)
+	-- Onedark Theme: excellent alternate theme (kept installed for easy switching)
 	{
 		"navarasu/onedark.nvim",
 		lazy = true, -- this setting keeps it available but not applied by default
@@ -88,6 +85,45 @@ return {
 				floats = "transparent",
 			},
 		},
+	},
+	-- Monokai Pro: rich theme with multiple filter variants
+	{
+		"loctvl842/monokai-pro.nvim",
+		lazy = true, -- this setting keeps it available but not applied by default
+		opts = {
+			filter = "octagon", -- this option selects the filter variant (classic, octagon, pro, machine, ristretto, spectrum)
+			transparent_background = true, -- this option mirrors our transparency preference
+			terminal_colors = true, -- this option enables terminal palette matching
+			devicons = true, -- this option enables devicons color integration
+			styles = {
+				comment = { italic = true },
+				keyword = { italic = true },
+				type = { bold = true },
+				storageclass = { bold = true },
+				structure = { bold = true },
+				parameter = { italic = true },
+				annotation = { italic = true },
+				tag_attribute = { italic = true },
+			},
+			inc_search = "background",
+			background_clear = {
+				"float_win",
+				"toggleterm",
+				"telescope",
+				"which-key",
+				"renamer",
+				"notify",
+				"nvim-tree",
+				"neo-tree",
+				"bufferline",
+				"mini.files", -- this entry clears background for your mini.files explorer
+			},
+		},
+		config = function(_, opts)
+			require("monokai-pro").setup(opts) -- this call applies Monokai Pro options
+			-- theme is lazy so apply manually with :colorscheme monokai-pro-octagon
+			-- swap "octagon" for "pro" if you prefer warmer tones
+		end,
 	},
 	-- Optional utility: ensure transparency is preserved even if a theme flips it
 	{

@@ -8,13 +8,13 @@
 
 ## Mode Legend
 
-| Label          | Meaning                                              |
-| -------------- | ---------------------------------------------------- |
-| `NORMAL`       | Press `<Esc>` first to ensure you are in Normal mode |
-| `VISUAL`       | Press `v` from Normal mode (characterwise selection) |
-| `VISUAL LINE`  | Press `V` from Normal mode (whole-line selection)    |
-| `VISUAL BLOCK` | Press `<C-v>` from Normal mode (column selection)    |
-| `INSERT`       | Press `i`, `a`, `o`, or `O` from Normal mode         |
+| Label          | Meaning                                                |
+| -------------- | ------------------------------------------------------ |
+| `NORMAL`       | Press `<Esc>` first to ensure you are in Normal mode   |
+| `VISUAL`       | Press `v` from Normal mode (characterwise selection)   |
+| `VISUAL LINE`  | Press `V` from Normal mode (whole-line selection)      |
+| `VISUAL BLOCK` | Press `<leader-v>` from Normal mode (column selection) |
+| `INSERT`       | Press `i`, `a`, `o`, or `O` from Normal mode           |
 
 ---
 
@@ -191,7 +191,7 @@ local parsed = parseFloat(rawInput.trim())
 2. Type `ma` — mark `a` is now set at this exact column
 3. Type `<C-d>` twice — scrolls down past the padding lines
 4. Type `` `a `` (backtick then `a`) — cursor jumps back to the **exact column** on `startHere`
-5. Now try `'a` (apostrophe then `a`) — jumps to the line but lands on the first non-blank character instead
+5. Now try `'a` (apostrophe then `a`) — jumps to the line but lands on the beginning of the line 'non-blank 'character instead
 
 ```lua
 local startHere = "mark this line with  ma"
@@ -344,9 +344,9 @@ local tasks = {
 3. Press `.` on each subsequent line — deletes each `console.log` call in one keystroke
 
 ```lua
-console.log("debug response", response)
-console.log("debug payload", payload)
-console.log("debug headers", headers)
+console.log("debug response", response);
+console.log("debug payload", payload);
+console.log("debug headers", headers);
 ```
 
 ---
@@ -393,7 +393,7 @@ local screen_nav_c = "line 3"
 
 ---
 
-## §6 — Visual Block Mode: `<C-v>`
+## §6 — Visual Block Mode: `<leader>-v`
 
 > `virtualedit=block` is set in your `options.lua` — the cursor can move past end-of-line into empty space. This is essential for the append drills below.
 
