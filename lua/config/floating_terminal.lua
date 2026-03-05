@@ -1,9 +1,10 @@
 -- ╭──────────────────────────────────────────────────────────────────────────╮
 -- │ Floating Terminal | lua/config/floating_terminal.lua                     │
 -- ╰──────────────────────────────────────────────────────────────────────────╯
--- WHAT: Plugin-free floating terminal + “run code” workflow (VS Code–style).
+-- WHAT: Plugin-free floating terminal + "run code" workflow (VS Code–style).
 -- WHY : Run current file / line / selection neatly; keep vim motions in term.
 -- NOTE: We auto-cd to the project root (git root if present) before runs.
+
 local M = {}
 
 -- ── User options ───────────────────────────────────────────────────────────
@@ -27,6 +28,9 @@ local last_cmd ---@type string|nil   -- last executed shell command
 local last_workdir ---@type string|nil   -- working directory of last_cmd
 local current_layout_key = "float" -- active layout ("float"|"run")
 
+-- FIX: uv/loop compat — support Neovim 0.10+ (vim.uv) and older (vim.loop)
+local uv = vim.uv or vim.loop
+
 -- ── Paths, runners & workdir helpers ───────────────────────────────────────
 local function first_exe(list)
 	-- this function returns the first executable in $PATH from a list
@@ -46,17 +50,32 @@ local function build_run_cmd(ft, abs_path)
 	if ft == "javascript" then
 		local exe = first_exe({ "bun", "node" }) or "node"
 		return exe .. " " .. escaped
+	elseif ft == "javascriptreact" then
+		-- ADD: JSX support — treat like JS, prefer bun/node
+		local exe = first_exe({ "bun", "node" }) or "node"
+		return exe .. " " .. escaped
 	elseif ft == "typescript" then
 		local exe = first_exe({ "tsx", "bunx", "ts-node", "node" }) or "node"
 		if exe == "tsx" then
 			return "tsx " .. escaped
-		elseif exe == "bunx" then
-			return "bunx tsx " .. escaped
-		elseif exe == "ts-node" then
-			return "ts-node " .. escaped
-		else
-			return "node " .. escaped
 		end
+		if exe == "bunx" then
+			return "bunx tsx " .. escaped
+		end
+		if exe == "ts-node" then
+			return "ts-node " .. escaped
+		end
+		return "node " .. escaped
+	elseif ft == "typescriptreact" then
+		-- ADD: TSX support — same runner chain as typescript
+		local exe = first_exe({ "tsx", "bunx", "ts-node" }) or "node"
+		if exe == "tsx" then
+			return "tsx " .. escaped
+		end
+		if exe == "bunx" then
+			return "bunx tsx " .. escaped
+		end
+		return "ts-node " .. escaped
 	elseif ft == "python" then
 		return (first_exe({ "python3", "python" }) or "python3") .. " " .. escaped
 	elseif ft == "lua" then
@@ -69,11 +88,12 @@ local function build_run_cmd(ft, abs_path)
 		local exe = first_exe({ ft, "bash", "sh", "zsh" }) or "bash"
 		return exe .. " " .. escaped
 	end
+
 	return nil
 end
 
 local function pick_workdir(abs_path)
-	-- this function returns the git root for a file, else the file’s directory
+	-- this function returns the git root for a file, else the file's directory
 	local dir = vim.fn.fnamemodify(abs_path, ":h")
 	local git = vim.fs.find(".git", { upward = true, path = dir })[1]
 	return git and vim.fn.fnamemodify(git, ":h") or dir
@@ -180,10 +200,15 @@ local function term_job()
 	return term_buf and vim.b[term_buf] and vim.b[term_buf].terminal_job_id or nil
 end
 
+-- FIX: term_send now uses pcall and resets the buffer on channel failure
 local function term_send(line)
 	local job = term_job()
 	if job then
-		vim.fn.chansend(job, line .. "\n")
+		local ok, err = pcall(vim.fn.chansend, job, line .. "\n")
+		if not ok then
+			vim.notify("Terminal send failed: " .. tostring(err), vim.log.levels.WARN)
+			term_buf = nil -- force a clean recreate on next open
+		end
 	end
 end
 
@@ -191,7 +216,7 @@ end
 local function shell_wrap(script)
 	-- this function selects bash→zsh→sh and wraps:  SHELL -lc 'script'
 	local shell = first_exe({ "bash", "zsh", "sh" }) or "sh"
-	local quoted = vim.fn.shellescape(script) -- safe single-quoted string
+	local quoted = vim.fn.shellescape(script)
 	return string.format("%s -lc %s", shell, quoted)
 end
 
@@ -199,7 +224,7 @@ end
 local function run_in_workdir(workdir, cmd)
 	if M.config.suppress_command_echo then
 		local script = string.format("cd %s; %s", vim.fn.fnameescape(workdir), cmd)
-		term_send(shell_wrap(script)) -- only program output will show
+		term_send(shell_wrap(script))
 	else
 		term_send(("cd %s && %s"):format(vim.fn.fnameescape(workdir), cmd))
 	end
@@ -212,7 +237,8 @@ local function print_header(title, subtitle)
 		term_send(subtitle)
 	end
 	if M.config.show_cwd then
-		term_send("cwd: " .. (vim.fn.getcwd(0, 0) or vim.loop.cwd()))
+		-- FIX: use vim.uv or vim.loop for Neovim 0.10+ compatibility
+		term_send("cwd: " .. (vim.fn.getcwd(0, 0) or uv.cwd()))
 	end
 end
 
@@ -299,8 +325,11 @@ function M.run_line_or_selection()
 	local workdir = pick_workdir(buf_path)
 	local label = header_path(buf_path, workdir)
 
-	if vim.fn.mode():match("[vV]") then
-		local srow, erow = vim.fn.line("'<"), vim.fn.line("'>")
+	-- FIX: explicit mode string comparison — vim.fn.mode() match("[vV]") is fragile
+	local mode = vim.fn.mode()
+	if mode == "v" or mode == "V" or mode == "\22" then
+		local srow = vim.fn.line("'<")
+		local erow = vim.fn.line("'>")
 		local lines = vim.api.nvim_buf_get_lines(0, srow - 1, erow, false)
 		local tmp = vim.fn.tempname()
 		vim.fn.writefile(lines, tmp)
@@ -333,14 +362,17 @@ function M.rerun_last_command()
 	local label = header_path(buf_path, last_workdir)
 	focus_or_open("run")
 	print_header("Run Previous", "file: " .. label)
-	run_in_workdir(last_workdir or (vim.loop.cwd() or "."), last_cmd)
+	-- FIX: use uv.cwd() instead of vim.loop.cwd()
+	run_in_workdir(last_workdir or (uv.cwd() or "."), last_cmd)
 end
 
 -- ── Commands & keymaps ─────────────────────────────────────────────────────
 vim.api.nvim_create_user_command("RunFile", M.run_current_file, { desc = "Run current file" })
 vim.api.nvim_create_user_command("RunLine", M.run_line_or_selection, { desc = "Run current line" })
+vim.api.nvim_create_user_command("RunLast", M.rerun_last_command, { desc = "Run last command" })
 vim.api.nvim_create_user_command("RunSelection", function(o)
-	local srow, erow = o.line1, o.line2
+	local srow = o.line1
+	local erow = o.line2
 	local ft = vim.bo.filetype
 	local buf_path = vim.api.nvim_buf_get_name(0)
 	local workdir = pick_workdir(buf_path)
@@ -357,9 +389,10 @@ vim.api.nvim_create_user_command("RunSelection", function(o)
 	print_header("Run Selection", "file: " .. label)
 	run_in_workdir(workdir, cmd)
 end, { range = true, desc = "Run visual selection" })
-vim.api.nvim_create_user_command("RunLast", M.rerun_last_command, { desc = "Run last command" })
 
-vim.keymap.set("n", "<leader>t", M.toggle_terminal, { desc = "Terminal: toggle (big float)", silent = true })
+-- NOTE: <leader>t = close terminal, <leader>tt = open terminal (intentional, no conflict)
+vim.keymap.set("n", "<leader>t", M.toggle_terminal, { desc = "Terminal: close", silent = true })
+vim.keymap.set("n", "<leader>tt", M.toggle_terminal, { desc = "Terminal: open (big float)", silent = true })
 vim.keymap.set("n", "<leader>rc", M.run_current_file, { desc = "Run: current file", silent = true })
 vim.keymap.set("n", "<leader>rl", M.run_line_or_selection, { desc = "Run: current line", silent = true })
 vim.keymap.set("x", "<leader>rv", M.run_line_or_selection, { desc = "Run: visual selection", silent = true })
@@ -376,6 +409,7 @@ vim.api.nvim_create_autocmd("VimResized", {
 		end
 	end,
 })
+
 vim.api.nvim_create_autocmd("ColorScheme", {
 	callback = function()
 		if term_win and vim.api.nvim_win_is_valid(term_win) then

@@ -2,7 +2,7 @@
 -- lua/config/autocmds.lua
 -- ==============================
 -- GOALS:
--- - Core quality-of-life autocmds that don’t fight plugins
+-- - Core quality-of-life autocmds that don't fight plugins
 -- - Play nice with transparent UI + our Mini/ToggleTerm/Trouble/DAP stack
 
 local aug = vim.api.nvim_create_augroup("allen_auto_cmd", { clear = true })
@@ -60,7 +60,31 @@ vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
 	desc = "Auto-reload changed files on focus/terminal events",
 })
 
--- 6) Per-language indentation / view tweaks (kept simple)
+-- 6) Close special buffers with q
+-- ADD: LazyVim standard — lets you dismiss help/qf/lspinfo etc. with just q
+vim.api.nvim_create_autocmd("FileType", {
+	group = aug,
+	pattern = {
+		"help",
+		"qf",
+		"lspinfo",
+		"checkhealth",
+		"lazy",
+		"mason",
+		"notify",
+		"trouble",
+		"dashboard",
+	},
+	callback = function()
+		vim.keymap.set("n", "q", "<cmd>close<CR>", { buffer = true, silent = true })
+	end,
+	desc = "Close special buffers with q",
+})
+
+-- 7) Per-language indentation / view tweaks
+-- FIX: web files changed from 4 → 2 spaces (JS/TS/HTML/CSS convention)
+-- FIX: json/jsonc removed from this block (handled separately below)
+-- FIX: lua removed from this block (handled separately below)
 vim.api.nvim_create_autocmd("FileType", {
 	group = aug,
 	pattern = {
@@ -68,25 +92,36 @@ vim.api.nvim_create_autocmd("FileType", {
 		"javascriptreact",
 		"typescript",
 		"typescriptreact",
-		"json",
-		"jsonc",
 		"html",
 		"css",
 		"scss",
 		"less",
-		"lua",
 		"yaml",
 		"yml",
 	},
 	callback = function()
-		vim.bo.shiftwidth = 4
-		vim.bo.tabstop = 4
+		vim.bo.shiftwidth = 2
+		vim.bo.tabstop = 2
 		vim.bo.expandtab = true
 		vim.wo.wrap = false
 	end,
-	desc = "Web/Lua/YAML: 4-space soft tabs",
+	desc = "Web/YAML: 2-space soft tabs",
 })
 
+-- FIX: lua gets its own block — 2-space is the Lua/Neovim convention
+vim.api.nvim_create_autocmd("FileType", {
+	group = aug,
+	pattern = { "lua" },
+	callback = function()
+		vim.bo.shiftwidth = 2
+		vim.bo.tabstop = 2
+		vim.bo.expandtab = true
+		vim.wo.wrap = false
+	end,
+	desc = "Lua: 2-space soft tabs",
+})
+
+-- Python: PEP8 4-space + Black's 88-col guide (unchanged, this was correct)
 vim.api.nvim_create_autocmd("FileType", {
 	group = aug,
 	pattern = { "python" },
@@ -100,6 +135,7 @@ vim.api.nvim_create_autocmd("FileType", {
 	desc = "Python: 4-space indents, 88-col guide",
 })
 
+-- Markdown / git commit: writing-friendly settings (unchanged, correct)
 vim.api.nvim_create_autocmd("FileType", {
 	group = aug,
 	pattern = { "markdown", "gitcommit" },
@@ -108,13 +144,14 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.wo.linebreak = true
 		vim.wo.spell = true
 		vim.wo.conceallevel = 2
-		vim.bo.shiftwidth = 4
-		vim.bo.tabstop = 4
+		vim.bo.shiftwidth = 2
+		vim.bo.tabstop = 2
 		vim.bo.expandtab = true
 	end,
-	desc = "Markdown/Git: wrap, linebreak, spell",
+	desc = "Markdown/Git: wrap, linebreak, spell, 2-space",
 })
 
+-- Shell: 2-space (unchanged, correct)
 vim.api.nvim_create_autocmd("FileType", {
 	group = aug,
 	pattern = { "sh", "bash", "zsh" },
@@ -127,6 +164,7 @@ vim.api.nvim_create_autocmd("FileType", {
 	desc = "Shell: 2-space indents",
 })
 
+-- Makefile: hard tabs required (unchanged, correct)
 vim.api.nvim_create_autocmd("FileType", {
 	group = aug,
 	pattern = { "make" },
@@ -139,16 +177,21 @@ vim.api.nvim_create_autocmd("FileType", {
 	desc = "Makefile: hard tabs at width 8",
 })
 
+-- FIX: json/jsonc merged into one block (was duplicated across two autocmds)
 vim.api.nvim_create_autocmd("FileType", {
 	group = aug,
 	pattern = { "json", "jsonc" },
 	callback = function()
-		vim.wo.conceallevel = 0
+		vim.bo.shiftwidth = 2
+		vim.bo.tabstop = 2
+		vim.bo.expandtab = true
+		vim.wo.conceallevel = 0 -- no conceal for JSON (keeps strings readable)
 	end,
-	desc = "JSON: no conceal",
+	desc = "JSON: 2-space indent, no conceal",
 })
 
--- 7) Mini IndentScope: turn off in special UIs (prevents guides in panels)
+-- 8) mini.indentscope: disable in special UI panels
+-- (prevents indent guides appearing in DAP/Trouble/Lazy/Mason/Terminal panels)
 vim.api.nvim_create_autocmd("FileType", {
 	group = aug,
 	pattern = {
@@ -166,11 +209,10 @@ vim.api.nvim_create_autocmd("FileType", {
 		"dapui_watches",
 		"dap-repl",
 		"toggleterm",
+		"notify",
 	},
 	callback = function()
 		vim.b.miniindentscope_disable = true
 	end,
 	desc = "Disable mini.indentscope in side panels / special buffers",
 })
-
-return true

@@ -4,24 +4,24 @@
 -- GOALS:
 -- - Use nvim-mini modules (icons, files, surround, ai, completion)
 -- - Keep plugin specs lean; lazy-load on first keypress/insert
--- - Honor transparent UI for mini.files & completion across ANY theme
+-- - Honor transparent UI for mini.files across ANY theme
 
 return {
-	-- Icons early (and devicons shim for other plugins)
+	-- ── Icons (early load + devicons shim for other plugins) ───────────────
 	{
 		"nvim-mini/mini.icons",
-		version = false,
+		version = "*",
 		lazy = false,
 		config = function()
-			require("mini.icons").setup() -- init icon set
-			require("mini.icons").mock_nvim_web_devicons() -- devicons shim
+			require("mini.icons").setup()
+			require("mini.icons").mock_nvim_web_devicons()
 		end,
 	},
 
-	-- Statusline (simple default; customize later)
+	-- ── Statusline ─────────────────────────────────────────────────────────
 	{
 		"nvim-mini/mini.statusline",
-		version = false,
+		version = "*",
 		lazy = false,
 		config = function()
 			require("mini.statusline").setup({ use_icons = true })
@@ -29,10 +29,10 @@ return {
 		end,
 	},
 
-	-- File explorer (lazy on keys)
+	-- ── File explorer ───────────────────────────────────────────────────────
 	{
 		"nvim-mini/mini.files",
-		version = false,
+		version = "*",
 		keys = {
 			{
 				"<leader>e",
@@ -41,13 +41,39 @@ return {
 				end,
 				desc = "MiniFiles: explore CWD",
 			},
-			{ "<leader>E", desc = "MiniFiles: reveal current file" },
+			-- FIX: was defined twice (placeholder here + vim.keymap.set in config)
+			-- Now has its action defined directly here — no duplicate in config
+			{
+				"<leader>E",
+				function()
+					local path = vim.api.nvim_buf_get_name(0)
+					local mf = require("mini.files")
+					if path == "" then
+						mf.open()
+						return
+					end
+					mf.open(vim.fn.fnamemodify(path, ":h"))
+					if type(mf.reveal) == "function" then
+						pcall(mf.reveal, path, { focus = true, open = true })
+					end
+				end,
+				desc = "MiniFiles: reveal current file",
+			},
 		},
 		config = function()
 			local mf = require("mini.files")
 			mf.setup({
-				options = { use_as_default_explorer = true, permanent_delete = true },
-				windows = { preview = true, width_focus = 40, width_nofocus = 25, width_preview = 60 },
+				options = {
+					use_as_default_explorer = true,
+					-- FIX: was true — permanent delete skips trash, too destructive
+					permanent_delete = false,
+				},
+				windows = {
+					preview = true,
+					width_focus = 40,
+					width_nofocus = 25,
+					width_preview = 60,
+				},
 			})
 
 			-- Transparent UI for mini.files (theme-agnostic)
@@ -75,58 +101,21 @@ return {
 				end,
 			})
 			mini_files_transparent()
-
-			-- Reveal current file (graceful fallback for no-name buffers)
-			local function reveal_current_file()
-				local path = vim.api.nvim_buf_get_name(0)
-				if path == "" then
-					mf.open()
-					return
-				end
-				mf.open(vim.fn.fnamemodify(path, ":h"))
-				if type(mf.reveal) == "function" then
-					pcall(mf.reveal, path, { focus = true, open = true })
-				end
-			end
-			vim.keymap.set("n", "<leader>E", reveal_current_file, { desc = "MiniFiles: reveal current file" })
+			-- NOTE: <leader>E keymap is defined in the keys table above (no duplicate here)
 		end,
 	},
 
-	-- Completion (lazy on first Insert; defaults are good)
-	{
-		"nvim-mini/mini.completion",
-		version = false,
-		event = "InsertEnter",
-		config = function()
-			require("mini.completion").setup() -- enable minimal, LSP-friendly completion
+	-- NOTE: mini.completion REMOVED — conflicts with nvim-cmp (cmp.lua)
+	-- Both hook InsertEnter and provide completion causing duplicate menus.
+	-- nvim-cmp is our completion engine — see lua/plugins/cmp.lua
 
-			-- Transparent popup menu/doc across themes
-			local grp = vim.api.nvim_create_augroup("Allen_MiniCompletion_Transparent", { clear = true })
-			vim.api.nvim_create_autocmd("ColorScheme", {
-				group = grp,
-				callback = function()
-					local set = vim.api.nvim_set_hl
-					pcall(set, 0, "Pmenu", { bg = "NONE" })
-					pcall(set, 0, "PmenuSel", { bg = "NONE" })
-					pcall(set, 0, "PmenuSbar", { bg = "NONE" })
-					pcall(set, 0, "PmenuThumb", { bg = "NONE" })
-					pcall(set, 0, "PmenuBorder", { bg = "NONE" })
-				end,
-			})
-			vim.api.nvim_exec_autocmds("ColorScheme", {})
-		end,
-	},
-
-	-- =========================================================================
-	-- GAP 1 CLOSED: mini.surround — custom pairs replacing bare  config = true
-	-- =========================================================================
+	-- ── Surround ────────────────────────────────────────────────────────────
 	{
 		"nvim-mini/mini.surround",
-		version = false,
+		version = "*",
 		event = "VeryLazy",
 		config = function()
 			require("mini.surround").setup({
-				-- sa sd sr sf sF sh sn — all default keys kept as-is
 				mappings = {
 					add = "sa",
 					delete = "sd",
@@ -138,18 +127,12 @@ return {
 					suffix_last = "l",
 					suffix_next = "n",
 				},
-
-				n_lines = 30, -- search up to 30 lines for a surrounding pair
-				highlight_duration = 500, -- flash duration in ms when using sh
-
-				-- cover_or_next: if cursor isn't inside a pair, search forward
-				-- instead of doing nothing — much more ergonomic
+				n_lines = 30,
+				highlight_duration = 500,
 				search_method = "cover_or_next",
 
 				custom_surroundings = {
-
 					-- t: HTML/JSX tag  (sat prompts for tag name, sdt strips nearest tag)
-					-- input pattern matches <tag ...>content</tag> as a balanced pair
 					t = {
 						input = { "<(%a[%a%d]*)%f[%s>].-</%1>", "^<.->().-()</.->$" },
 						output = function()
@@ -160,19 +143,16 @@ return {
 							return { left = "<" .. tag .. ">", right = "</" .. tag .. ">" }
 						end,
 					},
-
 					-- $: template expression  (sa$ → ${}, sd$ strips it)
 					["$"] = {
 						input = { "%${(.-)}" },
 						output = { left = "${", right = "}" },
 					},
-
 					-- l: console.log wrapper  (sal wraps, sdl unwraps)
 					l = {
 						input = { "console%.log%((.-)%)" },
 						output = { left = "console.log(", right = ")" },
 					},
-
 					-- c: /* block comment */  (sac wraps, sdc strips)
 					c = {
 						input = { "/%* ?(.-)%*/" },
@@ -183,22 +163,17 @@ return {
 		end,
 	},
 
-	-- =========================================================================
-	-- GAP 2 CLOSED: mini.ai — custom text objects replacing bare  config = true
-	-- =========================================================================
+	-- ── Extended text objects ───────────────────────────────────────────────
 	{
 		"nvim-mini/mini.ai",
-		version = false,
+		version = "*",
 		event = "VeryLazy",
 		config = function()
 			local ai = require("mini.ai")
 
 			ai.setup({
-				-- cover_or_next mirrors the surround search_method:
-				-- if cursor is outside an object, find the next one forward
 				search_method = "cover_or_next",
-
-				n_lines = 50, -- how many lines to search around cursor for an object
+				n_lines = 50,
 
 				mappings = {
 					around = "a",
@@ -207,14 +182,12 @@ return {
 					inside_next = "in",
 					around_last = "al",
 					inside_last = "il",
-					goto_left = "g[", -- jump cursor to left  edge of object
-					goto_right = "g]", -- jump cursor to right edge of object
+					goto_left = "g[",
+					goto_right = "g]",
 				},
 
 				custom_textobjects = {
-
-					-- e: entire buffer  (dae = delete all, yae = yank all, vae = select all)
-					-- returns fixed from/to positions spanning the whole file
+					-- e: entire buffer  (dae / yae / vae)
 					e = function()
 						local from = { line = 1, col = 1 }
 						local to = {
@@ -224,151 +197,165 @@ return {
 						return { from = from, to = to }
 					end,
 
-					-- a: function ARGUMENT  (dia = delete one arg, caa = change + its comma)
-					-- gen_spec.argument handles the comma-aware boundary logic automatically
+					-- a: function argument (dia / caa — comma-aware)
 					a = ai.gen_spec.argument({
 						brackets = { "(", "[", "{" },
 						separator = ",",
-						-- don't split on commas that sit inside nested quotes or brackets
 						exclude_regions = { '"', "'", "`", "(", "[", "{" },
 					}),
 
-					-- f: function CALL parens + body  (dif = delete args, caf = change whole call)
-					-- gen_spec.function_call targets the parens of a call, not the definition
+					-- f: function call parens + body  (dif / caf)
 					f = ai.gen_spec.function_call(),
 
-					-- F: function DEFINITION body  (diF = delete body, viF = select body)
-					-- treesitter-based so it understands language structure precisely
-					-- pcall guards against buffers where treesitter isn't active
+					-- F: function definition body  (diF / viF)
+					-- pcall guard: treesitter errors lazily if no query for filetype
 					F = function(ai_type)
-						local ok, ts = pcall(ai.gen_spec.treesitter, {
+						local spec = ai.gen_spec.treesitter({
 							a = "@function.outer",
 							i = "@function.inner",
 						})
+						local ok, result = pcall(spec, ai_type)
 						if not ok then
 							return nil
 						end
-						return ts(ai_type)
+						return result
 					end,
 
-					-- c: class definition  (dic = delete class body, vac = select whole class)
+					-- c: class definition  (dic / vac)
 					c = function(ai_type)
-						local ok, ts = pcall(ai.gen_spec.treesitter, {
+						local spec = ai.gen_spec.treesitter({
 							a = "@class.outer",
 							i = "@class.inner",
 						})
+						local ok, result = pcall(spec, ai_type)
 						if not ok then
 							return nil
 						end
-						return ts(ai_type)
+						return result
 					end,
 
-					-- t: HTML/JSX tag  (dit = delete tag content, vat = tag + content)
-					-- treesitter gives accurate tag matching even for nested components
+					-- t: HTML/JSX tag — pattern-based, no treesitter dependency
+					-- works in JS, JSX, TSX, HTML without needing query files
 					t = function(ai_type)
-						local ok, ts = pcall(ai.gen_spec.treesitter, {
-							a = "@block.outer",
-							i = "@block.inner",
-						})
-						if not ok then
+						local tag_pattern = "<(%w[%w%-:]*)%f[%s/>][^>]*>(.-)</%1>"
+						local line_count = vim.api.nvim_buf_line_count(0)
+						local cur_line = vim.api.nvim_win_get_cursor(0)[1]
+						local search_start = math.max(1, cur_line - 30)
+						local search_end = math.min(line_count, cur_line + 30)
+						local lines = vim.api.nvim_buf_get_lines(0, search_start - 1, search_end, false)
+						local combined = table.concat(lines, "\n")
+
+						local s, e, tag_name, _ = combined:find(tag_pattern)
+						if not s then
 							return nil
 						end
-						return ts(ai_type)
+
+						local function offset_to_pos(offset, base_line)
+							local prefix = combined:sub(1, offset - 1)
+							local newlines = select(2, prefix:gsub("\n", ""))
+							local last_nl = prefix:find("[^\n]*$")
+							return {
+								line = base_line + newlines,
+								col = offset - (last_nl or 1),
+							}
+						end
+
+						if ai_type == "i" then
+							local content_start = s + combined:sub(s):find(">")
+							local content_end = e - #("</" .. tag_name .. ">")
+							return {
+								from = offset_to_pos(content_start + 1, search_start),
+								to = offset_to_pos(content_end, search_start),
+							}
+						else
+							return {
+								from = offset_to_pos(s, search_start),
+								to = offset_to_pos(e + 1, search_start),
+							}
+						end
 					end,
 				},
 			})
 		end,
 	},
 
-	-- =========================================================================
-	-- GAP 3 CLOSED: mini.operators — explicit setup replacing bare  config = true
-	-- =========================================================================
+	-- ── Operators ───────────────────────────────────────────────────────────
 	{
 		"nvim-mini/mini.operators",
-		version = false,
+		version = "*",
 		event = "VeryLazy",
 		config = function()
 			require("mini.operators").setup({
-				-- All five operators use their default keys.
-				-- Each supports dot-repeat and takes any motion or text object.
-
-				-- gx{motion}: EXCHANGE — two consecutive gx calls swap the regions
-				-- gx is doubled for linewise exchange (gxx = exchange current line)
-				exchange = { prefix = "gx" },
-
-				-- gr{motion}: REPLACE with register content (default register = unnamed)
-				-- gr is doubled for linewise (grr = replace current line)
-				-- tip: yiw first, then griw on each target — register is preserved
-				replace = { prefix = "gr" },
-
-				-- gs{motion}: SORT lines or delimited words covered by the motion
-				-- gs is doubled for linewise sort (gss = sort current line's words)
-				-- uses default Lua string sort (case-sensitive, alphabetical)
-				sort = {
-					prefix = "gs",
-					-- reindent_linewise keeps indent level stable after a line sort
-					func = nil, -- nil = use default sort; override with custom fn if needed
-				},
-
-				-- gm{motion}: MULTIPLY (duplicate) the covered text in place
-				-- gm is doubled for linewise duplicate (gmm = duplicate current line)
-				multiply = { prefix = "gm" },
-
-				-- g={motion}: EVALUATE the covered text as a Lua expression
-				-- replaces the text with its computed result
-				-- g== evaluates the current line
-				evaluate = {
-					prefix = "g=",
-					-- func receives the selected text as a string and must return a string
-					func = nil, -- nil = default Lua loadstring evaluator
-				},
+				exchange = { prefix = "gx" }, -- gx{motion}: swap two regions
+				replace = { prefix = "gr" }, -- gr{motion}: replace with register
+				sort = { prefix = "gs", func = nil }, -- gs{motion}: sort lines/words
+				multiply = { prefix = "gm" }, -- gm{motion}: duplicate in place
+				evaluate = { prefix = "g=", func = nil }, -- g={motion}: eval as Lua
 			})
 		end,
 	},
 
-	-- mini.pairs: auto-close — no custom config needed, defaults cover all pairs
-	{ "nvim-mini/mini.pairs", version = false, event = "InsertEnter", config = true },
+	-- ── Auto-pairs ──────────────────────────────────────────────────────────
+	{
+		"nvim-mini/mini.pairs",
+		version = "*",
+		event = "InsertEnter",
+		config = true,
+	},
 
-	-- Comments: gc / gcc / gb motions (tiny & fast)
+	-- ── Comments ────────────────────────────────────────────────────────────
+	-- NOTE: Neovim 0.10+ has a built-in gc/gcc operator — mini.comment overrides
+	-- it with identical behavior plus a few extras. Remove if you prefer built-in.
 	{
 		"nvim-mini/mini.comment",
-		version = false,
+		version = "*",
 		event = "VeryLazy",
 		config = function()
-			require("mini.comment").setup() -- defaults: gcc (line), gc{motion}, gb (block)
+			require("mini.comment").setup()
 		end,
 	},
 
-	-- Indent guides: subtle, transparent-friendly
+	-- ── Indent guides ───────────────────────────────────────────────────────
 	{
 		"nvim-mini/mini.indentscope",
-		version = false,
+		version = "*",
 		event = { "BufReadPre", "BufNewFile" },
 		init = function()
-			vim.b.miniindentscope_disable = false -- per-buffer toggle (leave enabled by default)
+			vim.b.miniindentscope_disable = false
 		end,
 		config = function()
 			require("mini.indentscope").setup({
-				symbol = "￤", -- thin guide; easy on transparent themes
-				draw = { delay = 50, animation = require("mini.indentscope").gen_animation.none() },
-				options = { try_as_border = true }, -- use existing indent as scope when possible
+				symbol = "￤",
+				draw = {
+					delay = 50,
+					animation = require("mini.indentscope").gen_animation.none(),
+				},
+				options = { try_as_border = true },
 			})
 
-			-- Make indent guides blend on any theme
+			-- Blend indent guides on any theme
 			local grp = vim.api.nvim_create_augroup("Allen_Indent_Transparent", { clear = true })
 			vim.api.nvim_create_autocmd("ColorScheme", {
 				group = grp,
 				callback = function()
 					local set = vim.api.nvim_set_hl
-					set(
-						0,
-						"MiniIndentscopeSymbol",
-						{ bg = "NONE", fg = vim.api.nvim_get_hl_by_name("Comment", true).foreground or nil }
-					)
+					-- FIX: nvim_get_hl_by_name deprecated — use nvim_get_hl (0.9+)
+					set(0, "MiniIndentscopeSymbol", {
+						bg = "NONE",
+						fg = vim.api.nvim_get_hl(0, { name = "Comment" }).fg or nil,
+					})
 					set(0, "MiniIndentscopePrefix", { bg = "NONE", fg = "NONE" })
 				end,
 			})
-			vim.api.nvim_exec_autocmds("ColorScheme", {})
+
+			-- FIX: was nvim_exec_autocmds("ColorScheme") — fires ALL listeners
+			-- Apply directly on first load instead
+			local set = vim.api.nvim_set_hl
+			set(0, "MiniIndentscopeSymbol", {
+				bg = "NONE",
+				fg = vim.api.nvim_get_hl(0, { name = "Comment" }).fg or nil,
+			})
+			set(0, "MiniIndentscopePrefix", { bg = "NONE", fg = "NONE" })
 		end,
 	},
 }

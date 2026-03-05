@@ -108,7 +108,7 @@ local menu_items = {
 	{
 		icon = "📝",
 		desc = "Find text",
-		key = "g",
+		key = "t",
 		action = function()
 			require("telescope.builtin").live_grep()
 		end,
@@ -232,14 +232,14 @@ local function get_theme_colors()
 end
 
 -- Center text properly in window
-local function center_text(text, win_width)
+local function center_text(text, gc)
 	local text_width = vim.fn.strdisplaywidth(text)
-	local padding = math.max(0, math.floor((win_width - text_width) / 2))
+	local padding = math.max(0, math.floor((gc - text_width) / 2))
 	return string.rep(" ", padding) .. text
 end
 
 -- Left align text with padding
-local function left_align(text, win_width, left_margin)
+local function left_align(text, left_margin)
 	return string.rep(" ", left_margin) .. text
 end
 
@@ -259,7 +259,7 @@ end
 -- Draw the dashboard
 local function draw_dashboard(buf)
 	local win_height = vim.api.nvim_win_get_height(0)
-	local win_width = vim.api.nvim_win_get_width(0)
+	local gc = vim.api.nvim_win_get_width(0)
 	local lines = {}
 
 	-- Get ASCII art for current day
@@ -282,7 +282,7 @@ local function draw_dashboard(buf)
 
 	-- Add ASCII art (centered)
 	for _, line in ipairs(art) do
-		table.insert(lines, center_text(line, win_width))
+		table.insert(lines, center_text(line, gc))
 	end
 
 	-- Add spacing after art
@@ -290,12 +290,12 @@ local function draw_dashboard(buf)
 	table.insert(lines, "")
 
 	-- Calculate left margin to center menu items
-	local left_margin = math.max(4, math.floor((win_width - 50) / 2))
+	local left_margin = math.max(4, math.floor((gc - 50) / 2))
 
 	-- Add menu items with better spacing for two-column look
 	for _, item in ipairs(menu_items) do
 		local menu_line = string.format("%s  %-20s        %s", item.icon, item.desc, item.key)
-		table.insert(lines, left_align(menu_line, win_width, left_margin))
+		table.insert(lines, left_align(menu_line, left_margin))
 	end
 
 	-- Add spacing
@@ -304,11 +304,14 @@ local function draw_dashboard(buf)
 
 	-- Add footer with plugin count
 	local lazy_ok, lazy = pcall(require, "lazy")
-	local pkg_count = lazy_ok and #lazy.plugins() or 0
-	local lazy_stats = lazy_ok and lazy.stats() or { startuptime = 0 }
-	local startup_time = string.format("%.2fms", lazy_stats.startuptime or 0)
-	local footer = string.format("  Neovim loaded %d/%d plugins in %s", pkg_count, pkg_count, startup_time)
-	table.insert(lines, left_align(footer, win_width, left_margin))
+	local lazy_stats = lazy_ok and lazy.stats() or { count = 0, loaded = 0, startuptime = 0 }
+	local footer = string.format(
+		"  Neovim loaded %d/%d plugins in %.2fms",
+		lazy_stats.loaded or 0,
+		lazy_stats.count or 0,
+		lazy_stats.startuptime or 0
+	)
+	table.insert(lines, left_align(footer, left_margin))
 
 	-- Fill remaining space
 	while #lines < win_height do

@@ -25,7 +25,7 @@ vim.opt.virtualedit = "block" -- this option lets the cursor move past end-of-li
 -- Editing behavior ------------------------------------------------------
 
 vim.opt.expandtab = true -- this option converts tabs to spaces (standard for most codebases)
-vim.opt.shiftwidth = 4 -- this option sets indentation width when shifting (>> and <<)
+vim.opt.shiftwidth = 2 -- this option sets indentation width when shifting (>> and <<)
 vim.opt.tabstop = 2 -- this option renders a tab character as N spaces
 vim.opt.softtabstop = 2 -- this option makes <BS>/<Tab> feel natural with spaces
 vim.opt.smartindent = true -- this option adds simple smart indentation on new lines
@@ -112,7 +112,10 @@ if vim.fn.has("nvim-0.10") == 1 then
 	end) -- this option reduces scroll jump when splitting windows
 end
 
--- Platform hints (optional; macOS pbcopy fallback happens via clipboard=unnamedplus) --
--- No extra setup here since unnamedplus covers macOS/Linux/WSL well.
+vim.opt.confirm = true -- ask instead of erroring on unsaved changes
+vim.opt.inccommand = "nosplit" -- live preview for :substitute
+vim.opt.spell = false -- spell off by default (explicit intent)
+-- Prevent auto-comment-leader insertion on new lines
+vim.opt.formatoptions:remove({ "c", "r", "o" })
 
 -- End of options ---------------------------------------------------------

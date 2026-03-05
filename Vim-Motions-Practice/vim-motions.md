@@ -399,7 +399,7 @@ local screen_nav_c = "line 3"
 
 | Key            | Behaviour                                                       |
 | -------------- | --------------------------------------------------------------- |
-| `<C-v>`        | `NORMAL` → enter `VISUAL BLOCK` mode                            |
+| `<leader>v`    | `NORMAL` → enter `VISUAL BLOCK` mode                            |
 | `I{text}<Esc>` | `VISUAL BLOCK` — insert at the **start** of every selected line |
 | `A{text}<Esc>` | `VISUAL BLOCK` — append at the **end** of every selected line   |
 | `c{text}<Esc>` | `VISUAL BLOCK` — replace selected columns on every line         |
@@ -419,7 +419,7 @@ local screen_nav_c = "line 3"
 **Keystrokes:**
 
 1. `NORMAL`: place cursor on the **first column** of the `local alpha` line
-2. Press `<C-v>` — enters `VISUAL BLOCK` mode
+2. Press `<leader>v` — enters `VISUAL BLOCK` mode
 3. Press `jjj` — extends the block down to cover all four lines (one column wide)
 4. Press `I` — drops into `INSERT` mode at the start of the block
 5. Type `-- ` (dash dash space)
@@ -441,7 +441,7 @@ local delta   = 4
 **Keystrokes:**
 
 1. `NORMAL`: place cursor anywhere on the `"apple"` line
-2. Press `<C-v>` — enters `VISUAL BLOCK` mode
+2. Press `<leader>v` — enters `VISUAL BLOCK` mode
 3. Press `$` — extends the selection to the **end of the line** (virtualedit handles uneven lengths)
 4. Press `jjj` — extends the block down to cover all four string lines
 5. Press `A` — drops into `INSERT` mode at the end of each line
@@ -465,13 +465,13 @@ local fruits = {
 
 **Keystrokes:**
 
-1. `NORMAL`: place cursor on the `n` of the first `nil`
-2. Press `<C-v>` — enters `VISUAL BLOCK` mode
-3. Press `jjj` — extends selection down to cover `nil` on all four lines
-4. Press `e` — extends the selection to the end of the `nil` word
-5. Press `c` — deletes the block and drops into `INSERT` mode
-6. Type `false`
-7. Press `<Esc>` — `false` replaces `nil` on **all four lines**
+1. *NORMAL*: place cursor on the *n* of the first *nil*
+2. Press *<leader>v* — enters *VISUAL BLOCK* mode
+3. Press *jjj* — extends selection down to cover *nil* on all four lines
+4. Press *e* — extends the selection to the end of the *nil* word
+5. Press *c* — deletes the block and drops into *INSERT* mode
+6. Type *false*
+7. Press *<Esc>* — *false* replaces *nil* on **all four lines**
 
 ```lua
 local flags = {
@@ -491,19 +491,19 @@ local flags = {
 **Keystrokes:**
 
 1. `NORMAL`: place cursor anywhere on the first `{ id = 1 ...` line
-2. Press `<C-v>` — enters `VISUAL BLOCK` mode
+2. Press `<leader>v` — enters `VISUAL BLOCK` mode
 3. Press `$` — extends to the end of the current line
-4. Press `jjj` — extends down all four rows (each line may end at a different column — virtualedit handles this)
+4. Press `jjj` — extends down all four rows (each line may end at a different column — virtual edit handles this)
 5. Press `A` — drops into `INSERT` mode after the last char on each line
 6. Type `, "dev"`
 7. Press `<Esc>` — the new field appears on all four lines
 
 ```lua
 local users = {
-  { id = 1, name = "Alice", role = "admin" },
-  { id = 2, name = "Bob",   role = "editor" },
-  { id = 3, name = "Carol", role = "viewer" },
-  { id = 4, name = "Dave",  role = "viewer" },
+  { id = 1, name = "Alice", role = "admin" , "dev"},
+  { id = 2, name = "Bob",   role = "editor", "dev" },
+  { id = 3, name = "Carol", role = "viewer", "dev" },
+  { id = 4, name = "Dave",  role = "viewer", "dev" },
 }
 ```
 
@@ -516,7 +516,7 @@ local users = {
 **Keystrokes:**
 
 1. `NORMAL`: place cursor on the `0` in the first `{ step = 0` line
-2. Press `<C-v>` — enters `VISUAL BLOCK` mode
+2. Press `<leader>v` — enters `VISUAL BLOCK` mode
 3. Press `jjjj` — extends the column selection down all five rows
 4. Press `g<C-a>` — increments the numbers **sequentially**: `1`, `2`, `3`, `4`, `5`
 
@@ -524,11 +524,11 @@ local users = {
 
 ```lua
 local steps = {
-  { step = 0, label = "init" },
-  { step = 0, label = "load" },
-  { step = 0, label = "validate" },
-  { step = 0, label = "process" },
-  { step = 0, label = "respond" },
+  { step = 1, label = "init" },
+  { step = 2, label = "load" },
+  { step = 3, label = "validate" },
+  { step = 4, label = "process" },
+  { step = 5, label = "respond" },
 }
 ```
 
@@ -541,7 +541,7 @@ local steps = {
 **Keystrokes:**
 
 1. `NORMAL`: place cursor on the `R` of the first `REMOVE_ME`
-2. Press `<C-v>` — enters `VISUAL BLOCK` mode
+2. Press `<leader>v` — enters `VISUAL BLOCK` mode
 3. Press `jj` — extends selection down all three rows
 4. Press `e` then `l` to also select the `, ` that follows (or use `f,` to extend to the comma)
 5. Press `d` — the entire `REMOVE_ME = true, ` column is deleted from all three lines
@@ -551,7 +551,9 @@ local records = {
   { id = 1, REMOVE_ME = true, value = "a" },
   { id = 2, REMOVE_ME = true, value = "b" },
   { id = 3, REMOVE_ME = true, value = "c" },
+
 }
+
 ```
 
 ---

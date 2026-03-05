@@ -37,8 +37,8 @@ end
 
 -- Setup keymaps
 function M.setup()
-	vim.keymap.set("n", "<leader>ls", M.start, { noremap = true, silent = true, desc = "Start live server" })
-	vim.keymap.set("n", "<leader>lk", M.stop, { noremap = true, silent = true, desc = "Stop live server" })
+	vim.keymap.set("n", "<leader>ol", M.start, { noremap = true, silent = true, desc = "Start live server" })
+	vim.keymap.set("n", "<leader>ok", M.stop, { noremap = true, silent = true, desc = "Stop live server" })
 end
 
 return M

@@ -5,83 +5,102 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate", -- this command updates parsers when plugin updates
-		event = { "BufReadPost", "BufNewFile" }, -- this loads when you open/edit files (not at startup)
+		build = ":TSUpdate",
+		event = { "BufReadPost", "BufNewFile" },
+		dependencies = {
+			-- ADD: correct JSX/TSX comment type (// vs {/* */}) for mini.comment
+			"JoosepAlviste/nvim-ts-context-commentstring",
+		},
 		opts = {
-			-- parsers to install (add/remove to taste)
 			ensure_installed = {
+				-- Neovim internals
 				"lua",
 				"vim",
 				"vimdoc",
-				"query", -- neovim internals
+				"query",
+				-- Shell / docs
 				"bash",
 				"markdown",
-				"markdown_inline", -- docs / shell
+				"markdown_inline",
+				-- Config files
 				"json",
 				"yaml",
-				"toml", -- config files
+				"toml",
+				-- Web stack
 				"html",
 				"css",
 				"javascript",
-				"jsdoc", -- proper highlighting inside JSDoc comment blocks
+				"jsdoc",
 				"typescript",
-				"tsx", -- web stack
-				-- add others when needed
-				-- "python", "go", "rust", "java"
+				"tsx",
+				-- Uncomment as needed:
+				-- "python", "go", "rust", "java",
 			},
-			auto_install = true, -- this option auto-installs missing parsers on open buffer
+
+			auto_install = true, -- auto-installs missing parsers on buffer open (great for multi-machine)
+
 			highlight = {
-				enable = true, -- this option enables Treesitter-based syntax highlight
-				additional_vim_regex_highlighting = false, -- this option avoids duplicate highlights (faster/cleaner)
+				enable = true,
+				additional_vim_regex_highlighting = false, -- avoids duplicate highlights + slowdown
 			},
+
 			indent = {
-				enable = true, -- this option enables indentation informed by syntax tree
-				-- NOTE: Treesitter indent isn’t perfect for all languages; disable per-language if needed
+				enable = true,
+				-- NOTE: TS indent isn't perfect for all languages — disable per-ft if needed
 			},
+
+			-- FIX: was <CR> — conflicts with Enter behavior and dashboard keymap
+			-- Using <C-space> / <C-s> / <M-space> (LazyVim standard)
 			incremental_selection = {
-				enable = true, -- this option turns on semantic selection growth/shrink
-				keymaps = { -- this table defines intuitive keys:
-					init_selection = "<CR>", -- this mapping starts selection at cursor
-					node_incremental = "<CR>", -- this mapping expands to next node
-					scope_incremental = "<S-CR>", -- this mapping expands to next scope (like function/block)
-					node_decremental = "<BS>", -- this mapping shrinks to previous node
+				enable = true,
+				keymaps = {
+					init_selection = "<C-space>",
+					node_incremental = "<C-space>",
+					scope_incremental = "<C-s>",
+					node_decremental = "<M-space>",
 				},
 			},
+
+			-- ADD: correct comment type per language region (JSX needs {/* */})
+			-- enable_autocmd = false because mini.comment handles the autocmd
+			context_commentstring = {
+				enable = true,
+				enable_autocmd = false,
+			},
 		},
+
 		config = function(_, opts)
-			-- this call applies the options above
 			require("nvim-treesitter.configs").setup(opts)
 
-			-- Treesitter-based folds (off by default, consistent with options.lua)
-			-- we use this autocommand to set foldexpr/foldmethod whenever a buffer with TS attaches
+			-- Treesitter-based folds (off by default per options.lua foldenable=false)
+			-- Toggle per buffer with: :setlocal foldenable!
 			local grp = vim.api.nvim_create_augroup("Allen_TreesitterFolds", { clear = true })
 			vim.api.nvim_create_autocmd("FileType", {
 				group = grp,
 				callback = function()
-					-- these options tell Neovim to use Treesitter's fold expression
 					vim.opt_local.foldmethod = "expr"
-					vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
-					-- NOTE: folds remain disabled by default (from options.lua: foldenable=false).
-					-- Toggle on demand with: :setlocal foldenable!
+					-- FIX: was nvim_treesitter#foldexpr() — old Vimscript API, deprecated
+					-- Use the new Lua API (Neovim 0.9+)
+					vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 				end,
 			})
 		end,
 	},
 
-	-- Optional: better HTML/JSX auto-closing & renaming of tags
+	-- ── Auto-close & rename HTML/JSX tags ──────────────────────────────────
 	{
 		"windwp/nvim-ts-autotag",
 		event = { "BufReadPost", "BufNewFile" },
-		opts = { enable = true }, -- this option turns on automatic tag closing/renaming
+		-- FIX: was opts = { enable = true } — outdated API, modern setup takes {}
+		opts = {},
 		config = function(_, opts)
 			require("nvim-ts-autotag").setup(opts)
 		end,
 	},
 
-	-- Optional (power user): Treesitter Playground for live AST debugging
-	-- :TSPlaygroundToggle to inspect syntax tree & highlight groups
-	{
-		"nvim-treesitter/playground",
-		cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
-	},
+	-- NOTE: nvim-treesitter/playground REMOVED — plugin was archived (deprecated)
+	-- Use these built-in commands instead (available since Neovim 0.9+):
+	--   :InspectTree                       → live AST viewer
+	--   :Inspect                           → highlight capture groups under cursor
+	--   :TSInstallInfo                     → parser status
 }
