@@ -1,0 +1,9 @@
+# Neovim internal artifacts
+.netrwhist
+NetrwTreeListing
+
+# OS artifacts
+.DS_Store
+
+# Lazy.nvim internal state (NOT lazy-lock.json — that gets committed)
+/lazy/
