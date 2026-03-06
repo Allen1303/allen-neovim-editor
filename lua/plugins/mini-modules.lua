@@ -41,8 +41,6 @@ return {
 				end,
 				desc = "MiniFiles: explore CWD",
 			},
-			-- FIX: was defined twice (placeholder here + vim.keymap.set in config)
-			-- Now has its action defined directly here — no duplicate in config
 			{
 				"<leader>E",
 				function()
@@ -65,7 +63,6 @@ return {
 			mf.setup({
 				options = {
 					use_as_default_explorer = true,
-					-- FIX: was true — permanent delete skips trash, too destructive
 					permanent_delete = false,
 				},
 				windows = {
@@ -76,7 +73,6 @@ return {
 				},
 			})
 
-			-- Transparent UI for mini.files (theme-agnostic)
 			local function mini_files_transparent()
 				local set = vim.api.nvim_set_hl
 				pcall(set, 0, "MiniFilesNormal", { bg = "NONE" })
@@ -101,13 +97,10 @@ return {
 				end,
 			})
 			mini_files_transparent()
-			-- NOTE: <leader>E keymap is defined in the keys table above (no duplicate here)
 		end,
 	},
 
 	-- NOTE: mini.completion REMOVED — conflicts with nvim-cmp (cmp.lua)
-	-- Both hook InsertEnter and provide completion causing duplicate menus.
-	-- nvim-cmp is our completion engine — see lua/plugins/cmp.lua
 
 	-- ── Surround ────────────────────────────────────────────────────────────
 	{
@@ -132,7 +125,6 @@ return {
 				search_method = "cover_or_next",
 
 				custom_surroundings = {
-					-- t: HTML/JSX tag  (sat prompts for tag name, sdt strips nearest tag)
 					t = {
 						input = { "<(%a[%a%d]*)%f[%s>].-</%1>", "^<.->().-()</.->$" },
 						output = function()
@@ -143,17 +135,14 @@ return {
 							return { left = "<" .. tag .. ">", right = "</" .. tag .. ">" }
 						end,
 					},
-					-- $: template expression  (sa$ → ${}, sd$ strips it)
 					["$"] = {
 						input = { "%${(.-)}" },
 						output = { left = "${", right = "}" },
 					},
-					-- l: console.log wrapper  (sal wraps, sdl unwraps)
 					l = {
 						input = { "console%.log%((.-)%)" },
 						output = { left = "console.log(", right = ")" },
 					},
-					-- c: /* block comment */  (sac wraps, sdc strips)
 					c = {
 						input = { "/%* ?(.-)%*/" },
 						output = { left = "/* ", right = " */" },
@@ -187,7 +176,6 @@ return {
 				},
 
 				custom_textobjects = {
-					-- e: entire buffer  (dae / yae / vae)
 					e = function()
 						local from = { line = 1, col = 1 }
 						local to = {
@@ -197,18 +185,14 @@ return {
 						return { from = from, to = to }
 					end,
 
-					-- a: function argument (dia / caa — comma-aware)
 					a = ai.gen_spec.argument({
 						brackets = { "(", "[", "{" },
 						separator = ",",
 						exclude_regions = { '"', "'", "`", "(", "[", "{" },
 					}),
 
-					-- f: function call parens + body  (dif / caf)
 					f = ai.gen_spec.function_call(),
 
-					-- F: function definition body  (diF / viF)
-					-- pcall guard: treesitter errors lazily if no query for filetype
 					F = function(ai_type)
 						local spec = ai.gen_spec.treesitter({
 							a = "@function.outer",
@@ -221,7 +205,6 @@ return {
 						return result
 					end,
 
-					-- c: class definition  (dic / vac)
 					c = function(ai_type)
 						local spec = ai.gen_spec.treesitter({
 							a = "@class.outer",
@@ -234,8 +217,6 @@ return {
 						return result
 					end,
 
-					-- t: HTML/JSX tag — pattern-based, no treesitter dependency
-					-- works in JS, JSX, TSX, HTML without needing query files
 					t = function(ai_type)
 						local tag_pattern = "<(%w[%w%-:]*)%f[%s/>][^>]*>(.-)</%1>"
 						local line_count = vim.api.nvim_buf_line_count(0)
@@ -286,11 +267,11 @@ return {
 		event = "VeryLazy",
 		config = function()
 			require("mini.operators").setup({
-				exchange = { prefix = "gx" }, -- gx{motion}: swap two regions
-				replace = { prefix = "gr" }, -- gr{motion}: replace with register
-				sort = { prefix = "gs", func = nil }, -- gs{motion}: sort lines/words
-				multiply = { prefix = "gm" }, -- gm{motion}: duplicate in place
-				evaluate = { prefix = "g=", func = nil }, -- g={motion}: eval as Lua
+				exchange = { prefix = "gx" },
+				replace = { prefix = "gr" },
+				sort = { prefix = "gs", func = nil },
+				multiply = { prefix = "gm" },
+				evaluate = { prefix = "g=", func = nil },
 			})
 		end,
 	},
@@ -304,8 +285,6 @@ return {
 	},
 
 	-- ── Comments ────────────────────────────────────────────────────────────
-	-- NOTE: Neovim 0.10+ has a built-in gc/gcc operator — mini.comment overrides
-	-- it with identical behavior plus a few extras. Remove if you prefer built-in.
 	{
 		"nvim-mini/mini.comment",
 		version = "*",
@@ -333,13 +312,11 @@ return {
 				options = { try_as_border = true },
 			})
 
-			-- Blend indent guides on any theme
 			local grp = vim.api.nvim_create_augroup("Allen_Indent_Transparent", { clear = true })
 			vim.api.nvim_create_autocmd("ColorScheme", {
 				group = grp,
 				callback = function()
 					local set = vim.api.nvim_set_hl
-					-- FIX: nvim_get_hl_by_name deprecated — use nvim_get_hl (0.9+)
 					set(0, "MiniIndentscopeSymbol", {
 						bg = "NONE",
 						fg = vim.api.nvim_get_hl(0, { name = "Comment" }).fg or nil,
@@ -348,14 +325,78 @@ return {
 				end,
 			})
 
-			-- FIX: was nvim_exec_autocmds("ColorScheme") — fires ALL listeners
-			-- Apply directly on first load instead
 			local set = vim.api.nvim_set_hl
 			set(0, "MiniIndentscopeSymbol", {
 				bg = "NONE",
 				fg = vim.api.nvim_get_hl(0, { name = "Comment" }).fg or nil,
 			})
 			set(0, "MiniIndentscopePrefix", { bg = "NONE", fg = "NONE" })
+		end,
+	},
+
+	-- ── Color highlighter ───────────────────────────────────────────────────
+	-- mini.hipatterns: shows actual color swatch for hex/rgb/hsl codes inline
+	-- Works in CSS, JS, JSX, TSX, Lua — anywhere you write color values
+	-- e.g. #89B4FA renders with a blue background swatch next to it
+	{
+		"nvim-mini/mini.hipatterns",
+		version = "*",
+		event = { "BufReadPre", "BufNewFile" },
+		config = function()
+			local hipatterns = require("mini.hipatterns")
+			hipatterns.setup({
+				highlighters = {
+					-- Hex colors: #RRGGBB and #RGB
+					hex_color = hipatterns.gen_highlighter.hex_color(),
+
+					-- rgb() / rgba() values
+					rgb_color = {
+						pattern = "rgb%(%d+,?%s*%d+,?%s*%d+%)",
+						group = function(_, match)
+							local r, g, b = match:match("rgb%((%d+),?%s*(%d+),?%s*(%d+)%)")
+							if r then
+								return hipatterns.compute_hex_color_group(string.format("#%02x%02x%02x", r, g, b), "bg")
+							end
+						end,
+					},
+
+					-- hsl() values — converts to hex for highlighting
+					hsl_color = {
+						pattern = "hsl%(%d+,?%s*%d+%%?,?%s*%d+%%?%)",
+						group = function(_, match)
+							local h, s, l = match:match("hsl%((%d+),?%s*(%d+)%%?,?%s*(%d+)%%?%)")
+							if not h then
+								return nil
+							end
+							h, s, l = tonumber(h) / 360, tonumber(s) / 100, tonumber(l) / 100
+							local function hue(p, q, t)
+								if t < 0 then
+									t = t + 1
+								end
+								if t > 1 then
+									t = t - 1
+								end
+								if t < 1 / 6 then
+									return p + (q - p) * 6 * t
+								end
+								if t < 1 / 2 then
+									return q
+								end
+								if t < 2 / 3 then
+									return p + (q - p) * (2 / 3 - t) * 6
+								end
+								return p
+							end
+							local q2 = l < 0.5 and l * (1 + s) or l + s - l * s
+							local p2 = 2 * l - q2
+							local r = math.floor(hue(p2, q2, h + 1 / 3) * 255)
+							local g = math.floor(hue(p2, q2, h) * 255)
+							local b = math.floor(hue(p2, q2, h - 1 / 3) * 255)
+							return hipatterns.compute_hex_color_group(string.format("#%02x%02x%02x", r, g, b), "bg")
+						end,
+					},
+				},
+			})
 		end,
 	},
 }
