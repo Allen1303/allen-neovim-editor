@@ -201,21 +201,22 @@ return {
 			-- other server configs where vim.lsp.config() calls belong
 			-- Emmet: VSCode-style completions via cmp menu (no trigger key needed)
 			-- type  div.container  and it appears in the completion menu automatically
-			vim.lsp.config("emmet_language_server", {
-				capabilities = capabilities,
-				filetypes = {
-					"html",
-					"css",
-					"scss",
-					"less",
-					"javascript",
-					"javascriptreact",
-					"typescript",
-					"typescriptreact",
-					"svelte",
-					"vue",
-				},
-			})
+			-- Emmet Plugin started here..
+			-- vim.lsp.config("emmet_language_server", {
+			-- 	capabilities = capabilities,
+			-- 	filetypes = {
+			-- 		"html",
+			-- 		"css",
+			-- 		"scss",
+			-- 		"less",
+			-- 		"javascript",
+			-- 		"javascriptreact",
+			-- 		"typescript",
+			-- 		"typescriptreact",
+			-- 		"svelte",
+			-- 		"vue",
+			-- 	},
+			-- })
 		end,
 	},
 }
