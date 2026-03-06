@@ -80,7 +80,7 @@ return {
 				show_tab_indicators = true,
 				show_duplicate_prefix = true,
 				persist_buffer_sort = true,
-				separator_style = "thin", -- Thin default separation applied
+				separator_style = "slope", -- Thin default separation applied
 				enforce_regular_tabs = false,
 				always_show_bufferline = false, -- hide when only 1 buffer open
 				hover = {
