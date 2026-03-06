@@ -10,7 +10,7 @@ return {
 	-- Core package manager for LSP binaries
 	{
 		"mason-org/mason.nvim",
-		version = "*", -- FIX: was false (HEAD tracking) — "*" uses latest stable tag
+		version = "*",
 		build = ":MasonUpdate",
 		cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUpdate" },
 		opts = {
@@ -28,13 +28,12 @@ return {
 	-- Bridge Mason ↔ LSPConfig (modern behavior on 0.11+)
 	{
 		"mason-org/mason-lspconfig.nvim",
-		version = "*", -- FIX: was false — use latest stable tag
+		version = "*",
 		dependencies = {
 			"mason-org/mason.nvim",
 			"neovim/nvim-lspconfig",
 		},
 		opts = {
-			-- auto-installs servers if missing
 			ensure_installed = {
 				"lua_ls",
 				"ts_ls",
@@ -46,8 +45,8 @@ return {
 				"yamlls",
 				"bashls",
 				"marksman",
+				"emmet_language_server", -- VSCode-style Emmet for all web filetypes
 			},
-			-- auto-enables installed servers via :h vim.lsp.enable()
 			automatic_enable = true,
 		},
 	},
@@ -58,7 +57,6 @@ return {
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			-- ========== capabilities ==========
-			-- augments LSP capabilities with nvim-cmp completion
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			local ok_cmp, cmp_caps = pcall(require, "cmp_nvim_lsp")
 			if ok_cmp then
@@ -66,7 +64,6 @@ return {
 			end
 
 			-- ========== on_attach ==========
-			-- runs when a server attaches to a buffer — sets buffer-local keymaps
 			local function on_attach(client, bufnr)
 				local function map(mode, keys, action, desc)
 					vim.keymap.set(mode, keys, action, { buffer = bufnr, silent = true, desc = desc })
@@ -78,15 +75,10 @@ return {
 				map("n", "gr", vim.lsp.buf.references, "LSP: list references")
 				map("n", "gi", vim.lsp.buf.implementation, "LSP: goto implementation")
 				map("n", "K", vim.lsp.buf.hover, "LSP: hover docs")
-
-				-- FIX: was <leader>k — conflicts with k motion and future <leader>k* bindings
-				-- Added insert mode <C-k> for signature help (LazyVim standard)
 				map("n", "<leader>lh", vim.lsp.buf.signature_help, "LSP: signature help")
-				map("i", "<C-k>", vim.lsp.buf.signature_help, "LSP: signature help (insert)")
+				map("i", "<C-s>", vim.lsp.buf.signature_help, "LSP: signature help (insert)")
 
 				-- ── Workspace ─────────────────────────────────────────────
-				-- FIX: was <leader>wa/wr/wl — conflicted with <leader>w (save file)
-				-- Moved to <leader>lw* to stay in the clean LSP namespace
 				map("n", "<leader>lwa", vim.lsp.buf.add_workspace_folder, "LSP: workspace add folder")
 				map("n", "<leader>lwr", vim.lsp.buf.remove_workspace_folder, "LSP: workspace remove folder")
 				map("n", "<leader>lwl", function()
@@ -95,24 +87,15 @@ return {
 
 				-- ── Code actions / rename / format ────────────────────────
 				map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "LSP: code action")
-
-				-- FIX: was <leader>rn — conflicted with <leader>rc/rl/rp (run commands)
 				map("n", "<leader>lr", vim.lsp.buf.rename, "LSP: rename symbol")
-
-				-- FIX: was <leader>f — conflicted with <leader>ff (telescope find files)
 				map("n", "<leader>lf", function()
 					vim.lsp.buf.format({ async = false })
 				end, "LSP: format buffer")
 
 				-- ── Diagnostics ───────────────────────────────────────────
 				map("n", "gl", vim.diagnostic.open_float, "Diag: line diagnostics")
-
-				-- FIX: was <leader>qf — conflicted with <leader>qo/<leader>qc (quickfix)
-				-- Moved to <leader>xq to align with <leader>xd in keymaps.lua
-				map("n", "<leader>xq", vim.diagnostic.setqflist, "Diag: send to quickfix")
-
-				-- Note: [d / ]d global diagnostic nav lives in keymaps.lua
-				-- These buffer-local ones override cleanly per-buffer when LSP is active
+				map("n", "<leader>xd", vim.diagnostic.open_float, "Diag: float")
+				map("n", "<leader>dq", vim.diagnostic.setqflist, "Diag: send to quickfix")
 				map("n", "[d", function()
 					vim.diagnostic.jump({ count = -1, float = true })
 				end, "Diag: previous")
@@ -120,7 +103,7 @@ return {
 					vim.diagnostic.jump({ count = 1, float = true })
 				end, "Diag: next")
 
-				-- ── Inlay hints (0.10+ only) ──────────────────────────────
+				-- ── Inlay hints (0.10+) ───────────────────────────────────
 				if client.supports_method("textDocument/inlayHint") then
 					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 					map("n", "<leader>ih", function()
@@ -133,7 +116,6 @@ return {
 			end
 
 			-- ========== ESLint auto-fix on save ==========
-			-- Runs EslintFixAll automatically before writing .js/.jsx/.ts/.tsx files
 			vim.api.nvim_create_autocmd("BufWritePre", {
 				group = vim.api.nvim_create_augroup("Allen_EslintFix", { clear = true }),
 				pattern = { "*.js", "*.jsx", "*.ts", "*.tsx" },
@@ -147,7 +129,7 @@ return {
 				end,
 			})
 
-			-- ========== LspAttach — wire on_attach to every server ==========
+			-- ========== LspAttach ==========
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("Allen_LspKeymaps", { clear = true }),
 				callback = function(args)
@@ -161,7 +143,7 @@ return {
 
 			-- ========== per-server configs ==========
 
-			-- Lua: teach the server about Neovim runtime and globals
+			-- Lua
 			vim.lsp.config("lua_ls", {
 				capabilities = capabilities,
 				settings = {
@@ -169,10 +151,7 @@ return {
 						runtime = { version = "LuaJIT" },
 						workspace = {
 							checkThirdParty = false,
-							library = {
-								vim.env.VIMRUNTIME,
-								"${3rd}/luv/library",
-							},
+							library = { vim.env.VIMRUNTIME, "${3rd}/luv/library" },
 						},
 						diagnostics = { globals = { "vim", "require" } },
 						hint = { enable = true },
@@ -182,7 +161,6 @@ return {
 			})
 
 			-- TypeScript / JavaScript
-			-- Note: nvim-lspconfig renamed tsserver → ts_ls
 			vim.lsp.config("ts_ls", {
 				capabilities = capabilities,
 				settings = {
@@ -191,7 +169,7 @@ return {
 				},
 			})
 
-			-- ADD: pyright was in ensure_installed but had no config block
+			-- Python
 			vim.lsp.config("pyright", {
 				capabilities = capabilities,
 				settings = {
@@ -205,7 +183,7 @@ return {
 				},
 			})
 
-			-- HTML / CSS / JSON / YAML / Bash / Markdown (clean defaults)
+			-- HTML / CSS / JSON / YAML / Bash / Markdown
 			vim.lsp.config("html", { capabilities = capabilities })
 			vim.lsp.config("cssls", { capabilities = capabilities })
 			vim.lsp.config("jsonls", { capabilities = capabilities })
@@ -217,6 +195,26 @@ return {
 			vim.lsp.config("eslint", {
 				capabilities = capabilities,
 				settings = { format = true },
+			})
+
+			-- FIX: was incorrectly placed inside on_attach — moved here with all
+			-- other server configs where vim.lsp.config() calls belong
+			-- Emmet: VSCode-style completions via cmp menu (no trigger key needed)
+			-- type  div.container  and it appears in the completion menu automatically
+			vim.lsp.config("emmet_language_server", {
+				capabilities = capabilities,
+				filetypes = {
+					"html",
+					"css",
+					"scss",
+					"less",
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact",
+					"svelte",
+					"vue",
+				},
 			})
 		end,
 	},
