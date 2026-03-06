@@ -121,7 +121,11 @@ return {
 						["<C-k>"] = "move_selection_previous",
 						["<C-u>"] = "preview_scrolling_up",
 						["<C-d>"] = "preview_scrolling_down",
-						["<Esc>"] = "close",
+						["<Esc>"] = { "<Esc>", type = "command" }, -- exit insert, stay in picker
+					},
+					n = {
+						["q"] = "close", -- q to fully close from normal mode
+						["<Esc>"] = "close", -- Esc also closes from normal mode
 					},
 				},
 			},

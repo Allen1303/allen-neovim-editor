@@ -6,18 +6,24 @@
 
 ## Navigation
 
-| Key          | Action                 | File              |
-| ------------ | ---------------------- | ----------------- |
-| `<leader>ff` | Find files             | telescope         |
-| `<leader>fg` | Live grep              | telescope         |
-| `<leader>fb` | Buffers                | telescope         |
-| `<leader>fh` | Help tags              | telescope         |
-| `<leader>fr` | Recent files           | telescope         |
-| `<leader>fc` | Commands               | telescope         |
-| `<leader>fd` | Dashboard              | dashboard         |
-| `<leader>fp` | Projects               | telescope/project |
-| `<leader>e`  | Explorer CWD           | mini.files        |
-| `<leader>E`  | Explorer (reveal file) | mini.files        |
+| Key          | Action                             | File              |
+| ------------ | ---------------------------------- | ----------------- |
+| `<leader>ff` | Find files                         | telescope         |
+| `<leader>fg` | Live grep                          | telescope         |
+| `<leader>fb` | Buffers                            | telescope         |
+| `<leader>fh` | Help tags                          | telescope         |
+| `<leader>fr` | Recent files                       | telescope         |
+| `<leader>fc` | Commands                           | telescope         |
+| `<leader>fd` | Dashboard                          | dashboard         |
+| `<leader>fp` | Projects                           | telescope/project |
+| `<leader>e`  | Explorer CWD                       | mini.files        |
+| `<leader>E`  | Explorer (reveal file)             | mini.files        |
+| `<C-j>`      | Move selection down                |
+| `<C-k>`      | Move selection up                  |
+| `<C-u>`      | Scroll preview up                  |
+| `<C-d>`      | Scroll preview down                |
+| `<Esc>`      | Exit insert mode (j/k to navigate) |
+| `q`          | Clos e picker                      |
 
 ---
 
