@@ -1,4 +1,4 @@
-# 🧠 Allen's Neovim Personal Development Environment ( PDE )
+### Allen's Neovim Personal Developer Environment ( PDE )
 
 A personal Neovim distribution built for full-stack web development. Inspired by LazyVim's architecture but fully hand-crafted — no base distribution dependency.
 
