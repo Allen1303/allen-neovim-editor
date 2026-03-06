@@ -29,9 +29,10 @@ return {
 		opts = {
 			options = {
 				-- Use mini.icons if available, fallback to nvim-web-devicons
+				-- FIX: guard against nil filename (terminals, empty buffers)
 				get_element_icon = function(element)
 					local ok, mini_icons = pcall(require, "mini.icons")
-					if ok then
+					if ok and element.filename and element.filename ~= "" then
 						local icon, hl = mini_icons.get("file", element.filename)
 						return icon, hl
 					end
