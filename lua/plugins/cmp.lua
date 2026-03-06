@@ -115,6 +115,8 @@ return {
 							cmp.select_next_item()
 						elseif luasnip.expand_or_jumpable() then
 							luasnip.expand_or_jump()
+						elseif vim.fn["emmet#isExpandable"]() == 1 then
+							vim.fn["emmet#expandAbbr"](0, "")
 						else
 							fallback()
 						end
