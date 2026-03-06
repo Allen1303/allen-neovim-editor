@@ -8,8 +8,16 @@ return {
 		build = ":TSUpdate",
 		event = { "BufReadPost", "BufNewFile" },
 		dependencies = {
-			-- ADD: correct JSX/TSX comment type (// vs {/* */}) for mini.comment
-			"JoosepAlviste/nvim-ts-context-commentstring",
+			-- FIX: use new standalone API — old treesitter module integration is deprecated
+			-- Provides correct comment type per language region (// in JS, {/* */} in JSX)
+			{
+				"JoosepAlviste/nvim-ts-context-commentstring",
+				config = function()
+					require("ts_context_commentstring").setup({})
+					-- skip the deprecated nvim-treesitter module shim (speeds up loading)
+					vim.g.skip_ts_context_commentstring_module = true
+				end,
+			},
 		},
 		opts = {
 			ensure_installed = {
@@ -61,12 +69,7 @@ return {
 				},
 			},
 
-			-- ADD: correct comment type per language region (JSX needs {/* */})
-			-- enable_autocmd = false because mini.comment handles the autocmd
-			context_commentstring = {
-				enable = true,
-				enable_autocmd = false,
-			},
+			-- NOTE: context_commentstring configured via its own spec in dependencies above
 		},
 
 		config = function(_, opts)
