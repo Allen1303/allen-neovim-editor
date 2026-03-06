@@ -57,17 +57,10 @@ fi
 # ── 3. Dependencies ───────────────────────────────────────────────────────────
 section "Dependencies"
 
-declare -A DEPS=(
-    ["neovim"]="nvim"
-    ["git"]="git"
-    ["ripgrep"]="rg"
-    ["fd"]="fd"
-    ["node"]="node"
-    ["make"]="make"
-)
-
-for pkg in "${!DEPS[@]}"; do
-    bin="${DEPS[$pkg]}"
+# FIX: replaced declare -A (bash 4+ only) with a function — macOS ships bash 3.2
+brew_install_if_missing() {
+    local pkg="$1"
+    local bin="${2:-$1}"
     if ! command -v "$bin" &>/dev/null; then
         info "Installing $pkg..."
         brew install "$pkg"
@@ -75,7 +68,14 @@ for pkg in "${!DEPS[@]}"; do
     else
         success "$pkg already installed"
     fi
-done
+}
+
+brew_install_if_missing "neovim"  "nvim"
+brew_install_if_missing "git"     "git"
+brew_install_if_missing "ripgrep" "rg"
+brew_install_if_missing "fd"      "fd"
+brew_install_if_missing "node"    "node"
+brew_install_if_missing "make"    "make"
 
 # Nerd Font
 if ls ~/Library/Fonts/JetBrainsMonoNerdFont* &>/dev/null 2>&1 || \
@@ -166,3 +166,4 @@ echo ""
 echo -e "  ${YELLOW}Tip:${NC} If icons look broken, set your terminal"
 echo -e "       font to ${BOLD}JetBrainsMono Nerd Font${NC}."
 echo ""
+
