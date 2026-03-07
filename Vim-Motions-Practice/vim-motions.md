@@ -465,13 +465,13 @@ local fruits = {
 
 **Keystrokes:**
 
-1. *NORMAL*: place cursor on the *n* of the first *nil*
-2. Press *<leader>v* — enters *VISUAL BLOCK* mode
-3. Press *jjj* — extends selection down to cover *nil* on all four lines
-4. Press *e* — extends the selection to the end of the *nil* word
-5. Press *c* — deletes the block and drops into *INSERT* mode
-6. Type *false*
-7. Press *<Esc>* — *false* replaces *nil* on **all four lines**
+1. _NORMAL_: place cursor on the _n_ of the first _nil_
+2. Press _<leader>v_ — enters _VISUAL BLOCK_ mode
+3. Press _jjj_ — extends selection down to cover _nil_ on all four lines
+4. Press _e_ — extends the selection to the end of the _nil_ word
+5. Press _c_ — deletes the block and drops into _INSERT_ mode
+6. Type _false_
+7. Press _<Esc>_ — _false_ replaces _nil_ on **all four lines**
 
 ```lua
 local flags = {
@@ -1315,3 +1315,299 @@ local function legacyHandler(req, res)
   res.json({ token = token })
 end
 ```
+
+o---
+
+## §13 — flash.nvim: Jump Anywhere in 2-3 Keystrokes
+
+> flash.nvim replaces the need to spam `f`/`;` or count lines. You jump directly to any visible location by typing 2 chars and pressing a label.
+
+| Key | Mode                           | Action                                       |
+| --- | ------------------------------ | -------------------------------------------- |
+| `s` | `NORMAL / VISUAL / OP-PENDING` | Flash jump — type 2 chars, pick label        |
+| `S` | `NORMAL / VISUAL / OP-PENDING` | Flash treesitter — jump to any AST node      |
+| `r` | `OP-PENDING`                   | Remote flash — operate on a distant location |
+| `R` | `OP-PENDING / VISUAL`          | Treesitter search across window              |
+
+---
+
+### Drill 13a — basic `s` jump
+
+**Mode:** `NORMAL`
+
+**Keystrokes:**
+
+1. Open any file with multiple lines
+2. Type `s` — flash activates, screen dims
+3. Type the first 2 chars of your target word — e.g. `co` for `console`
+4. Labels appear next to every match — press the label letter to jump there instantly
+
+```js
+const user = getUser(id);
+console.log(user);
+const token = generateToken(user);
+fetch("/api/data", { method: "POST" });
+```
+
+---
+
+### Drill 13b — `s` in operator-pending mode
+
+**Mode:** `NORMAL`
+
+**Keystrokes:**
+
+1. Type `d` then `s` — flash activates in operator-pending mode
+2. Type 2 chars of the target — e.g. `fe` for `fetch`
+3. Press the label — deletes from cursor to that location
+4. Press `u` to undo and try `y` + `s` to yank to a remote location
+
+---
+
+### Drill 13c — `S` treesitter node jump
+
+**Mode:** `NORMAL`
+
+**Keystrokes:**
+
+1. Type `S` — flash highlights every treesitter node on screen (functions, args, blocks)
+2. Press a label to jump directly to that node's start
+3. Useful for jumping between function definitions without knowing the exact characters
+
+---
+
+## §14 — bufferline: Buffer Tab Navigation
+
+> bufferline shows all open buffers as tabs at the top. These keymaps let you navigate and manage them without touching the mouse.
+
+| Key          | Action                                               |
+| ------------ | ---------------------------------------------------- |
+| `[b` / `]b`  | Cycle to prev / next buffer                          |
+| `[B` / `]B`  | Move current buffer left / right in the tab bar      |
+| `<leader>bp` | Toggle pin on current buffer (pinned tabs stay left) |
+| `<leader>bo` | Close all other unpinned buffers                     |
+| `<leader>br` | Close all buffers to the right                       |
+| `<leader>bl` | Close all buffers to the left                        |
+| `<leader>ba` | Delete all buffers                                   |
+
+---
+
+### Drill 14a — buffer cycling
+
+**Keystrokes:**
+
+1. Open 3-4 files with `:e filename`
+2. Type `]b` — moves to next buffer tab
+3. Type `[b` — moves back
+4. Type `<leader>bp` on a file you want to keep — it gets pinned (stays left)
+5. Type `<leader>bo` — closes everything except the pinned buffer
+
+---
+
+## §15 — Harpoon: Pin & Jump to Key Files
+
+> Harpoon lets you bookmark up to 5 files in your current work session and jump to them instantly — no searching needed.
+
+| Key                | Action                            |
+| ------------------ | --------------------------------- |
+| `<leader>ha`       | Add current file to harpoon list  |
+| `<leader>hh`       | Open harpoon menu (edit the list) |
+| `<C-1>` to `<C-5>` | Jump directly to pinned file 1-5  |
+| `<leader>hn`       | Next harpoon file                 |
+| `<leader>hp`       | Prev harpoon file                 |
+
+---
+
+### Drill 15a — pin and jump
+
+**Keystrokes:**
+
+1. Open `lsp-config.lua` — type `<leader>ha` to pin it (slot 1)
+2. Open `keymaps.lua` — type `<leader>ha` to pin it (slot 2)
+3. Open `mini-modules.lua` — type `<leader>ha` to pin it (slot 3)
+4. Now press `<C-1>` — instantly back to `lsp-config.lua`
+5. Press `<C-2>` — instantly to `keymaps.lua`
+6. Press `<leader>hh` — opens the harpoon menu, reorder by editing the list
+
+---
+
+## §16 — Neogit & Diffview: Git Workflow
+
+> Full git suite without leaving Neovim. Neogit is your commit/push/branch dashboard. Diffview is your side-by-side diff viewer.
+
+### Neogit keymaps
+
+| Key          | Action                |
+| ------------ | --------------------- |
+| `<leader>gg` | Open Neogit dashboard |
+| `<leader>gC` | Open commit popup     |
+| `<leader>gP` | Open push popup       |
+| `<leader>gL` | Open log view         |
+
+### Inside Neogit dashboard
+
+| Key     | Action                         |
+| ------- | ------------------------------ |
+| `s`     | Stage hunk / file under cursor |
+| `u`     | Unstage hunk / file            |
+| `c`     | Open commit editor             |
+| `p`     | Push                           |
+| `<Tab>` | Expand / collapse section      |
+| `q`     | Close Neogit                   |
+
+### Diffview keymaps
+
+| Key          | Action                                       |
+| ------------ | -------------------------------------------- |
+| `<leader>gD` | Open diffview — all current changes vs HEAD  |
+| `<leader>gh` | File history — every commit for current file |
+| `<leader>gH` | Repo history — all commits                   |
+| `<leader>gx` | Close diffview                               |
+
+---
+
+### Drill 16a — stage and commit with Neogit
+
+**Keystrokes:**
+
+1. Make a small change to any file and save it
+2. Type `<leader>gg` — Neogit opens showing your unstaged change
+3. Move cursor to the file under "Unstaged"
+4. Type `s` — file moves to "Staged"
+5. Type `c` — commit editor opens
+6. Type your commit message, then `:wq`
+7. Type `<leader>gP` to push
+
+---
+
+### Drill 16b — review changes with Diffview
+
+**Keystrokes:**
+
+1. Make changes to 2-3 files without committing
+2. Type `<leader>gD` — diffview opens showing all changes side by side
+3. Navigate between files in the left panel with `j`/`k`
+4. Press `<CR>` to focus a file's diff
+5. Type `<leader>gx` to close when done
+
+---
+
+## §17 — todo-comments: Navigate TODOs
+
+> todo-comments highlights special keywords in your code and lets you search/navigate them.
+
+| Keyword              | Color  | Meaning           |
+| -------------------- | ------ | ----------------- |
+| `TODO:`              | Blue   | Work to be done   |
+| `FIXME:` / `BUG:`    | Red    | Broken code       |
+| `HACK:`              | Orange | Workaround        |
+| `NOTE:` / `INFO:`    | Green  | Important context |
+| `PERF:` / `OPTIM:`   | Purple | Performance issue |
+| `WARN:` / `WARNING:` | Yellow | Caution           |
+
+| Key          | Action                          |
+| ------------ | ------------------------------- |
+| `]t`         | Jump to next TODO               |
+| `[t`         | Jump to prev TODO               |
+| `<leader>xt` | Show all TODOs in Trouble panel |
+| `<leader>ft` | Search TODOs with Telescope     |
+
+---
+
+### Drill 17a — navigate TODOs
+
+**Keystrokes:**
+
+1. Add a few comments to any file:
+
+```js
+// TODO: refactor this function
+// FIXME: this breaks on empty input
+// NOTE: see docs for edge cases
+```
+
+2. Type `]t` — jumps to next TODO keyword
+3. Type `[t` — jumps back
+4. Type `<leader>ft` — opens Telescope showing all TODOs in the project
+
+---
+
+## §18 — Aerial: Code Outline Navigation
+
+> Aerial shows you the symbol structure of your file (functions, classes, methods) in a sidebar. Navigate large files without scrolling.
+
+| Key          | Action                        |
+| ------------ | ----------------------------- |
+| `<leader>cs` | Toggle aerial sidebar         |
+| `<leader>cS` | Search symbols with Telescope |
+| `{`          | Jump to previous symbol       |
+| `}`          | Jump to next symbol           |
+
+### Inside the aerial sidebar
+
+| Key       | Action                 |
+| --------- | ---------------------- |
+| `<CR>`    | Jump to symbol         |
+| `o`       | Toggle fold            |
+| `q`       | Close aerial           |
+| `l` / `h` | Open / close tree node |
+
+---
+
+### Drill 18a — navigate a large file with aerial
+
+**Keystrokes:**
+
+1. Open any file with multiple functions
+2. Type `<leader>cs` — aerial sidebar opens on the right
+3. Press `j`/`k` to browse symbols — the main buffer scrolls to follow
+4. Press `<CR>` on a function name — cursor jumps there
+5. Back in the main buffer, press `}` to jump to the next function
+6. Press `{` to jump back
+7. Type `<leader>cs` again to close
+
+---
+
+## §19 — Updated Keymaps Reference
+
+> Changes made during the LazyVim parity upgrade. These replace or fix previous bindings.
+
+### Window management
+
+| Key               | Action                 | Note                                 |
+| ----------------- | ---------------------- | ------------------------------------ |
+| `<leader>sv`      | Split vertical         | Unchanged                            |
+| `<leader>sh`      | Split horizontal       | Unchanged                            |
+| `<leader>se`      | Equalize splits        | Unchanged                            |
+| `<leader>sx`      | Close split            | Unchanged                            |
+| `<leader><Up>`    | Increase window height | FIX: was `<C-Up>` (macOS intercepts) |
+| `<leader><Down>`  | Decrease window height | FIX: was `<C-Down>`                  |
+| `<leader><Left>`  | Decrease window width  | FIX: was `<C-Left>`                  |
+| `<leader><Right>` | Increase window width  | FIX: was `<C-Right>`                 |
+
+### Misc changes
+
+| Key          | Action                 | Note                                                     |
+| ------------ | ---------------------- | -------------------------------------------------------- |
+| `<leader>D`  | Delete without yanking | FIX: was `<leader>d` (conflicted with DAP)               |
+| `<leader>qq` | Quit window            | Unchanged                                                |
+| `<leader>qQ` | Force quit all         | FIX: was `<leader>Q` (now consistent with `q` namespace) |
+| `<leader>qs` | Restore session        | NEW: persistence.nvim                                    |
+| `<leader>ql` | Restore last session   | NEW: persistence.nvim                                    |
+| `<leader>qd` | Stop saving session    | NEW: persistence.nvim                                    |
+
+### Yank path utilities
+
+| Key          | Action                           |
+| ------------ | -------------------------------- |
+| `<leader>yp` | Copy full file path to clipboard |
+| `<leader>yr` | Copy relative file path          |
+| `<leader>yn` | Copy filename only               |
+| `<leader>yd` | Copy file directory              |
+
+### Noice UI
+
+| Key          | Action                     |
+| ------------ | -------------------------- |
+| `<leader>nd` | Dismiss all Noice messages |
+| `<leader>nh` | Show Noice message history |
