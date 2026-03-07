@@ -8,12 +8,9 @@ return {
 	-- Keys absorbed here; friendly-snippets loaded in config
 	{
 		"L3MON4D3/LuaSnip",
-		version = "v2.*", -- FIX: pinned to v2 stable (was "*")
-		build = "make install_jsregexp", -- enables regex-based snippet transforms
+		version = "v2.*",
+		build = "make install_jsregexp",
 		dependencies = { "rafamadriz/friendly-snippets" },
-		-- ADD: snippet jump keys live here so LuaSnip lazy-loads on first jump
-		-- <C-k> jumps forward / expands — freed from LSP (lsp-config uses <C-s> now)
-		-- <C-j> jumps backward through placeholders
 		keys = {
 			{
 				"<C-k>",
@@ -39,7 +36,6 @@ return {
 			},
 		},
 		config = function()
-			-- Load VS Code-style snippets from friendly-snippets
 			require("luasnip.loaders.from_vscode").lazy_load()
 		end,
 	},
@@ -49,16 +45,13 @@ return {
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
 		dependencies = {
-			-- Snippet engine
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
-			-- Completion sources
-			"hrsh7th/cmp-nvim-lsp", -- LSP completions
-			"hrsh7th/cmp-buffer", -- buffer word completions
-			"hrsh7th/cmp-path", -- filesystem path completions
-			"hrsh7th/cmp-cmdline", -- cmdline completions
-			-- Kind icons in the completion menu
-			"onsails/lspkind.nvim", -- ADD: shows kind icons (function, variable, class, etc.)
+			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-cmdline",
+			"onsails/lspkind.nvim",
 		},
 		config = function()
 			local cmp = require("cmp")
@@ -68,7 +61,6 @@ return {
 			cmp.setup({
 
 				-- ── Performance ──────────────────────────────────────────
-				-- ADD: prevents sluggish menus on large files / many sources
 				performance = {
 					debounce = 60,
 					throttle = 30,
@@ -91,34 +83,35 @@ return {
 
 				-- ── Keymaps ───────────────────────────────────────────────
 				mapping = cmp.mapping.preset.insert({
-					-- ADD: Vim-native navigation (<C-n>/<C-p>) alongside Tab
 					["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
 					["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-
-					-- Doc scrolling
 					["<C-b>"] = cmp.mapping.scroll_docs(-4),
 					["<C-f>"] = cmp.mapping.scroll_docs(4),
-
-					-- Trigger completion manually
 					["<C-Space>"] = cmp.mapping.complete(),
-
-					-- Abort / dismiss
 					["<C-e>"] = cmp.mapping.abort(),
 
-					-- FIX: was select = true — caused accidental confirmation on <CR>
-					-- select = false only confirms explicitly selected items
+					-- Only confirm explicitly selected items
 					["<CR>"] = cmp.mapping.confirm({ select = false }),
 
-					-- Tab: navigate menu OR jump through snippet placeholders
+					-- Tab priority:
+					--   1. Navigate cmp menu if visible
+					--   2. Jump through luasnip placeholders
+					--   3. Expand emmet abbreviation (mode 3 handles all complex syntax:
+					--      p{text}+button*3, div.container>ul>li*3, header>nav>a*4)
+					--   4. Fallback to normal Tab
 					["<Tab>"] = cmp.mapping(function(fallback)
 						if cmp.visible() then
 							cmp.select_next_item()
 						elseif luasnip.expand_or_jumpable() then
 							luasnip.expand_or_jump()
-						elseif vim.fn["emmet#isExpandable"]() == 1 then
-							vim.fn["emmet#expandAbbr"](0, "")
 						else
-							fallback()
+							-- FIX: was emmet#isExpandable() == 1 which returns 0 for
+							-- complex abbreviations like p{text}+button*3
+							-- mode 3 = full expand — handles all emmet syntax
+							local ok = pcall(vim.fn["emmet#expandAbbr"], 3, "")
+							if not ok then
+								fallback()
+							end
 						end
 					end, { "i", "s" }),
 
@@ -133,8 +126,7 @@ return {
 					end, { "i", "s" }),
 				}),
 
-				-- ── Sources with priority weights ─────────────────────────
-				-- FIX: added priority so LSP results always rank above buffer words
+				-- ── Sources ───────────────────────────────────────────────
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp", priority = 1000 },
 					{ name = "luasnip", priority = 750 },
@@ -142,18 +134,15 @@ return {
 					{ name = "buffer", priority = 250 },
 				}),
 
-				-- ── Formatting: kind icons + source label ─────────────────
-				-- ADD: lspkind shows kind icons (⊕ Function, ● Variable, etc.)
+				-- ── Formatting ────────────────────────────────────────────
 				formatting = {
 					format = function(entry, item)
-						-- Apply lspkind kind icons first
 						item = lspkind.cmp_format({
 							mode = "symbol_text",
 							maxwidth = 50,
 							ellipsis_char = "...",
 						})(entry, item)
 
-						-- Append source icon as menu label
 						local source_icons = {
 							nvim_lsp = "",
 							luasnip = "",
@@ -166,7 +155,7 @@ return {
 				},
 			})
 
-			-- ── Cmdline completion (:commands) ────────────────────────────
+			-- ── Cmdline completion ────────────────────────────────────────
 			cmp.setup.cmdline(":", {
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = cmp.config.sources({
@@ -175,7 +164,7 @@ return {
 				}),
 			})
 
-			-- ── Search completion (/) ─────────────────────────────────────
+			-- ── Search completion ─────────────────────────────────────────
 			cmp.setup.cmdline("/", {
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = {
