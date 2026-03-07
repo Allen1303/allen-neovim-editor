@@ -19,8 +19,6 @@ return {
 			{ "<leader>bo", "<cmd>BufferLineCloseOthers<CR>", desc = "Buffer: close others" },
 			{ "<leader>br", "<cmd>BufferLineCloseRight<CR>", desc = "Buffer: close right" },
 			{ "<leader>bl", "<cmd>BufferLineCloseLeft<CR>", desc = "Buffer: close left" },
-			{ "<S-h>", "<cmd>BufferLineCyclePrev<CR>", desc = "Buffer: prev" },
-			{ "<S-l>", "<cmd>BufferLineCycleNext<CR>", desc = "Buffer: next" },
 			{ "[b", "<cmd>BufferLineCyclePrev<CR>", desc = "Buffer: prev" },
 			{ "]b", "<cmd>BufferLineCycleNext<CR>", desc = "Buffer: next" },
 			{ "[B", "<cmd>BufferLineMovePrev<CR>", desc = "Buffer: move left" },
