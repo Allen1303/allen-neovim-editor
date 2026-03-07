@@ -11,6 +11,7 @@ return {
 	{
 		"mason-org/mason.nvim",
 		version = "*",
+		lazy = false,
 		build = ":MasonUpdate",
 		cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUpdate" },
 		opts = {
@@ -29,6 +30,7 @@ return {
 	{
 		"mason-org/mason-lspconfig.nvim",
 		version = "*",
+		lazy = false,
 		dependencies = {
 			"mason-org/mason.nvim",
 			"neovim/nvim-lspconfig",
@@ -140,7 +142,8 @@ return {
 					on_attach(client, args.buf)
 				end,
 			})
-
+			-- Disable emmet_ls — we use emmet_language_server instead
+			vim.lsp.enable("emmet_ls", false)
 			-- ========== per-server configs ==========
 
 			-- Lua
@@ -197,26 +200,24 @@ return {
 				settings = { format = true },
 			})
 
-			-- FIX: was incorrectly placed inside on_attach — moved here with all
-			-- other server configs where vim.lsp.config() calls belong
 			-- Emmet: VSCode-style completions via cmp menu (no trigger key needed)
 			-- type  div.container  and it appears in the completion menu automatically
 			-- Emmet Plugin started here..
-			-- vim.lsp.config("emmet_language_server", {
-			-- 	capabilities = capabilities,
-			-- 	filetypes = {
-			-- 		"html",
-			-- 		"css",
-			-- 		"scss",
-			-- 		"less",
-			-- 		"javascript",
-			-- 		"javascriptreact",
-			-- 		"typescript",
-			-- 		"typescriptreact",
-			-- 		"svelte",
-			-- 		"vue",
-			-- 	},
-			-- })
+			vim.lsp.config("emmet_language_server", {
+				capabilities = capabilities,
+				filetypes = {
+					"html",
+					"css",
+					"scss",
+					"less",
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact",
+					"svelte",
+					"vue",
+				},
+			})
 		end,
 	},
 }
