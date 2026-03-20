@@ -12,6 +12,10 @@
 -- <leader>du — DAP UI toggle
 -- <leader>dr — DAP REPL toggle
 
+-- Filetype split:
+--   javascriptreact / typescriptreact → Chrome configs only (Node can't run JSX)
+--   javascript / typescript           → Chrome + Node configs
+
 return {
 	-- ── Core DAP + UI + inline values ──────────────────────────────────────
 	{
@@ -19,9 +23,7 @@ return {
 		dependencies = {
 			"rcarriga/nvim-dap-ui",
 			"theHamsta/nvim-dap-virtual-text",
-			"nvim-neotest/nvim-nio", -- required by dap-ui >= 3.x
-			-- FIX: mason-nvim-dap removed from here — it has its own top-level
-			-- spec below; declaring it twice caused Lazy to load it twice
+			"nvim-neotest/nvim-nio",
 		},
 
 		keys = {
@@ -54,9 +56,6 @@ return {
 				end,
 				desc = "DAP: Step Into",
 			},
-
-			-- FIX: <S-F11> is often intercepted by macOS Mission Control
-			-- <F12> added as a reliable alternative for step out
 			{
 				"<S-F11>",
 				function()
@@ -124,7 +123,7 @@ return {
 			local dap = require("dap")
 			local dapui = require("dapui")
 
-			-- UI: left pane for info, bottom for REPL/console
+			-- ── UI setup ──────────────────────────────────────────────
 			dapui.setup({
 				controls = { enabled = true, element = "repl" },
 				layouts = {
@@ -142,10 +141,10 @@ return {
 				floating = { border = "rounded" },
 			})
 
-			-- Inline variable values
+			-- Inline variable values next to each line
 			require("nvim-dap-virtual-text").setup({})
 
-			-- Auto-open/close UI with sessions (hands-free)
+			-- Auto-open/close UI with sessions
 			dap.listeners.after.event_initialized["dapui_open"] = function()
 				dapui.open()
 			end
@@ -156,9 +155,7 @@ return {
 				dapui.close()
 			end
 
-			-- Transparency hardening (theme-agnostic)
-			-- FIX: was nvim_exec_autocmds("ColorScheme") — fired all listeners
-			-- Extracted to function and called directly on load
+			-- ── Transparency ──────────────────────────────────────────
 			local function apply_dap_transparent()
 				local set = vim.api.nvim_set_hl
 				pcall(set, 0, "DapUIFloatNormal", { bg = "NONE" })
@@ -168,93 +165,110 @@ return {
 				pcall(set, 0, "DapUIModifiedValue", { bg = "NONE" })
 				pcall(set, 0, "DapUIWinSelect", { bg = "NONE" })
 			end
-
 			vim.api.nvim_create_autocmd("ColorScheme", {
 				group = vim.api.nvim_create_augroup("Allen_Dap_Transparent", { clear = true }),
 				callback = apply_dap_transparent,
 			})
-
-			-- Apply immediately on first load
 			apply_dap_transparent()
 
-			-- Signs: inherit colors from DiagnosticSign* (theme-agnostic)
+			-- ── Signs ─────────────────────────────────────────────────
+			-- FIX: Unicode chars — Nerd Font icons don't render in signcolumn
+			-- FIX: vim.schedule ensures signs apply after all plugins load
 			vim.schedule(function()
 				vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticSignError" })
 				vim.fn.sign_define("DapBreakpointCondition", { text = "◆", texthl = "DiagnosticSignWarn" })
 				vim.fn.sign_define("DapLogPoint", { text = "◎", texthl = "DiagnosticSignInfo" })
 				vim.fn.sign_define("DapStopped", { text = "→", texthl = "DiagnosticSignHint", linehl = "Visual" })
 			end)
-			-- ── JS / TS debug configurations (Node + Chrome on macOS) ────────
-			-- Adapters provided by vscode-js-debug (installed via mason-nvim-dap)
-			local js_langs = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
 
-			for _, lang in ipairs(js_langs) do
-				dap.configurations[lang] = {
-					-- 1) Node: launch current file (scripts, CLIs)
-					{
-						type = "pwa-node",
-						request = "launch",
-						name = "Node: Launch current file",
-						program = "${file}",
-						cwd = "${workspaceFolder}",
-						console = "integratedTerminal",
-						sourceMaps = true,
-					},
+			-- ── Adapters ─────────────────────────────────────────────
+			-- FIX: mason-nvim-dap doesn't always auto-register pwa-node/pwa-chrome
+			-- Hardcoding the Mason install path ensures reliable detection
+			local js_debug_path =
+				vim.fn.expand("~/.local/share/nvim/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js")
 
-					-- 2) Node: attach to running process (choose PID)
-					{
-						type = "pwa-node",
-						request = "attach",
-						name = "Node: Attach to process",
-						processId = require("dap.utils").pick_process,
-						cwd = "${workspaceFolder}",
-					},
-
-					-- 3) Chrome: launch to dev server
-					-- FIX: added port note — Vite: 5173 | Next.js/CRA: 3000
-					{
-						type = "pwa-chrome",
-						request = "launch",
-						name = "Chrome: Launch http://localhost:5173",
-						url = "http://localhost:5173", -- Vite: 5173 | Next.js/CRA: 3000
-						webRoot = "${workspaceFolder}",
-						-- Uncomment if Chrome auto-detect fails on macOS:
-						-- runtimeExecutable = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-					},
-
-					-- 4) Chrome: attach to existing session (--remote-debugging-port=9222)
-					{
-						type = "pwa-chrome",
-						request = "attach",
-						name = "Chrome: Attach (9222)",
-						port = 9222,
-						webRoot = "${workspaceFolder}",
-					},
-
-					-- 5) TypeScript via ts-node (requires ts-node + typescript devDeps)
-					{
-						type = "pwa-node",
-						request = "launch",
-						name = "Node: Launch TS via ts-node",
-						program = "${file}",
-						cwd = "${workspaceFolder}",
-						runtimeExecutable = "node",
-						runtimeArgs = { "-r", "ts-node/register" },
-						sourceMaps = true,
-						skipFiles = { "<node_internals>/**" },
+			for _, adapter in ipairs({ "pwa-node", "pwa-chrome" }) do
+				dap.adapters[adapter] = {
+					type = "server",
+					host = "localhost",
+					port = "${port}",
+					executable = {
+						command = "node",
+						args = { js_debug_path, "${port}" },
 					},
 				}
+			end
+
+			-- ── Chrome configs: JSX/TSX + JS/TS ─────────────────────
+			-- FIX: JSX/TSX only get Chrome configs — Node.js can't run JSX files
+			-- JS/TS get both Chrome AND Node configs
+			local chrome_configs = {
+				{
+					type = "pwa-chrome",
+					request = "launch",
+					name = "Chrome: Launch http://localhost:5173",
+					url = "http://localhost:5173",
+					webRoot = "${workspaceFolder}",
+					-- Uncomment if Chrome auto-detect fails on macOS:
+					-- runtimeExecutable = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+				},
+				{
+					type = "pwa-chrome",
+					request = "attach",
+					name = "Chrome: Attach (9222)",
+					port = 9222,
+					webRoot = "${workspaceFolder}",
+				},
+			}
+
+			local node_configs = {
+				{
+					type = "pwa-node",
+					request = "launch",
+					name = "Node: Launch current file",
+					program = "${file}",
+					cwd = "${workspaceFolder}",
+					console = "integratedTerminal",
+					sourceMaps = true,
+				},
+				{
+					type = "pwa-node",
+					request = "attach",
+					name = "Node: Attach to process",
+					processId = require("dap.utils").pick_process,
+					cwd = "${workspaceFolder}",
+				},
+				{
+					type = "pwa-node",
+					request = "launch",
+					name = "Node: Launch TS via ts-node",
+					program = "${file}",
+					cwd = "${workspaceFolder}",
+					runtimeExecutable = "node",
+					runtimeArgs = { "-r", "ts-node/register" },
+					sourceMaps = true,
+					skipFiles = { "<node_internals>/**" },
+				},
+			}
+
+			-- JSX/TSX — Chrome only
+			for _, lang in ipairs({ "javascriptreact", "typescriptreact" }) do
+				dap.configurations[lang] = chrome_configs
+			end
+
+			-- JS/TS — Chrome + Node
+			for _, lang in ipairs({ "javascript", "typescript" }) do
+				dap.configurations[lang] = vim.list_extend(vim.deepcopy(chrome_configs), node_configs)
 			end
 		end,
 	},
 
-	-- ── Mason bridge: installs vscode-js-debug (pwa-node / pwa-chrome) ─────
+	-- ── Mason bridge: installs vscode-js-debug ─────────────────────────────
 	{
 		"jay-babu/mason-nvim-dap.nvim",
-		-- FIX: was williamboman/mason.nvim — correct org is mason-org (matches lsp-config.lua)
 		dependencies = { "mason-org/mason.nvim" },
 		opts = {
-			ensure_installed = { "js" }, -- installs vscode-js-debug adapter
+			ensure_installed = { "js" },
 			automatic_installation = true,
 			handlers = {
 				function(cfg)
