@@ -178,11 +178,12 @@ return {
 			apply_dap_transparent()
 
 			-- Signs: inherit colors from DiagnosticSign* (theme-agnostic)
-			vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "DiagnosticSignError" })
-			vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "DiagnosticSignWarn" })
-			vim.fn.sign_define("DapLogPoint", { text = "", texthl = "DiagnosticSignInfo" })
-			vim.fn.sign_define("DapStopped", { text = "", texthl = "DiagnosticSignHint", linehl = "Visual" })
-
+			vim.schedule(function()
+				vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticSignError" })
+				vim.fn.sign_define("DapBreakpointCondition", { text = "◆", texthl = "DiagnosticSignWarn" })
+				vim.fn.sign_define("DapLogPoint", { text = "◎", texthl = "DiagnosticSignInfo" })
+				vim.fn.sign_define("DapStopped", { text = "→", texthl = "DiagnosticSignHint", linehl = "Visual" })
+			end)
 			-- ── JS / TS debug configurations (Node + Chrome on macOS) ────────
 			-- Adapters provided by vscode-js-debug (installed via mason-nvim-dap)
 			local js_langs = { "javascript", "javascriptreact", "typescript", "typescriptreact" }
