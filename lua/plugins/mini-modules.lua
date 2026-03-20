@@ -24,7 +24,135 @@ return {
 		version = "*",
 		lazy = false,
 		config = function()
-			require("mini.statusline").setup({ use_icons = true })
+			local statusline = require("mini.statusline")
+
+			-- ── Helpers ──────────────────────────────────────────────────
+
+			-- Git branch via gitsigns head
+			local function git_branch()
+				local ok, head = pcall(function()
+					return vim.b.gitsigns_head or vim.g.gitsigns_head
+				end)
+				if ok and head and head ~= "" then
+					return "  " .. head
+				end
+				return ""
+			end
+
+			-- LSP diagnostics count
+			local function lsp_diagnostics()
+				local errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+				local warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
+				local hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
+				local parts = {}
+				if errors > 0 then
+					table.insert(parts, " " .. errors)
+				end
+				if warnings > 0 then
+					table.insert(parts, " " .. warnings)
+				end
+				if hints > 0 then
+					table.insert(parts, " " .. hints)
+				end
+				return table.concat(parts, " ")
+			end
+
+			-- Macro recording indicator — shows which register is being recorded
+			local function macro_recording()
+				local reg = vim.fn.reg_recording()
+				if reg ~= "" then
+					return "  @" .. reg
+				end
+				return ""
+			end
+
+			-- LSP client names attached to current buffer
+			local function lsp_clients()
+				local clients = vim.lsp.get_clients({ bufnr = 0 })
+				if #clients == 0 then
+					return ""
+				end
+				local names = {}
+				for _, c in ipairs(clients) do
+					-- skip noisy utility servers
+					if c.name ~= "null-ls" and c.name ~= "copilot" then
+						table.insert(names, c.name)
+					end
+				end
+				if #names == 0 then
+					return ""
+				end
+				return "󰒋 " .. table.concat(names, ", ")
+			end
+
+			-- ── Active content (focused window) ──────────────────────────
+			local function active_content()
+				local mode, mode_hl = statusline.section_mode({ trunc_width = 120 })
+				local filename = statusline.section_filename({ trunc_width = 140 })
+				local fileinfo = statusline.section_fileinfo({ trunc_width = 120 })
+				local location = statusline.section_location({ trunc_width = 75 })
+				local search = statusline.section_searchcount({ trunc_width = 75 })
+
+				-- Custom sections
+				local branch = git_branch()
+				local diag = lsp_diagnostics()
+				local recording = macro_recording()
+				local lsp = lsp_clients()
+
+				-- Combine — left | right pattern
+				return statusline.combine_groups({
+					-- ── Left ──────────────────────────────────────────────
+					{ hl = mode_hl, strings = { mode } },
+					{ hl = "MiniStatuslineDevinfo", strings = { branch } },
+					{ hl = "MiniStatuslineFilename", strings = { filename } },
+					{ hl = "MiniStatuslineDevinfo", strings = { recording } },
+
+					-- ── Spacer ────────────────────────────────────────────
+					"%<", -- truncation point
+					"%=", -- right-align everything after this
+
+					-- ── Right ─────────────────────────────────────────────
+					{ hl = "MiniStatuslineDevinfo", strings = { diag } },
+					{ hl = "MiniStatuslineDevinfo", strings = { lsp } },
+					{ hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
+					{ hl = "MiniStatuslineDevinfo", strings = { search } },
+					{ hl = mode_hl, strings = { location } },
+				})
+			end
+
+			-- ── Inactive content (unfocused windows) ─────────────────────
+			local function inactive_content()
+				return statusline.combine_groups({
+					{ hl = "MiniStatuslineInactive", strings = { "%f %m" } },
+					"%=",
+					{ hl = "MiniStatuslineInactive", strings = { "%l:%c" } },
+				})
+			end
+
+			statusline.setup({
+				content = {
+					active = active_content,
+					inactive = inactive_content,
+				},
+				use_icons = true,
+				set_vim_settings = true,
+			})
+
+			-- Trigger statusline redraw when macro recording starts/stops
+			-- so the @q indicator appears and disappears in real time
+			vim.api.nvim_create_autocmd("RecordingEnter", {
+				group = vim.api.nvim_create_augroup("Allen_StatusMacro", { clear = true }),
+				callback = function()
+					vim.cmd("redrawstatus")
+				end,
+			})
+			vim.api.nvim_create_autocmd("RecordingLeave", {
+				group = "Allen_StatusMacro",
+				callback = function()
+					vim.cmd("redrawstatus")
+				end,
+			})
+
 			vim.opt.laststatus = 3
 		end,
 	},
@@ -335,9 +463,6 @@ return {
 	},
 
 	-- ── Color highlighter ───────────────────────────────────────────────────
-	-- mini.hipatterns: shows actual color swatch for hex/rgb/hsl codes inline
-	-- Works in CSS, JS, JSX, TSX, Lua — anywhere you write color values
-	-- e.g. #89B4FA renders with a blue background swatch next to it
 	{
 		"nvim-mini/mini.hipatterns",
 		version = "*",
@@ -346,10 +471,8 @@ return {
 			local hipatterns = require("mini.hipatterns")
 			hipatterns.setup({
 				highlighters = {
-					-- Hex colors: #RRGGBB and #RGB
 					hex_color = hipatterns.gen_highlighter.hex_color(),
 
-					-- rgb() / rgba() values
 					rgb_color = {
 						pattern = "rgb%(%d+,?%s*%d+,?%s*%d+%)",
 						group = function(_, match)
@@ -360,7 +483,6 @@ return {
 						end,
 					},
 
-					-- hsl() values — converts to hex for highlighting
 					hsl_color = {
 						pattern = "hsl%(%d+,?%s*%d+%%?,?%s*%d+%%?%)",
 						group = function(_, match)
