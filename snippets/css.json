@@ -1,0 +1,134 @@
+{
+  "Flexbox Container": {
+    "prefix": "flex",
+    "body": [
+      "display: flex;",
+      "align-items: ${1:center};",
+      "justify-content: ${2:center};",
+      "gap: ${3:1rem};"
+    ],
+    "description": "Flexbox container"
+  },
+  "Flexbox Column": {
+    "prefix": "flexcol",
+    "body": [
+      "display: flex;",
+      "flex-direction: column;",
+      "align-items: ${1:center};",
+      "justify-content: ${2:center};",
+      "gap: ${3:1rem};"
+    ],
+    "description": "Flexbox column layout"
+  },
+  "CSS Grid": {
+    "prefix": "grid",
+    "body": [
+      "display: grid;",
+      "grid-template-columns: ${1:repeat(3, 1fr)};",
+      "gap: ${2:1rem};"
+    ],
+    "description": "CSS Grid layout"
+  },
+  "CSS Grid Areas": {
+    "prefix": "gridarea",
+    "body": [
+      "display: grid;",
+      "grid-template-areas:",
+      "  '${1:header header}'",
+      "  '${2:sidebar main}'",
+      "  '${3:footer footer}';",
+      "grid-template-columns: ${4:200px 1fr};",
+      "grid-template-rows: ${5:auto 1fr auto};",
+      "gap: ${6:1rem};"
+    ],
+    "description": "CSS Grid with named areas"
+  },
+  "Media Query Mobile First": {
+    "prefix": "mq",
+    "body": ["@media (min-width: ${1:768px}) {", "  $0", "}"],
+    "description": "Mobile-first media query"
+  },
+  "Media Query Max Width": {
+    "prefix": "mqmax",
+    "body": ["@media (max-width: ${1:768px}) {", "  $0", "}"],
+    "description": "Max-width media query"
+  },
+  "CSS Custom Property": {
+    "prefix": "var",
+    "body": ["--${1:name}: ${2:value};"],
+    "description": "CSS custom property (variable)"
+  },
+  "CSS Variables Block": {
+    "prefix": "root",
+    "body": [
+      ":root {",
+      "  --${1:primary}: ${2:#007bff};",
+      "  --${3:secondary}: ${4:#6c757d};",
+      "  --${5:background}: ${6:#ffffff};",
+      "  $0",
+      "}"
+    ],
+    "description": "CSS :root variables block"
+  },
+  "Absolute Center": {
+    "prefix": "abscenter",
+    "body": [
+      "position: absolute;",
+      "top: 50%;",
+      "left: 50%;",
+      "transform: translate(-50%, -50%);"
+    ],
+    "description": "Absolute center positioning"
+  },
+  "Full Width Height": {
+    "prefix": "full",
+    "body": ["width: 100%;", "height: 100%;"],
+    "description": "Full width and height"
+  },
+  "Transition": {
+    "prefix": "trans",
+    "body": ["transition: ${1:all} ${2:0.3s} ${3:ease};"],
+    "description": "CSS transition"
+  },
+  "Box Shadow": {
+    "prefix": "shadow",
+    "body": ["box-shadow: ${1:0} ${2:4px} ${3:8px} ${4:rgba(0, 0, 0, 0.1)};"],
+    "description": "Box shadow"
+  },
+  "Border Radius": {
+    "prefix": "br",
+    "body": ["border-radius: ${1:8px};"],
+    "description": "Border radius"
+  },
+  "CSS Animation": {
+    "prefix": "anim",
+    "body": [
+      "@keyframes ${1:animationName} {",
+      "  from {",
+      "    $0",
+      "  }",
+      "  to {",
+      "    ${2:opacity: 1;}",
+      "  }",
+      "}",
+      "",
+      "animation: ${1:animationName} ${3:0.3s} ${4:ease} ${5:forwards};"
+    ],
+    "description": "CSS keyframe animation"
+  },
+  "Responsive Card": {
+    "prefix": "card",
+    "body": [
+      "background: ${1:var(--background)};",
+      "border-radius: ${2:8px};",
+      "box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);",
+      "padding: ${3:1.5rem};",
+      "transition: transform 0.2s ease;",
+      "",
+      "&:hover {",
+      "  transform: translateY(-2px);",
+      "}"
+    ],
+    "description": "Responsive card styles"
+  }
+}

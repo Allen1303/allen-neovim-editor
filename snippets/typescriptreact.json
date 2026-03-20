@@ -1,0 +1,106 @@
+{
+  "React Arrow Function Component Export (TS)": {
+    "prefix": "rafce",
+    "body": [
+      "interface ${1:${TM_FILENAME_BASE}}Props {",
+      "  ${2:prop}: ${3:string};",
+      "}",
+      "",
+      "const ${1:${TM_FILENAME_BASE}} = ({ ${2:prop} }: ${1:${TM_FILENAME_BASE}}Props) => {",
+      "  return (",
+      "    <div className=\"${4:container}\">",
+      "      $0",
+      "    </div>",
+      "  );",
+      "};",
+      "",
+      "export default ${1:${TM_FILENAME_BASE}};"
+    ],
+    "description": "React arrow function component with TypeScript props interface"
+  },
+  "React Function Component (TS)": {
+    "prefix": "rfc",
+    "body": [
+      "interface ${1:${TM_FILENAME_BASE}}Props {",
+      "  ${2:prop}: ${3:string};",
+      "}",
+      "",
+      "function ${1:${TM_FILENAME_BASE}}({ ${2:prop} }: ${1:${TM_FILENAME_BASE}}Props) {",
+      "  return (",
+      "    <div className=\"${4:container}\">",
+      "      $0",
+      "    </div>",
+      "  );",
+      "}",
+      "",
+      "export default ${1:${TM_FILENAME_BASE}};"
+    ],
+    "description": "React function component with TypeScript props interface"
+  },
+  "useState with Type": {
+    "prefix": "ust",
+    "body": [
+      "const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = useState<${2:string}>(${3:null});"
+    ],
+    "description": "React useState hook with TypeScript type"
+  },
+  "useEffect Hook": {
+    "prefix": "uef",
+    "body": [
+      "useEffect(() => {",
+      "  $0",
+      "  return () => {",
+      "    ${1:// cleanup}",
+      "  };",
+      "}, [${2:deps}]);"
+    ],
+    "description": "React useEffect hook with cleanup"
+  },
+  "useRef with Type": {
+    "prefix": "urf",
+    "body": ["const ${1:ref} = useRef<${2:HTMLDivElement}>(${3:null});"],
+    "description": "React useRef hook with TypeScript type"
+  },
+  "TypeScript Interface": {
+    "prefix": "iface",
+    "body": [
+      "interface ${1:Name} {",
+      "  ${2:property}: ${3:string};",
+      "  $0",
+      "}"
+    ],
+    "description": "TypeScript interface"
+  },
+  "TypeScript Type": {
+    "prefix": "ttype",
+    "body": [
+      "type ${1:Name} = {",
+      "  ${2:property}: ${3:string};",
+      "  $0",
+      "};"
+    ],
+    "description": "TypeScript type alias"
+  },
+  "Async Function with Type": {
+    "prefix": "afn",
+    "body": [
+      "const ${1:name} = async (${2:params}): Promise<${3:void}> => {",
+      "  try {",
+      "    $0",
+      "  } catch (error) {",
+      "    console.error(error);",
+      "  }",
+      "};"
+    ],
+    "description": "Async arrow function with TypeScript return type"
+  },
+  "React Event Type": {
+    "prefix": "reh",
+    "body": [
+      "const handle${1:Event} = (e: React.${2:ChangeEvent}<HTML${3:Input}Element>) => {",
+      "  $0",
+      "};"
+    ],
+    "description": "React typed event handler"
+  }
+}

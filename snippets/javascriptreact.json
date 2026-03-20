@@ -1,0 +1,147 @@
+{
+  "React Arrow Function Component Export": {
+    "prefix": "rafce",
+    "body": [
+      "const ${1:${TM_FILENAME_BASE}} = () => {",
+      "  return (",
+      "    <div className=\"${2:container}\">",
+      "      $0",
+      "    </div>",
+      "  );",
+      "};",
+      "",
+      "export default ${1:${TM_FILENAME_BASE}};"
+    ],
+    "description": "React arrow function component with export"
+  },
+  "React Function Component": {
+    "prefix": "rfc",
+    "body": [
+      "function ${1:${TM_FILENAME_BASE}}() {",
+      "  return (",
+      "    <div className=\"${2:container}\">",
+      "      $0",
+      "    </div>",
+      "  );",
+      "}",
+      "",
+      "export default ${1:${TM_FILENAME_BASE}};"
+    ],
+    "description": "React function component with export"
+  },
+  "React Arrow Function Component with Props": {
+    "prefix": "rafcp",
+    "body": [
+      "const ${1:${TM_FILENAME_BASE}} = ({ ${2:props} }) => {",
+      "  return (",
+      "    <div className=\"${3:container}\">",
+      "      $0",
+      "    </div>",
+      "  );",
+      "};",
+      "",
+      "export default ${1:${TM_FILENAME_BASE}};"
+    ],
+    "description": "React arrow function component with props and export"
+  },
+  "useState Hook": {
+    "prefix": "ust",
+    "body": [
+      "const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = useState(${2:null});"
+    ],
+    "description": "React useState hook"
+  },
+  "useEffect Hook": {
+    "prefix": "uef",
+    "body": [
+      "useEffect(() => {",
+      "  $0",
+      "  return () => {",
+      "    ${1:// cleanup}",
+      "  };",
+      "}, [${2:deps}]);"
+    ],
+    "description": "React useEffect hook with cleanup"
+  },
+  "useEffect on Mount": {
+    "prefix": "uefm",
+    "body": ["useEffect(() => {", "  $0", "}, []);"],
+    "description": "React useEffect on mount only"
+  },
+  "useRef Hook": {
+    "prefix": "urf",
+    "body": ["const ${1:ref} = useRef(${2:null});"],
+    "description": "React useRef hook"
+  },
+  "useCallback Hook": {
+    "prefix": "ucb",
+    "body": [
+      "const ${1:callback} = useCallback(() => {",
+      "  $0",
+      "}, [${2:deps}]);"
+    ],
+    "description": "React useCallback hook"
+  },
+  "useMemo Hook": {
+    "prefix": "umo",
+    "body": [
+      "const ${1:memoized} = useMemo(() => {",
+      "  return $0;",
+      "}, [${2:deps}]);"
+    ],
+    "description": "React useMemo hook"
+  },
+  "useContext Hook": {
+    "prefix": "uctx",
+    "body": ["const ${1:context} = useContext(${2:Context});"],
+    "description": "React useContext hook"
+  },
+  "React Import Statement": {
+    "prefix": "rimp",
+    "body": ["import ${1:Component} from './${1:Component}';"],
+    "description": "React component import"
+  },
+  "React useState + useEffect": {
+    "prefix": "rstate",
+    "body": [
+      "const [${1:data}, set${1/(.*)/${1:/capitalize}/}] = useState(${2:null});",
+      "",
+      "useEffect(() => {",
+      "  $0",
+      "}, []);"
+    ],
+    "description": "useState + useEffect combo"
+  },
+  "React Event Handler": {
+    "prefix": "reh",
+    "body": ["const handle${1:Event} = (${2:e}) => {", "  $0", "};"],
+    "description": "React event handler function"
+  },
+  "React Conditional Render": {
+    "prefix": "rcr",
+    "body": ["{${1:condition} && (", "  <${2:div}>$0</${2:div}>", ")}"],
+    "description": "React conditional render"
+  },
+  "React Ternary Render": {
+    "prefix": "rtr",
+    "body": [
+      "{${1:condition} ? (",
+      "  <${2:div}>$3</${2:div}>",
+      ") : (",
+      "  <${4:div}>$0</${4:div}>",
+      ")}"
+    ],
+    "description": "React ternary render"
+  },
+  "React Map": {
+    "prefix": "rmap",
+    "body": [
+      "{${1:items}.map((${2:item}) => (",
+      "  <${3:div} key={${2:item}.${4:id}}>",
+      "    $0",
+      "  </${3:div}>",
+      "))}"
+    ],
+    "description": "React array map render"
+  }
+}

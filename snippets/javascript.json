@@ -1,0 +1,129 @@
+{
+  "Console Log": {
+    "prefix": "cl",
+    "body": ["console.log(${1:'$2'});"],
+    "description": "console.log"
+  },
+  "Console Log Variable": {
+    "prefix": "clv",
+    "body": ["console.log('${1:label}:', ${1:label});"],
+    "description": "console.log with label"
+  },
+  "Console Error": {
+    "prefix": "ce",
+    "body": ["console.error(${1:'$2'});"],
+    "description": "console.error"
+  },
+  "Console Warn": {
+    "prefix": "cw",
+    "body": ["console.warn(${1:'$2'});"],
+    "description": "console.warn"
+  },
+  "Async Function": {
+    "prefix": "afn",
+    "body": [
+      "const ${1:name} = async (${2:params}) => {",
+      "  try {",
+      "    $0",
+      "  } catch (error) {",
+      "    console.error(error);",
+      "  }",
+      "};"
+    ],
+    "description": "Async arrow function with try/catch"
+  },
+  "Fetch API": {
+    "prefix": "fetch",
+    "body": [
+      "const ${1:data} = await fetch('${2:url}', {",
+      "  method: '${3:GET}',",
+      "  headers: {",
+      "    'Content-Type': 'application/json',",
+      "    $0",
+      "  },",
+      "});",
+      "const ${4:result} = await ${1:data}.json();"
+    ],
+    "description": "Fetch API call with await"
+  },
+  "Fetch with Error Handling": {
+    "prefix": "fetche",
+    "body": [
+      "try {",
+      "  const response = await fetch('${1:url}');",
+      "  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);",
+      "  const ${2:data} = await response.json();",
+      "  $0",
+      "} catch (error) {",
+      "  console.error('Fetch error:', error);",
+      "}"
+    ],
+    "description": "Fetch with full error handling"
+  },
+  "Arrow Function": {
+    "prefix": "afn",
+    "body": ["const ${1:name} = (${2:params}) => {", "  $0", "};"],
+    "description": "Arrow function"
+  },
+  "Destructure Object": {
+    "prefix": "des",
+    "body": ["const { ${1:key} } = ${2:object};"],
+    "description": "Object destructuring"
+  },
+  "Destructure Array": {
+    "prefix": "desa",
+    "body": ["const [${1:first}, ${2:second}] = ${3:array};"],
+    "description": "Array destructuring"
+  },
+  "Spread Object": {
+    "prefix": "spo",
+    "body": ["{ ...${1:object}, ${2:key}: ${3:value} }"],
+    "description": "Spread object with override"
+  },
+  "Template Literal": {
+    "prefix": "tl",
+    "body": ["`${1:text} ${${2:variable}}`"],
+    "description": "Template literal"
+  },
+  "Import": {
+    "prefix": "imp",
+    "body": ["import ${1:module} from '${2:path}';"],
+    "description": "ES6 import"
+  },
+  "Named Import": {
+    "prefix": "impn",
+    "body": ["import { ${1:named} } from '${2:path}';"],
+    "description": "Named ES6 import"
+  },
+  "Export Default": {
+    "prefix": "exd",
+    "body": ["export default ${1:name};"],
+    "description": "Export default"
+  },
+  "Export Named": {
+    "prefix": "exn",
+    "body": ["export const ${1:name} = ${2:value};"],
+    "description": "Named export"
+  },
+  "Promise": {
+    "prefix": "prom",
+    "body": ["new Promise((resolve, reject) => {", "  $0", "});"],
+    "description": "New Promise"
+  },
+  "setTimeout": {
+    "prefix": "sto",
+    "body": ["setTimeout(() => {", "  $0", "}, ${1:1000});"],
+    "description": "setTimeout"
+  },
+  "setInterval": {
+    "prefix": "sti",
+    "body": [
+      "const ${1:interval} = setInterval(() => {",
+      "  $0",
+      "}, ${2:1000});",
+      "",
+      "// clearInterval(${1:interval});"
+    ],
+    "description": "setInterval with cleanup comment"
+  }
+}

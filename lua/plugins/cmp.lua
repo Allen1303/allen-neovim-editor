@@ -36,7 +36,14 @@ return {
 			},
 		},
 		config = function()
+			-- Load VS Code-style snippets from friendly-snippets
 			require("luasnip.loaders.from_vscode").lazy_load()
+
+			-- Load custom project snippets from ~/.config/nvim/snippets/
+			-- Covers: javascriptreact.json, javascript.json, css.json, typescriptreact.json
+			require("luasnip.loaders.from_vscode").lazy_load({
+				paths = { vim.fn.stdpath("config") .. "/snippets" },
+			})
 		end,
 	},
 

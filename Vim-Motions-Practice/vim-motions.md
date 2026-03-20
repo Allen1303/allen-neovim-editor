@@ -831,9 +831,9 @@ local call = doSomething(firstArg, secondArg, thirdArg)
 **Keystrokes:**
 
 1. Place cursor on `version = 2` deep inside the nested table
-2. Type `g]` — cursor jumps to the **closing** `}` of the nearest enclosing object
-3. Type `g[` — cursor jumps to the **opening** `{` of the nearest enclosing object
-4. Type `g]` from the outer scope — jumps to the `}` of the outer `inner` table
+2. Type `g]b` — cursor jumps to the **closing** `}` of the nearest enclosing object
+3. Type `g[b` — cursor jumps to the **opening** `{` of the nearest enclosing object
+4. Type `g]b` from the outer scope — jumps to the `}` of the outer `inner` table
 5. Combine: type `dg]` — deletes from cursor to the next closing `}`
 
 ```lua
