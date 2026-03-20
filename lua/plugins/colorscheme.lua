@@ -3,18 +3,24 @@
 -- ==============================
 -- GOAL: Provide great defaults with Catppuccin (plus alternates as spares),
 --       apply the theme early, and keep transparency consistent.
+--
+-- Active theme:   catppuccin-macchiato
+-- Alternates:     :colorscheme tokyonight
+--                 :colorscheme onedark
+--                 :colorscheme monokai-pro-octagon
+--                 :colorscheme vscode
 
 return {
 	-- ── Catppuccin: primary theme ───────────────────────────────────────────
 	{
 		"catppuccin/nvim",
 		name = "catppuccin",
-		priority = 1000, -- load before all other UI plugins (avoids flash)
-		lazy = false, -- must be available at startup
+		priority = 1000,
+		lazy = false,
 		opts = {
-			flavour = "macchiato", -- latte | frappe | macchiato | mocha
-			transparent_background = true, -- respect terminal transparency
-			term_colors = true, -- better terminal palette matching
+			flavour = "macchiato",
+			transparent_background = true,
+			term_colors = true,
 			no_italic = false,
 			no_bold = false,
 
@@ -30,38 +36,31 @@ return {
 						information = { "underline" },
 					},
 				},
-				-- FIX: was lsp_trouble = false — key changed in Catppuccin + trouble v3
 				trouble = true,
 				telescope = true,
 				gitsigns = true,
 				which_key = true,
 				navic = false,
-				-- ADD: styles Noice message/cmdline UI elements
 				noice = true,
-				-- ADD: styles custom dashboard filetype highlight groups
 				dashboard = true,
-				-- EXPAND: full mini integration table
 				mini = {
 					enabled = true,
-					indentscope_color = "", -- inherits from theme palette
+					indentscope_color = "",
 				},
 			},
 
-			-- Tweak highlight groups for transparent UI consistency
 			custom_highlights = function(colors)
 				return {
-					NormalFloat = { bg = "NONE" }, -- clear floating window background
-					FloatBorder = { bg = "NONE" }, -- clear floating border background
-					SignColumn = { bg = "NONE" }, -- keep sign column transparent
-					NormalNC = { bg = "NONE" }, -- clear inactive window background
-					-- Keep statusline opaque so it stays readable over transparent bg
+					NormalFloat = { bg = "NONE" },
+					FloatBorder = { bg = "NONE" },
+					SignColumn = { bg = "NONE" },
+					NormalNC = { bg = "NONE" },
 					StatusLine = { bg = colors.base, fg = colors.text },
 					StatusLineNC = { bg = colors.mantle, fg = colors.overlay1 },
 				}
 			end,
 		},
 		config = function(_, opts)
-			-- FIX: safe_colorscheme moved inside config (was module-level, unsafe for hot-reload)
 			local function safe_colorscheme(name)
 				local ok = pcall(vim.cmd.colorscheme, name)
 				if not ok then
@@ -76,12 +75,49 @@ return {
 		end,
 	},
 
+	-- ── VSCode: alternate theme ─────────────────────────────────────────────
+	-- Accurate port of VSCode's default Dark+ theme
+	-- Apply with: :colorscheme vscode
+	{
+		"Mofiqul/vscode.nvim",
+		lazy = true,
+		opts = {
+			-- dark | light
+			style = "dark",
+
+			-- Match VSCode's transparent feel
+			transparent = true,
+
+			-- Italic comments and keywords (matches VSCode defaults)
+			italic_comments = true,
+
+			-- Disable nvim-cmp highlights if you want pure VSCode colors
+			disable_nvimtree_bg = true,
+
+			-- Override specific highlight groups if needed
+			color_overrides = {},
+
+			-- Full treesitter + LSP semantic token support
+			group_overrides = {
+				-- keep floating windows transparent
+				NormalFloat = { bg = "NONE" },
+				FloatBorder = { bg = "NONE" },
+				SignColumn = { bg = "NONE" },
+				NormalNC = { bg = "NONE" },
+			},
+		},
+		config = function(_, opts)
+			require("vscode").setup(opts)
+			-- Apply manually: :colorscheme vscode
+		end,
+	},
+
 	-- ── Tokyonight: alternate theme ─────────────────────────────────────────
 	{
 		"folke/tokyonight.nvim",
-		lazy = true, -- available but not applied by default (:colorscheme tokyonight)
+		lazy = true,
 		opts = {
-			style = "storm", -- storm | night | moon | day
+			style = "storm",
 			transparent = true,
 			styles = {
 				sidebars = "transparent",
@@ -93,21 +129,19 @@ return {
 	-- ── Onedark: alternate theme ────────────────────────────────────────────
 	{
 		"navarasu/onedark.nvim",
-		lazy = true, -- available but not applied by default (:colorscheme onedark)
+		lazy = true,
 		opts = {
-			style = "darker", -- dark | darker | cool | deep | warm | warmer
+			style = "darker",
 			transparent = true,
-			-- FIX: removed styles.sidebars/floats — those are TokyoNight-only keys
-			-- onedark.nvim does not support them and they were causing silent no-ops
 		},
 	},
 
 	-- ── Monokai Pro: alternate theme ────────────────────────────────────────
 	{
 		"loctvl842/monokai-pro.nvim",
-		lazy = true, -- available but not applied by default (:colorscheme monokai-pro-octagon)
+		lazy = true,
 		opts = {
-			filter = "octagon", -- classic | octagon | pro | machine | ristretto | spectrum
+			filter = "octagon",
 			transparent_background = true,
 			terminal_colors = true,
 			devicons = true,
@@ -137,13 +171,6 @@ return {
 		},
 		config = function(_, opts)
 			require("monokai-pro").setup(opts)
-			-- Apply manually: :colorscheme monokai-pro-octagon
 		end,
 	},
-
-	-- ── transparent.nvim: REMOVED ───────────────────────────────────────────
-	-- Reason: redundant — transparency is already handled correctly via:
-	--   1. transparent_background = true in each theme
-	--   2. custom_highlights NormalFloat/FloatBorder/SignColumn in Catppuccin
-	-- Keeping transparent.nvim risks fighting with those groups and causing flicker
 }
