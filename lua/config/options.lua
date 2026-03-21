@@ -118,4 +118,7 @@ vim.opt.spell = false -- spell off by default (explicit intent)
 -- Prevent auto-comment-leader insertion on new lines
 vim.opt.formatoptions:remove({ "c", "r", "o" })
 
+-- Porjest style Options---------------------------------------------------
+vim.opt.exrc = true -- auto-load .nvim.lua from project root
+vim.opt.secure = true -- sandbox it — prevents malicious repos from running arbitrary code
 -- End of options ---------------------------------------------------------
