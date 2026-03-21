@@ -6,7 +6,9 @@
 --
 -- Active theme:   catppuccin-macchiato
 -- Alternates:     :colorscheme tokyonight
---                 :colorscheme onedark
+--                 :colorscheme onedark          (onedarkpro — accurate Atom One Dark)
+--                 :colorscheme onedark_vivid     (onedarkpro — more vibrant variant)
+--                 :colorscheme onedark_dark      (onedarkpro — darker variant)
 --                 :colorscheme monokai-pro-octagon
 --                 :colorscheme vscode
 
@@ -82,24 +84,12 @@ return {
 		"Mofiqul/vscode.nvim",
 		lazy = true,
 		opts = {
-			-- dark | light
 			style = "dark",
-
-			-- Match VSCode's transparent feel
 			transparent = true,
-
-			-- Italic comments and keywords (matches VSCode defaults)
 			italic_comments = true,
-
-			-- Disable nvim-cmp highlights if you want pure VSCode colors
 			disable_nvimtree_bg = true,
-
-			-- Override specific highlight groups if needed
 			color_overrides = {},
-
-			-- Full treesitter + LSP semantic token support
 			group_overrides = {
-				-- keep floating windows transparent
 				NormalFloat = { bg = "NONE" },
 				FloatBorder = { bg = "NONE" },
 				SignColumn = { bg = "NONE" },
@@ -108,7 +98,6 @@ return {
 		},
 		config = function(_, opts)
 			require("vscode").setup(opts)
-			-- Apply manually: :colorscheme vscode
 		end,
 	},
 
@@ -126,14 +115,63 @@ return {
 		},
 	},
 
-	-- ── Onedark: alternate theme ────────────────────────────────────────────
+	-- ── OneDark Pro: alternate theme ────────────────────────────────────────
+	-- FIX: replaced navarasu/onedark.nvim — limited plugin support, older codebase
+	-- olimorris/onedarkpro.nvim is a more accurate Atom One Dark port with:
+	--   - Full treesitter + LSP semantic token support
+	--   - Multiple variants: onedark | onedark_vivid | onedark_dark | onelight
+	--   - Proper bufferline, telescope, noice, which-key integration
+	-- Apply with: :colorscheme onedark
+	--             :colorscheme onedark_vivid
+	--             :colorscheme onedark_dark
 	{
-		"navarasu/onedark.nvim",
+		"olimorris/onedarkpro.nvim",
 		lazy = true,
 		opts = {
-			style = "darker",
-			transparent = true,
+			-- Style options per token type
+			styles = {
+				comments = "italic",
+				keywords = "bold",
+				functions = "italic",
+				variables = "NONE",
+				strings = "NONE",
+				types = "bold",
+			},
+
+			-- Keep UI transparent
+			options = {
+				transparency = true,
+				terminal_colors = true,
+				lualine_transparency = true,
+				-- highlight_inactive_windows = false,
+			},
+
+			-- Plugin integrations
+			plugins = {
+				all = false, -- only enable what we actually use
+				treesitter = true,
+				telescope = true,
+				which_key = true,
+				gitsigns = true,
+				nvim_lsp = true,
+				nvim_cmp = true,
+				nvim_notify = true,
+				trouble = true,
+				["bufferline.nvim"] = true,
+				["nvim-dap-ui"] = true,
+			},
+
+			-- Transparent float windows
+			highlights = {
+				NormalFloat = { bg = "NONE" },
+				FloatBorder = { bg = "NONE" },
+				SignColumn = { bg = "NONE" },
+				NormalNC = { bg = "NONE" },
+			},
 		},
+		config = function(_, opts)
+			require("onedarkpro").setup(opts)
+		end,
 	},
 
 	-- ── Monokai Pro: alternate theme ────────────────────────────────────────
