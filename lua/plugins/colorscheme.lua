@@ -174,6 +174,28 @@ return {
 		end,
 	},
 
+	-- ── Oxocarbon: alternate theme ──────────────────────────────────────────
+	-- Inspired by IBM Carbon design — cool blue/cyan tones closest to React's
+	-- brand palette (#61DAFB). Dark background with cyan accents.
+	-- Apply with: :colorscheme oxocarbon
+	{
+		"nyoom-engineering/oxocarbon.nvim",
+		lazy = true,
+		config = function()
+			-- keep floats transparent
+			vim.api.nvim_create_autocmd("ColorScheme", {
+				pattern = "oxocarbon",
+				callback = function()
+					local set = vim.api.nvim_set_hl
+					pcall(set, 0, "NormalFloat", { bg = "NONE" })
+					pcall(set, 0, "FloatBorder", { bg = "NONE" })
+					pcall(set, 0, "SignColumn", { bg = "NONE" })
+					pcall(set, 0, "NormalNC", { bg = "NONE" })
+				end,
+			})
+		end,
+	},
+
 	-- ── Monokai Pro: alternate theme ────────────────────────────────────────
 	{
 		"loctvl842/monokai-pro.nvim",
