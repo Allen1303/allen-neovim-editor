@@ -121,4 +121,17 @@ vim.opt.formatoptions:remove({ "c", "r", "o" })
 -- Porjest style Options---------------------------------------------------
 vim.opt.exrc = true -- auto-load .nvim.lua from project root
 vim.opt.secure = true -- sandbox it — prevents malicious repos from running arbitrary code
+-- matching Rainbow Brackets-----------------------------------------------
+vim.wo.foldmethod = "expr" -- likely already set
+
+-- Rainbow bracket pairs (built-in treesitter feature)
+vim.cmd([[
+  hi RainbowDelimiterRed    guifg=#E06C75
+  hi RainbowDelimiterYellow guifg=#E5C07B
+  hi RainbowDelimiterBlue   guifg=#61AFEF
+  hi RainbowDelimiterOrange guifg=#D19A66
+  hi RainbowDelimiterGreen  guifg=#98C379
+  hi RainbowDelimiterViolet guifg=#C678DD
+  hi RainbowDelimiterCyan   guifg=#56B6C2
+]])
 -- End of options ---------------------------------------------------------

@@ -316,7 +316,6 @@ return {
 					a = ai.gen_spec.argument({
 						brackets = { "(", "[", "{" },
 						separator = ",",
-						exclude_regions = { '"', "'", "`", "(", "[", "{" },
 					}),
 
 					f = ai.gen_spec.function_call(),

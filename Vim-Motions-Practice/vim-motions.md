@@ -834,7 +834,7 @@ local call = doSomething(firstArg, secondArg, thirdArg)
 2. Type `g]b` — cursor jumps to the **closing** `}` of the nearest enclosing object
 3. Type `g[b` — cursor jumps to the **opening** `{` of the nearest enclosing object
 4. Type `g]b` from the outer scope — jumps to the `}` of the outer `inner` table
-5. Combine: type `dg]` — deletes from cursor to the next closing `}`
+5. Combine: type `dg]b` — deletes from cursor to the next closing `}`
 
 ```lua
 local nested = {
@@ -958,7 +958,7 @@ local wrapped = outerFn(innerFn(arg))
 **Expected:** `local conn = 'mongodb://localhost:27017'`
 
 ```lua
-local conn = "mongodb://localhost:27017"
+local conn = "smongodb://localhost:27017s"
 ```
 
 ---
@@ -1017,7 +1017,7 @@ local longLine = this entire line should be wrapped as a string
 5. Now type `u` three times — watch each state come back in reverse
 
 ```lua
-local chained = result
+local chained = 'result'
 ```
 
 ---
