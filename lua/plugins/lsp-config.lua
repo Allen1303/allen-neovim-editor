@@ -48,6 +48,7 @@ return {
 				"bashls",
 				"marksman",
 				"emmet_language_server", -- VSCode-style Emmet for all web filetypes
+				"tailwindcss",
 			},
 			automatic_enable = true,
 		},
@@ -216,6 +217,18 @@ return {
 					"typescriptreact",
 					"svelte",
 					"vue",
+				},
+			})
+			-- Tailwind CSS
+			vim.lsp.config("tailwindcss", {
+				capabilities = capabilities,
+				filetypes = {
+					"html",
+					"css",
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact",
 				},
 			})
 		end,

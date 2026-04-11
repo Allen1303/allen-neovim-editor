@@ -17,7 +17,6 @@ end
 map({ "n", "v" }, "<Space>", "<Nop>", "No-op for space in normal/visual modes")
 
 -- Better visual block ergonomics ----------------------------------------
-map("n", "<leader>v", "<C-v>", "Visual block mode")
 
 -- ╭──────────────────────────────╮
 -- │ 1) Quality-of-life basics    │
