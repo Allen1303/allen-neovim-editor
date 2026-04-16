@@ -69,7 +69,7 @@
     "description": "React useEffect on mount only"
   },
   "useRef Hook": {
-    "prefix": "urf",
+    "prefix": "uref",
     "body": ["const ${1:ref} = useRef(${2:null});"],
     "description": "React useRef hook"
   },
@@ -92,7 +92,7 @@
     "description": "React useMemo hook"
   },
   "useContext Hook": {
-    "prefix": "uctx",
+    "prefix": "ucon",
     "body": ["const ${1:context} = useContext(${2:Context});"],
     "description": "React useContext hook"
   },
@@ -143,5 +143,24 @@
       "))}"
     ],
     "description": "React array map render"
+  },
+  "React createContext + Provider": {
+    "prefix": "cctx",
+    "body": [
+      "import { createContext, useState } from 'react';",
+      "",
+      "export const ${1:Name}Context = createContext(${2:'defaultValue'});",
+      "",
+      "export function ${1:Name}Provider({ children }) {",
+      "  const [${3:state}, set${3/(.*)/${1:/capitalize}/}] = useState(${4:null});",
+      "",
+      "  return (",
+      "    <${1:Name}Context.Provider value={{ ${3:state}, set${3/(.*)/${1:/capitalize}/} }}>",
+      "      {children}",
+      "    </${1:Name}Context.Provider>",
+      "  );",
+      "}"
+    ],
+    "description": "React createContext with Provider wrapper component"
   }
 }
