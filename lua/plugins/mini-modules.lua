@@ -4,7 +4,6 @@
 
 return {
   -- ── Icons ──────────────────────────────────────────────────────────────
-  -- Early load required — other plugins depend on it for file icons
   {
     "nvim-mini/mini.icons",
     version = "*",
@@ -16,7 +15,6 @@ return {
   },
 
   -- ── File explorer ───────────────────────────────────────────────────────
-  -- Transparent UI fix is necessary — mini.files doesn't handle this natively
   {
     "nvim-mini/mini.files",
     version = "*",
@@ -73,7 +71,8 @@ return {
   },
 
   -- ── Surround ────────────────────────────────────────────────────────────
-  -- Custom surroundings: t (HTML tag), $ (template), l (console.log), c (block comment)
+  -- FIX: t input pattern — removed %1 backreference (Lua patterns don't support it)
+  -- %1 was causing "unfinished capture" crash in mini.ai whenever any text object was used
   {
     "nvim-mini/mini.surround",
     version = "*",
@@ -94,8 +93,10 @@ return {
       highlight_duration  = 500,
       search_method       = "cover_or_next",
       custom_surroundings = {
+        -- FIX: was "<(%a[%a%d]*)%f[%s>].-</%1>" — %1 backreference not valid in Lua
+        -- New pattern matches open/close tags without backreference
         t     = {
-          input  = { "<(%a[%a%d]*)%f[%s>].-</%1>", "^<.->().-()</.->$" },
+          input  = { "<(%a[%a%d%-]*)%f[%s/>][^>]*>.-</%a[%a%d%-]*>", "^<.->().-()</.->$" },
           output = function()
             local tag = vim.fn.input("Tag: ")
             if tag == "" then return nil end
@@ -110,9 +111,6 @@ return {
   },
 
   -- ── Text objects ────────────────────────────────────────────────────────
-  -- e: entire buffer | a: argument | f: function call
-  -- F: function definition | c: class (both treesitter with pcall guard)
-  -- t: HTML/JSX tag — uses mini.ai's native built-in (no custom override)
   {
     "nvim-mini/mini.ai",
     version = "*",
@@ -133,18 +131,24 @@ return {
           goto_right = "g]",
         },
         custom_textobjects = {
+          -- e: entire buffer
           e = function()
             return {
               from = { line = 1, col = 1 },
               to   = { line = vim.fn.line("$"), col = math.max(vim.fn.getline("$"):len(), 1) },
             }
           end,
-          a = ai.gen_spec.argument({ brackets = { "(", "[", "{" }, separator = "," }),
+          -- a: function argument — using mini.ai defaults (no custom brackets/separator)
+          -- FIX: custom brackets config was generating invalid internal pattern causing crash
+          a = ai.gen_spec.argument(),
+          -- f: function call
           f = ai.gen_spec.function_call(),
+          -- F: function definition (treesitter)
           F = function(ai_type)
             local ok, result = pcall(ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }), ai_type)
             return ok and result or nil
           end,
+          -- c: class definition (treesitter)
           c = function(ai_type)
             local ok, result = pcall(ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }), ai_type)
             return ok and result or nil
@@ -185,7 +189,6 @@ return {
   },
 
   -- ── Indent guides ───────────────────────────────────────────────────────
-  -- Transparent fix necessary — mini.indentscope doesn't handle this natively
   {
     "nvim-mini/mini.indentscope",
     version = "*",
@@ -212,18 +215,13 @@ return {
   },
 
   -- ── Color highlighter ───────────────────────────────────────────────────
-  -- hex only — rgb/hsl removed (too verbose, hex covers 95% of use cases)
   {
     "nvim-mini/mini.hipatterns",
     version = "*",
     event   = { "BufReadPre", "BufNewFile" },
     config  = function()
       local hp = require("mini.hipatterns")
-      hp.setup({
-        highlighters = {
-          hex_color = hp.gen_highlighter.hex_color(),
-        },
-      })
+      hp.setup({ highlighters = { hex_color = hp.gen_highlighter.hex_color() } })
     end,
   },
 }
