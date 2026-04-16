@@ -4,134 +4,108 @@
 
 -- Core UX ---------------------------------------------------------------
 
-vim.opt.number = true -- this option turns on absolute line numbers (helps with navigation)
-vim.opt.relativenumber = true -- this option shows relative numbers (quicker jump counts with motions)
-vim.opt.cursorline = true -- this option highlights the current line (helps track the caret)
-vim.opt.signcolumn = "yes" -- this option keeps the sign column visible to avoid text jitter
-vim.opt.colorcolumn = "80" -- this option disables a fixed ruler column (we’ll use formatters/linters instead)
-vim.opt.wrap = false -- this option disables soft wrapping (keeps long lines on one row)
-vim.opt.scrolloff = 10 -- this option keeps N lines above/below the cursor while scrolling
-vim.opt.sidescrolloff = 10 -- this option keeps N columns when horizontally scrolling
-vim.opt.termguicolors = true -- this option enables truecolor support in the terminal UI
-vim.opt.splitright = true -- this option opens vertical splits to the right (feels natural for code)
-vim.opt.splitbelow = true -- this option opens horizontal splits below (keeps flow top→bottom)
-vim.opt.laststatus = 3 -- this option uses a global statusline (cleaner layout for multiple windows)
-vim.opt.winminwidth = 5 -- this option prevents windows from shrinking too small
-vim.opt.pumheight = 12 -- this option limits popup menu height (keeps UI tidy)
-vim.opt.showmode = false -- this option hides the mode banner since statusline will show mode
-vim.opt.conceallevel = 2 -- this option hides most markup/formatting chars where supported
-vim.opt.virtualedit = "block" -- this option lets the cursor move past end-of-line/into empty space in Visual Block mode
+vim.opt.number         = true    -- absolute line numbers
+vim.opt.relativenumber = true    -- relative numbers for quick jump counts
+vim.opt.cursorline     = true    -- highlight current line
+vim.opt.signcolumn     = "yes"   -- keep sign column visible (no jitter)
+vim.opt.colorcolumn    = "80"    -- ruler at 80 chars
+vim.opt.wrap           = false   -- no soft wrapping
+vim.opt.scrolloff      = 10      -- keep N lines above/below cursor
+vim.opt.sidescrolloff  = 10      -- keep N columns when scrolling horizontally
+vim.opt.termguicolors  = true    -- truecolor support
+vim.opt.splitright     = true    -- vertical splits open to the right
+vim.opt.splitbelow     = true    -- horizontal splits open below
+vim.opt.laststatus     = 3       -- global statusline
+vim.opt.winminwidth    = 5       -- minimum window width
+vim.opt.pumheight      = 12      -- popup menu max height
+vim.opt.showmode       = false   -- hidden — statusline shows mode
+vim.opt.conceallevel   = 2       -- hide markup chars where supported
+vim.opt.virtualedit    = "block" -- cursor past end-of-line in Visual Block
 
 -- Editing behavior ------------------------------------------------------
 
-vim.opt.expandtab = true -- this option converts tabs to spaces (standard for most codebases)
-vim.opt.shiftwidth = 2 -- this option sets indentation width when shifting (>> and <<)
-vim.opt.tabstop = 2 -- this option renders a tab character as N spaces
-vim.opt.softtabstop = 2 -- this option makes <BS>/<Tab> feel natural with spaces
-vim.opt.smartindent = true -- this option adds simple smart indentation on new lines
-vim.opt.breakindent = true -- this option visually indents wrapped lines (if wrapping is ever enabled)
+vim.opt.expandtab      = true -- tabs → spaces
+vim.opt.shiftwidth     = 2   -- indent width
+vim.opt.tabstop        = 2   -- tab display width
+vim.opt.softtabstop    = 2   -- <BS>/<Tab> feel natural
+vim.opt.smartindent    = true -- smart indent on new lines
+vim.opt.breakindent    = true -- visually indent wrapped lines
 
-vim.opt.undofile = true -- this option enables persistent undo across sessions
-vim.opt.swapfile = false -- this option disables swap files (leaner; we rely on undo/history)
-vim.opt.backup = false -- this option disables backup files (avoid clutter)
-vim.opt.writebackup = false -- this option avoids making a backup before overwriting a file
+vim.opt.undofile       = true -- persistent undo across sessions
+vim.opt.swapfile       = false -- no swap files
+vim.opt.backup         = false -- no backup files
+vim.opt.writebackup    = false -- no pre-write backup
 
 -- Completion & UI latency -----------------------------------------------
 
-vim.opt.updatetime = 200 -- this option lowers CursorHold/diagnostic delay (snappier LSP UI)
-vim.opt.timeoutlen = 400 -- this option controls mapped key timeout (balance speed vs which-key)
-vim.opt.completeopt = { "menu", "menuone", "noselect" } -- this option guides completion plugins for good UX
-vim.opt.shortmess:append("c") -- this option reduces completion messages (cleaner cmdline)
+vim.opt.updatetime     = 200                             -- snappier LSP UI
+vim.opt.timeoutlen     = 400                             -- mapped key timeout
+vim.opt.completeopt    = { "menu", "menuone", "noselect" } -- completion UX
+vim.opt.shortmess:append("c")                            -- reduce completion messages
 
 -- Search ----------------------------------------------------------------
 
-vim.opt.ignorecase = true -- this option makes search case-insensitive by default
-vim.opt.smartcase = true -- this option re-enables case-sensitivity if pattern has capitals
-vim.opt.incsearch = true -- this option shows incremental matches while typing a search
-vim.opt.hlsearch = true -- this option keeps matches highlighted after a search (toggle with :nohl)
+vim.opt.ignorecase   = true -- case-insensitive search by default
+vim.opt.smartcase    = true -- case-sensitive if pattern has capitals
+vim.opt.incsearch    = true -- incremental matches while typing
+vim.opt.hlsearch     = true -- keep matches highlighted after search
 
 -- Files, encoding, clipboard -------------------------------------------
 
-vim.opt.fileencoding = "utf-8" -- this option ensures UTF-8 file encoding (sane default)
-vim.opt.spelllang = { "en" } -- this option sets the default spelling language (we’ll keep it simple)
-vim.opt.clipboard = "unnamedplus" -- this option uses the system clipboard for all yank/paste operations
-vim.opt.mouse = "a" -- this option enables mouse support in all modes (handy in terminals)
+vim.opt.fileencoding = "utf-8"
+vim.opt.spelllang    = { "en" }
+vim.opt.clipboard    = "unnamedplus" -- system clipboard for all yank/paste
+vim.opt.mouse        = "a"           -- mouse support in all modes
 
--- Diagnostics & folds (baseline; Treesitter/LSP will refine) ------------
+-- Diagnostics -----------------------------------------------------------
 
 vim.diagnostic.config({
-	underline = true, -- this setting underlines problematic text for quick visual hints
-	virtual_text = { spacing = 2, prefix = "●" }, -- this setting shows inline virtual text markers for diagnostics
-	signs = true, -- this setting mirrors diagnostics to the sign column
-	update_in_insert = false, -- this setting avoids noisy diagnostics while typing
-	severity_sort = true, -- this setting sorts diagnostics by severity (top issues first)
+  underline        = true,
+  virtual_text     = { spacing = 2, prefix = "●" },
+  signs            = true,
+  update_in_insert = false,
+  severity_sort    = true,
 })
 
-vim.opt.foldenable = false -- this option disables folding by default (we’ll enable per-file when needed)
-vim.opt.foldlevel = 99 -- this option keeps folds open (so Treesitter folds don’t auto-close everything)
-vim.opt.foldlevelstart = 99 -- this option starts new buffers with folds open
+-- Folds — disabled by default, treesitter enables per-buffer ------------
 
--- Grep integration (use ripgrep if available) ---------------------------
+vim.opt.foldenable     = false
+vim.opt.foldlevel      = 99
+vim.opt.foldlevelstart = 99
+
+-- Grep — use ripgrep if available ---------------------------------------
 
 if vim.fn.executable("rg") == 1 then
-	vim.opt.grepprg = "rg --vimgrep --hidden --smart-case" -- this option makes :grep use ripgrep (fast project search)
-	vim.opt.grepformat = "%f:%l:%c:%m" -- this option formats ripgrep results for quickfix parsing
+  vim.opt.grepprg    = "rg --vimgrep --hidden --smart-case"
+  vim.opt.grepformat = "%f:%l:%c:%m"
 end
 
--- Session behavior -------------------------------------------------------
+-- Session ---------------------------------------------------------------
 
-vim.opt.sessionoptions = { -- this option controls what is saved when making/restoring sessions
-	"buffers",
-	"curdir",
-	"tabpages",
-	"winsize",
-	"help",
-	"globals",
-	"skiprtp",
-}
+vim.opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp" }
 
--- Minor niceties ---------------------------------------------------------
+-- Invisible chars (hidden by default) -----------------------------------
 
-vim.opt.list = false -- this option hides invisible chars by default (toggle with :set list!)
-vim.opt.listchars = { -- this option defines how invisible chars look when list=true
-	tab = "» ",
-	trail = "·",
-	extends = "›",
-	precedes = "‹",
-	nbsp = "␣",
-}
-vim.opt.joinspaces = false -- this option avoids adding double spaces after punctuation when joining
-vim.opt.whichwrap:append("<,>,[,],h,l") -- this option allows arrow keys to wrap across lines at boundaries
+vim.opt.list           = false
+vim.opt.listchars      = { tab = "» ", trail = "·", extends = "›", precedes = "‹", nbsp = "␣" }
 
--- Neovim 0.10+ niceties (guarded) ---------------------------------------
+-- Misc ------------------------------------------------------------------
+
+vim.opt.joinspaces     = false
+vim.opt.whichwrap:append("<,>,[,],h,l")
+vim.opt.confirm    = true                       -- ask instead of erroring on unsaved changes
+vim.opt.inccommand = "nosplit"                  -- live preview for :substitute
+vim.opt.spell      = false
+vim.opt.formatoptions:remove({ "c", "r", "o" }) -- no auto comment leaders
+
+-- Neovim 0.10+ niceties ------------------------------------------------
 
 if vim.fn.has("nvim-0.10") == 1 then
-	vim.opt.smoothscroll = true -- this option enables smoother scrolling for long lines
-	pcall(function()
-		vim.opt.splitkeep = "screen"
-	end) -- this option reduces scroll jump when splitting windows
+  vim.opt.smoothscroll = true
+  pcall(function() vim.opt.splitkeep = "screen" end)
 end
 
-vim.opt.confirm = true -- ask instead of erroring on unsaved changes
-vim.opt.inccommand = "nosplit" -- live preview for :substitute
-vim.opt.spell = false -- spell off by default (explicit intent)
--- Prevent auto-comment-leader insertion on new lines
-vim.opt.formatoptions:remove({ "c", "r", "o" })
+-- Per-project config ----------------------------------------------------
 
--- Porjest style Options---------------------------------------------------
-vim.opt.exrc = true -- auto-load .nvim.lua from project root
-vim.opt.secure = true -- sandbox it — prevents malicious repos from running arbitrary code
--- matching Rainbow Brackets-----------------------------------------------
-vim.wo.foldmethod = "expr" -- likely already set
-
--- Rainbow bracket pairs (built-in treesitter feature)
-vim.cmd([[
-  hi RainbowDelimiterRed    guifg=#E06C75
-  hi RainbowDelimiterYellow guifg=#E5C07B
-  hi RainbowDelimiterBlue   guifg=#61AFEF
-  hi RainbowDelimiterOrange guifg=#D19A66
-  hi RainbowDelimiterGreen  guifg=#98C379
-  hi RainbowDelimiterViolet guifg=#C678DD
-  hi RainbowDelimiterCyan   guifg=#56B6C2
-]])
--- End of options ---------------------------------------------------------
+vim.opt.exrc   = true -- auto-load .nvim.lua from project root
+vim.opt.secure = true -- sandbox it against malicious repos

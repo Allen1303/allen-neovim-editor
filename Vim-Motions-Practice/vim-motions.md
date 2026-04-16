@@ -1134,7 +1134,7 @@ local _ = require("nvim-treesitter")
 **Expected:** `processItem(userId, userId, callback)`
 
 ```lua
-local r = processItem(userId, callback)
+local duplicate = processItem(userId, callback)
 ```
 
 ---
