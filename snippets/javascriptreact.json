@@ -15,19 +15,17 @@
     "description": "React arrow function component with export"
   },
   "React Function Component": {
-    "prefix": "rfc",
+    "prefix": "rfcd",
     "body": [
-      "function ${1:${TM_FILENAME_BASE}}() {",
+      "export default function ${1:${TM_FILENAME_BASE}}() {",
       "  return (",
       "    <div className=\"${2:container}\">",
       "      $0",
       "    </div>",
       "  );",
-      "}",
-      "",
-      "export default ${1:${TM_FILENAME_BASE}};"
+      "}"
     ],
-    "description": "React function component with export"
+    "description": "React function component with inline export default"
   },
   "React Arrow Function Component with Props": {
     "prefix": "rafcp",
@@ -147,20 +145,21 @@
   "React createContext + Provider": {
     "prefix": "cctx",
     "body": [
-      "import { createContext, useState } from 'react';",
+      "import { createContext, useState } from 'react'; // import createContext to create the context and useState to manage its value",
       "",
-      "export const ${1:Name}Context = createContext(${2:'defaultValue'});",
+      "export const ${1:Name}Context = createContext(${2:'defaultValue'}); // create the context with a default value — consumed by useContext(${1:Name}Context)",
       "",
-      "export function ${1:Name}Provider({ children }) {",
-      "  const [${3:state}, set${3/(.*)/${1:/capitalize}/}] = useState(${4:null});",
+      "export function ${1:Name}Provider({ children }) { // Provider component — wraps any part of the tree that needs access to this context",
+      "  const [${3:state}, set${3/(.*)/${1:/capitalize}/}] = useState(${4:null}); // the shared state that will be passed down through the context",
       "",
       "  return (",
+      "    // pass state and setter into the context value so consumers can read and update it",
       "    <${1:Name}Context.Provider value={{ ${3:state}, set${3/(.*)/${1:/capitalize}/} }}>",
-      "      {children}",
+      "      {children} {/* render any child components wrapped by this Provider */}",
       "    </${1:Name}Context.Provider>",
       "  );",
       "}"
     ],
-    "description": "React createContext with Provider wrapper component"
+    "description": "React createContext with Provider wrapper component and inline comments"
   }
 }

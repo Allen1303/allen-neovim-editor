@@ -1,0 +1,28 @@
+{
+  "name": "allen-snippets",
+  "version": "1.0.0",
+  "contributes": {
+    "snippets": [
+      {
+        "language": "javascript",
+        "path": "./javascript.json"
+      },
+      {
+        "language": "javascriptreact",
+        "path": "./javascriptreact.json"
+      },
+      {
+        "language": "typescript",
+        "path": "./typescriptreact.json"
+      },
+      {
+        "language": "typescriptreact",
+        "path": "./typescriptreact.json"
+      },
+      {
+        "language": "css",
+        "path": "./css.json"
+      }
+    ]
+  }
+}
