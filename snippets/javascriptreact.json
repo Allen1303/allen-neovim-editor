@@ -142,6 +142,28 @@
     ],
     "description": "React array map render"
   },
+  "useEffect + Fetch": {
+    "prefix": "ufetch",
+    "body": [
+      "useEffect(() => {",
+      "  const ${1:fetchData} = async () => { // async function defined inside effect to allow await",
+      "    try {",
+      "      set${2:IsLoading}(true); // show loading state before request starts",
+      "      const response = await fetch('${3:https://api.example.com/endpoint}'); // make the API request",
+      "      if (!response.ok) throw new Error('${4:Failed to fetch}'); // throw if server returned an error status",
+      "      const data = await response.json(); // parse the JSON response body",
+      "      set${5:Data}(data); // store the result in state",
+      "    } catch (error) {",
+      "      set${6:Error}(error.message || '${4:Failed to fetch}'); // capture and store the error message",
+      "    } finally {",
+      "      set${2:IsLoading}(false); // always hide loading state whether request succeeded or failed",
+      "    }",
+      "  };",
+      "  ${1:fetchData}(); // immediately invoke the async function",
+      "}, []); // empty array — runs once on mount"
+    ],
+    "description": "useEffect with async fetch, loading state, error handling and comments"
+  },
   "React createContext + Provider": {
     "prefix": "cctx",
     "body": [
