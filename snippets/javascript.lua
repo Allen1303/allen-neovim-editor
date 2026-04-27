@@ -9,18 +9,18 @@
 --   vim.keymap.set({"i","s"}, "<C-l>",   function() require("luasnip").change_choice(1)  end)  -- next choice
 --   vim.keymap.set({"i","s"}, "<C-h>",   function() require("luasnip").change_choice(-1) end)  -- prev choice
 --
--- Usage: type the category prefix then <Tab> to expand.
+-- Usage: type C then the category name + <Tab>. C prefix = Components.
 --        Use <C-l> / <C-h> to cycle through components in that category.
 --
 -- Prefixes:
---   forms        →  Login Form, Registration Form, Contact Form, Input States
---   navigation   →  Navbar, Sidebar Nav
---   cards        →  Profile Card, Pricing Card
---   elements     →  Buttons
---   overlays     →  Modal
---   feedback     →  Toast
---   data         →  Table
---   layout       →  Hero Section, Feature Section, Dashboard Layout, Section Divider, Footer, Layout Patterns
+--   Cforms       →  Login Form, Registration Form, Contact Form, Input States
+--   Cnavbar      →  Navbar, Sidebar Nav
+--   Ccards       →  Profile Card, Pricing Card
+--   Cbuttons     →  Buttons
+--   Cmodal       →  Modal
+--   Ctoast       →  Toast
+--   Ctable       →  Table
+--   Clayout      →  Hero Section, Feature Section, Dashboard Layout, Section Divider, Footer, Layout Patterns
 
 local ls = require("luasnip")
 local s = ls.snippet
@@ -31,7 +31,7 @@ local sn = ls.snippet_node
 return {
 
 	-- ── FORMS ───────────────────────────────────
-	s("forms", {
+	s("Cforms", {
 		c(1, {
 			-- Login Form
 			sn(
@@ -409,7 +409,7 @@ export default function InputStatesReference() {
 	}),
 
 	-- ── NAVIGATION ──────────────────────────────
-	s("navigation", {
+	s("Cnavbar", {
 		c(1, {
 			-- Navbar
 			sn(
@@ -572,7 +572,7 @@ export default function SidebarNav() {
 	}),
 
 	-- ── CARDS ───────────────────────────────────
-	s("cards", {
+	s("Ccards", {
 		c(1, {
 			-- Profile Card
 			sn(
@@ -739,7 +739,7 @@ export default function PricingSection() {
 
 	-- ── ELEMENTS ────────────────────────────────
 	-- Buttons
-	s("elements", {
+	s("Cbuttons", {
 		t([=[
 // Button reference — every variant with designer intent notes
 
@@ -840,7 +840,7 @@ export default function ButtonReference() {
 
 	-- ── OVERLAYS ────────────────────────────────
 	-- Modal
-	s("overlays", {
+	s("Cmodal", {
 		t([=[
 // Modal — structural outline (shown open)
 
@@ -908,7 +908,7 @@ export default function Modal() {
 
 	-- ── FEEDBACK ────────────────────────────────
 	-- Toast
-	s("feedback", {
+	s("Ctoast", {
 		t([=[
 // Toast variants — all four types with designer notes
 
@@ -953,7 +953,7 @@ export default function ToastReference() {
 
 	-- ── DATA ────────────────────────────────────
 	-- Table
-	s("data", {
+	s("Ctable", {
 		t([=[
 // DataTable — structural outline
 // Replace TABLE_DATA with your API response. Same shape, just map over it.
@@ -1043,7 +1043,7 @@ export default function DataTable() {
 	}),
 
 	-- ── LAYOUT ──────────────────────────────────
-	s("layout", {
+	s("Clayout", {
 		c(1, {
 			-- Hero Section
 			sn(
