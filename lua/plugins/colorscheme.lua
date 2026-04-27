@@ -11,6 +11,8 @@
 --                 :colorscheme onedark_dark      (onedarkpro — darker variant)
 --                 :colorscheme monokai-pro-octagon
 --                 :colorscheme vscode
+--                 :colorscheme one_monokai       (VSCode One Monokai port)
+--                 :colorscheme oxocarbon
 
 return {
 	-- ── Catppuccin: primary theme ───────────────────────────────────────────
@@ -77,8 +79,24 @@ return {
 		end,
 	},
 
+	-- ── One Monokai: alternate theme ────────────────────────────────────────
+	-- Direct Lua port of the VSCode One Monokai theme
+	-- Also includes a lualine theme — set via lualine opts: theme = "one_monokai"
+	-- Apply with: :colorscheme one_monokai
+	{
+		"cpea2506/one_monokai.nvim",
+		lazy = true,
+		opts = {
+			transparent = true,
+			italics = true,
+			colors = {},
+			highlights = function()
+				return {}
+			end,
+		},
+	},
+
 	-- ── VSCode: alternate theme ─────────────────────────────────────────────
-	-- Accurate port of VSCode's default Dark+ theme
 	-- Apply with: :colorscheme vscode
 	{
 		"Mofiqul/vscode.nvim",
@@ -116,19 +134,11 @@ return {
 	},
 
 	-- ── OneDark Pro: alternate theme ────────────────────────────────────────
-	-- FIX: replaced navarasu/onedark.nvim — limited plugin support, older codebase
-	-- olimorris/onedarkpro.nvim is a more accurate Atom One Dark port with:
-	--   - Full treesitter + LSP semantic token support
-	--   - Multiple variants: onedark | onedark_vivid | onedark_dark | onelight
-	--   - Proper bufferline, telescope, noice, which-key integration
-	-- Apply with: :colorscheme onedark
-	--             :colorscheme onedark_vivid
-	--             :colorscheme onedark_dark
+	-- Apply with: :colorscheme onedark | onedark_vivid | onedark_dark
 	{
 		"olimorris/onedarkpro.nvim",
 		lazy = true,
 		opts = {
-			-- Style options per token type
 			styles = {
 				comments = "italic",
 				keywords = "bold",
@@ -137,18 +147,13 @@ return {
 				strings = "NONE",
 				types = "bold",
 			},
-
-			-- Keep UI transparent
 			options = {
 				transparency = true,
 				terminal_colors = true,
 				lualine_transparency = true,
-				-- highlight_inactive_windows = false,
 			},
-
-			-- Plugin integrations
 			plugins = {
-				all = false, -- only enable what we actually use
+				all = false,
 				treesitter = true,
 				telescope = true,
 				which_key = true,
@@ -160,8 +165,6 @@ return {
 				["bufferline.nvim"] = true,
 				["nvim-dap-ui"] = true,
 			},
-
-			-- Transparent float windows
 			highlights = {
 				NormalFloat = { bg = "NONE" },
 				FloatBorder = { bg = "NONE" },
@@ -175,14 +178,12 @@ return {
 	},
 
 	-- ── Oxocarbon: alternate theme ──────────────────────────────────────────
-	-- Inspired by IBM Carbon design — cool blue/cyan tones closest to React's
-	-- brand palette (#61DAFB). Dark background with cyan accents.
+	-- IBM Carbon inspired — cool blue/cyan tones
 	-- Apply with: :colorscheme oxocarbon
 	{
 		"nyoom-engineering/oxocarbon.nvim",
 		lazy = true,
 		config = function()
-			-- keep floats transparent
 			vim.api.nvim_create_autocmd("ColorScheme", {
 				pattern = "oxocarbon",
 				callback = function()
@@ -197,6 +198,7 @@ return {
 	},
 
 	-- ── Monokai Pro: alternate theme ────────────────────────────────────────
+	-- Apply with: :colorscheme monokai-pro-octagon (or other filters)
 	{
 		"loctvl842/monokai-pro.nvim",
 		lazy = true,

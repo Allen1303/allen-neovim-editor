@@ -12,7 +12,6 @@ end
 require("config.options")
 require("config.autocmds")
 pcall(require, "config.keymaps")
-
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 local uv = vim.uv or vim.loop
@@ -52,3 +51,4 @@ require("lazy").setup({
 require("config.floating_terminal")
 require("config.dashboard").setup()
 require("config.live-server").setup()
+require("config.snippets-setup")
