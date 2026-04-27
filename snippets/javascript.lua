@@ -1,1829 +1,1804 @@
 -- Tailwind UI — category snippets for Neovim + LuaSnip
--- File: ~/.config/nvim/snippets/components.lua
+-- File: ~/.config/nvim/snippets/javascriptreact.lua
 --
--- Setup (add to your init.lua / plugins config):
---   require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets/" })
---
--- Keymaps (add if not already set):
---   vim.keymap.set({"i","s"}, "<Tab>",   function() require("luasnip").expand_or_jump() end)
---   vim.keymap.set({"i","s"}, "<C-l>",   function() require("luasnip").change_choice(1)  end)  -- next choice
---   vim.keymap.set({"i","s"}, "<C-h>",   function() require("luasnip").change_choice(-1) end)  -- prev choice
---
--- Usage: type C then the category name + <Tab>. C prefix = Components.
---        Use <C-l> / <C-h> to cycle through components in that category.
+-- Usage: type the prefix then <Tab> to expand.
+--        Use <Tab> again to cycle forward through choices.
+--        Use <S-Tab> to cycle backward.
 --
 -- Prefixes:
---   Cforms       →  Login Form, Registration Form, Contact Form, Input States
---   Cnavbar      →  Navbar, Sidebar Nav
---   Ccards       →  Profile Card, Pricing Card
---   Cbuttons     →  Buttons
---   Cmodal       →  Modal
---   Ctoast       →  Toast
---   Ctable       →  Table
---   Clayout      →  Hero Section, Feature Section, Dashboard Layout, Section Divider, Footer, Layout Patterns
+--   Cforms         →  Login Form, Registration Form, Contact Form, Input States
+--   Cnavbar        →  Navbar, Sidebar Nav
+--   Ccards         →  Profile Card, Pricing Card
+--   Cbuttons       →  Buttons
+--   Cmodal         →  Modal
+--   Ctoast         →  Toast
+--   Ctable         →  Table
+--   Clayout        →  Hero Section, Feature Section, Dashboard Layout, Section Divider, Footer, Layout Patterns
 
 local ls = require("luasnip")
 local s = ls.snippet
 local c = ls.choice_node
 local t = ls.text_node
 local sn = ls.snippet_node
+local isn = ls.indent_snippet_node
 
 return {
 
-	-- ── FORMS ───────────────────────────────────
+	-- ── Cforms ── Login Form, Registration Form, Contact Form, Input States
 	s("Cforms", {
 		c(1, {
 			-- Login Form
 			sn(
 				nil,
 				{
-					t([=[
-// LoginForm — structural outline
-
-export default function LoginForm() {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <section className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl p-10 shadow-sm">
-
-        <header className="mb-6">
-          {/* Logo: top of the card, small — 32–40px. Reinforces brand before the user does anything */}
-          <div className="w-9 h-9 bg-gray-900 rounded-lg flex items-center justify-center mb-4">
-            <span className="text-indigo-300 text-sm font-bold">A</span>
-          </div>
-          {/* Heading: one clear action-oriented line. "Welcome back" outperforms "Login" in conversion */}
-          <h1 className="text-xl font-semibold text-gray-900 tracking-tight mb-1">Welcome back</h1>
-          {/* Sign-up link: secondary, below the heading — don't compete with the primary form action */}
-          <p className="text-sm text-gray-500">
-            No account?{" "}
-            <a href="/signup" className="text-indigo-600 font-medium hover:underline">Sign up free</a>
-          </p>
-        </header>
-
-        <form method="POST" action="/login" noValidate>
-          <fieldset className="mb-5 border-none p-0">
-            <legend className="sr-only">Account credentials</legend>
-
-            <div className="mb-4">
-              {/* Label: ALL CAPS small text above the field — creates visual hierarchy without size change */}
-              <label htmlFor="email" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-                Email
-              </label>
-              <input id="email" name="email" type="email" autoComplete="email" required
-                placeholder="you@example.com"
-                className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />
-            </div>
-
-            <div className="mb-5">
-              <label htmlFor="password" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-                Password
-              </label>
-              {/* Eye toggle: right-aligned inside the field — never place it outside, breaks the visual unit */}
-              <div className="relative">
-                <input id="password" name="password" type="password" autoComplete="current-password" required
-                  placeholder="••••••••"
-                  className="w-full h-11 px-3.5 pr-11 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />
-                <button type="button" aria-label="Toggle password visibility"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                  👁
-                </button>
-              </div>
-            </div>
-          </fieldset>
-
-          {/* Remember me + Forgot: justify-between keeps these at opposite ends of the same row */}
-          <div className="flex items-center justify-between mb-6">
-            <label htmlFor="remember" className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer">
-              <input id="remember" name="remember" type="checkbox" className="accent-indigo-600 w-3.5 h-3.5" />
-              Remember me
-            </label>
-            {/* Forgot password: low visual weight — it's an escape hatch, not a primary action */}
-            <a href="/forgot-password" className="text-sm text-indigo-600 font-medium hover:underline">
-              Forgot password?
-            </a>
-          </div>
-
-          {/* Primary CTA: full width, high contrast — the single most important action on this screen */}
-          <button type="submit"
-            className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold rounded-lg transition mb-5">
-            Sign in
-          </button>
-        </form>
-
-        {/* Divider: use "or continue with" not just "or" — more descriptive for screen readers */}
-        <div role="separator" className="flex items-center gap-3 mb-5">
-          <span className="flex-1 h-px bg-gray-200"></span>
-          <span className="text-xs text-gray-400">or continue with</span>
-          <span className="flex-1 h-px bg-gray-200"></span>
-        </div>
-
-        {/* SSO button: ghost/outline style — visually subordinate to the primary Sign in CTA */}
-        <form method="POST" action="/auth/google">
-          <button type="submit"
-            className="w-full h-11 flex items-center justify-center gap-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition">
-            {/* Provider logo: 16px, left of label — users scan for the logo before reading the text */}
-            <span aria-hidden="true">G</span>
-            Continue with Google
-          </button>
-        </form>
-
-      </section>
-    </main>
-  );
-
-]=]),
+					t({
+						"// LoginForm — structural outline",
+						"",
+						"export default function LoginForm() {",
+						"  return (",
+						'    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">',
+						'      <section className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl p-10 shadow-sm">',
+						"",
+						'        <header className="mb-6">',
+						"          {/* Logo: top of the card, small — 32–40px. Reinforces brand before the user does anything */}",
+						'          <div className="w-9 h-9 bg-gray-900 rounded-lg flex items-center justify-center mb-4">',
+						'            <span className="text-indigo-300 text-sm font-bold">A</span>',
+						"          </div>",
+						'          {/* Heading: one clear action-oriented line. "Welcome back" outperforms "Login" in conversion */}',
+						'          <h1 className="text-xl font-semibold text-gray-900 tracking-tight mb-1">Welcome back</h1>',
+						"          {/* Sign-up link: secondary, below the heading — don't compete with the primary form action */}",
+						'          <p className="text-sm text-gray-500">',
+						'            No account?{" "}',
+						'            <a href="/signup" className="text-indigo-600 font-medium hover:underline">Sign up free</a>',
+						"          </p>",
+						"        </header>",
+						"",
+						'        <form method="POST" action="/login" noValidate>',
+						'          <fieldset className="mb-5 border-none p-0">',
+						'            <legend className="sr-only">Account credentials</legend>',
+						"",
+						'            <div className="mb-4">',
+						"              {/* Label: ALL CAPS small text above the field — creates visual hierarchy without size change */}",
+						'              <label htmlFor="email" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">',
+						"                Email",
+						"              </label>",
+						'              <input id="email" name="email" type="email" autoComplete="email" required',
+						'                placeholder="you@example.com"',
+						'                className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />',
+						"            </div>",
+						"",
+						'            <div className="mb-5">',
+						'              <label htmlFor="password" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">',
+						"                Password",
+						"              </label>",
+						"              {/* Eye toggle: right-aligned inside the field — never place it outside, breaks the visual unit */}",
+						'              <div className="relative">',
+						'                <input id="password" name="password" type="password" autoComplete="current-password" required',
+						'                  placeholder="••••••••"',
+						'                  className="w-full h-11 px-3.5 pr-11 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />',
+						'                <button type="button" aria-label="Toggle password visibility"',
+						'                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">',
+						"                  👁",
+						"                </button>",
+						"              </div>",
+						"            </div>",
+						"          </fieldset>",
+						"",
+						"          {/* Remember me + Forgot: justify-between keeps these at opposite ends of the same row */}",
+						'          <div className="flex items-center justify-between mb-6">',
+						'            <label htmlFor="remember" className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer">',
+						'              <input id="remember" name="remember" type="checkbox" className="accent-indigo-600 w-3.5 h-3.5" />',
+						"              Remember me",
+						"            </label>",
+						"            {/* Forgot password: low visual weight — it's an escape hatch, not a primary action */}",
+						'            <a href="/forgot-password" className="text-sm text-indigo-600 font-medium hover:underline">',
+						"              Forgot password?",
+						"            </a>",
+						"          </div>",
+						"",
+						"          {/* Primary CTA: full width, high contrast — the single most important action on this screen */}",
+						'          <button type="submit"',
+						'            className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold rounded-lg transition mb-5">',
+						"            Sign in",
+						"          </button>",
+						"        </form>",
+						"",
+						'        {/* Divider: use "or continue with" not just "or" — more descriptive for screen readers */}',
+						'        <div role="separator" className="flex items-center gap-3 mb-5">',
+						'          <span className="flex-1 h-px bg-gray-200"></span>',
+						'          <span className="text-xs text-gray-400">or continue with</span>',
+						'          <span className="flex-1 h-px bg-gray-200"></span>',
+						"        </div>",
+						"",
+						"        {/* SSO button: ghost/outline style — visually subordinate to the primary Sign in CTA */}",
+						'        <form method="POST" action="/auth/google">',
+						'          <button type="submit"',
+						'            className="w-full h-11 flex items-center justify-center gap-2.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition">',
+						"            {/* Provider logo: 16px, left of label — users scan for the logo before reading the text */}",
+						'            <span aria-hidden="true">G</span>',
+						"            Continue with Google",
+						"          </button>",
+						"        </form>",
+						"",
+						"      </section>",
+						"    </main>",
+						"  );",
+					}),
 				}
 			),
 			-- Registration Form
 			sn(
 				nil,
 				{
-					t([=[
-// RegistrationForm — structural outline
-// Two-column name row, password strength bar, terms checkbox
-
-export default function RegistrationForm() {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <section className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-10 shadow-sm">
-
-        <header className="mb-6">
-          {/* Heading: action-oriented — "Create your account" > "Register" */}
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight mb-1">Create your account</h1>
-          <p className="text-sm text-gray-500">
-            Already have one? <a href="/login" className="text-indigo-600 font-medium hover:underline">Sign in</a>
-          </p>
-        </header>
-
-        <form method="POST" action="/register" noValidate>
-          <fieldset className="border-none p-0 m-0 mb-4">
-            <legend className="sr-only">Personal details</legend>
-
-            {/* Name row: two columns side by side — saves vertical space on the form */}
-            <div className="grid grid-cols-2 gap-2.5 mb-4">
-              <div>
-                <label htmlFor="first_name" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">First name</label>
-                <input id="first_name" name="first_name" type="text" autoComplete="given-name" required
-                  placeholder="Jane"
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />
-              </div>
-              <div>
-                <label htmlFor="last_name" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Last name</label>
-                <input id="last_name" name="last_name" type="text" autoComplete="family-name" required
-                  placeholder="Smith"
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Email</label>
-              <input id="email" name="email" type="email" autoComplete="email" required
-                placeholder="jane@example.com"
-                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Password</label>
-              {/* Wire password strength via useState — evaluate length + complexity, drive bar fill */}
-              <input id="password" name="password" type="password" autoComplete="new-password" required
-                placeholder="Min. 8 characters"
-                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition mb-1.5" />
-              {/* Strength bar: 4 segments, color driven by strength score */}
-              <div className="flex gap-1">
-                <div className="flex-1 h-[3px] rounded-full bg-indigo-600"></div>
-                <div className="flex-1 h-[3px] rounded-full bg-indigo-600"></div>
-                <div className="flex-1 h-[3px] rounded-full bg-gray-200"></div>
-                <div className="flex-1 h-[3px] rounded-full bg-gray-200"></div>
-              </div>
-              <p className="text-[11px] text-gray-400 mt-1">Use 8+ characters with a mix of letters and numbers</p>
-            </div>
-
-          </fieldset>
-
-          {/* Terms: always present, required — keep the link text concise */}
-          <label htmlFor="terms" className="flex items-start gap-2.5 text-sm text-gray-500 mb-5 cursor-pointer">
-            <input id="terms" name="terms" type="checkbox" required className="accent-indigo-600 mt-0.5 flex-shrink-0" />
-            <span>I agree to the <a href="/terms" className="text-indigo-600 font-medium hover:underline">Terms of Service</a> and <a href="/privacy" className="text-indigo-600 font-medium hover:underline">Privacy Policy</a></span>
-          </label>
-
-          {/* CTA: "Create account" — specific, action-oriented */}
-          <button type="submit"
-            className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold rounded-lg transition">
-            Create account
-          </button>
-        </form>
-
-      </section>
-    </main>
-  );
-}
-]=]),
+					t({
+						"// RegistrationForm — structural outline",
+						"// Two-column name row, password strength bar, terms checkbox",
+						"",
+						"export default function RegistrationForm() {",
+						"  return (",
+						'    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">',
+						'      <section className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-10 shadow-sm">',
+						"",
+						'        <header className="mb-6">',
+						'          {/* Heading: action-oriented — "Create your account" > "Register" */}',
+						'          <h1 className="text-xl font-bold text-gray-900 tracking-tight mb-1">Create your account</h1>',
+						'          <p className="text-sm text-gray-500">',
+						'            Already have one? <a href="/login" className="text-indigo-600 font-medium hover:underline">Sign in</a>',
+						"          </p>",
+						"        </header>",
+						"",
+						'        <form method="POST" action="/register" noValidate>',
+						'          <fieldset className="border-none p-0 m-0 mb-4">',
+						'            <legend className="sr-only">Personal details</legend>',
+						"",
+						"            {/* Name row: two columns side by side — saves vertical space on the form */}",
+						'            <div className="grid grid-cols-2 gap-2.5 mb-4">',
+						"              <div>",
+						'                <label htmlFor="first_name" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">First name</label>',
+						'                <input id="first_name" name="first_name" type="text" autoComplete="given-name" required',
+						'                  placeholder="Jane"',
+						'                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />',
+						"              </div>",
+						"              <div>",
+						'                <label htmlFor="last_name" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Last name</label>',
+						'                <input id="last_name" name="last_name" type="text" autoComplete="family-name" required',
+						'                  placeholder="Smith"',
+						'                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />',
+						"              </div>",
+						"            </div>",
+						"",
+						'            <div className="mb-4">',
+						'              <label htmlFor="email" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Email</label>',
+						'              <input id="email" name="email" type="email" autoComplete="email" required',
+						'                placeholder="jane@example.com"',
+						'                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />',
+						"            </div>",
+						"",
+						'            <div className="mb-4">',
+						'              <label htmlFor="password" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Password</label>',
+						"              {/* Wire password strength via useState — evaluate length + complexity, drive bar fill */}",
+						'              <input id="password" name="password" type="password" autoComplete="new-password" required',
+						'                placeholder="Min. 8 characters"',
+						'                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition mb-1.5" />',
+						"              {/* Strength bar: 4 segments, color driven by strength score */}",
+						'              <div className="flex gap-1">',
+						'                <div className="flex-1 h-[3px] rounded-full bg-indigo-600"></div>',
+						'                <div className="flex-1 h-[3px] rounded-full bg-indigo-600"></div>',
+						'                <div className="flex-1 h-[3px] rounded-full bg-gray-200"></div>',
+						'                <div className="flex-1 h-[3px] rounded-full bg-gray-200"></div>',
+						"              </div>",
+						'              <p className="text-[11px] text-gray-400 mt-1">Use 8+ characters with a mix of letters and numbers</p>',
+						"            </div>",
+						"",
+						"          </fieldset>",
+						"",
+						"          {/* Terms: always present, required — keep the link text concise */}",
+						'          <label htmlFor="terms" className="flex items-start gap-2.5 text-sm text-gray-500 mb-5 cursor-pointer">',
+						'            <input id="terms" name="terms" type="checkbox" required className="accent-indigo-600 mt-0.5 flex-shrink-0" />',
+						'            <span>I agree to the <a href="/terms" className="text-indigo-600 font-medium hover:underline">Terms of Service</a> and <a href="/privacy" className="text-indigo-600 font-medium hover:underline">Privacy Policy</a></span>',
+						"          </label>",
+						"",
+						'          {/* CTA: "Create account" — specific, action-oriented */}',
+						'          <button type="submit"',
+						'            className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold rounded-lg transition">',
+						"            Create account",
+						"          </button>",
+						"        </form>",
+						"",
+						"      </section>",
+						"    </main>",
+						"  );",
+						"}",
+					}),
 				}
 			),
 			-- Contact Form
 			sn(
 				nil,
 				{
-					t([=[
-// ContactForm — structural outline
-// Two-column layout: contact info left, form right
-
-const TOPICS = ["General enquiry", "Sales", "Support", "Partnership"];
-
-export default function ContactSection() {
-  return (
-    <section aria-labelledby="contact-heading" className="bg-white py-16 px-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-
-        {/* Left — contact copy and details */}
-        <div>
-          <h2 id="contact-heading" className="text-3xl font-extrabold text-gray-900 tracking-tight mb-3">
-            Get in touch
-          </h2>
-          <p className="text-[15px] text-gray-500 leading-relaxed mb-8">
-            {/* Brief reassurance: response time sets expectations */}
-            Have a question or want to work together? We'll get back to you within one business day.
-          </p>
-          <address style={{ fontStyle:"normal" }}>
-            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-3">
-              {/* Contact details: email, phone, location — only include what you'll actually respond to */}
-              <li className="text-[13px] text-gray-600"><strong className="text-gray-900">Email:</strong> hello@brand.com</li>
-              <li className="text-[13px] text-gray-600"><strong className="text-gray-900">Phone:</strong> +1 (555) 000-0000</li>
-              <li className="text-[13px] text-gray-600"><strong className="text-gray-900">Office:</strong> 123 Main St, City, ST</li>
-            </ul>
-          </address>
-        </div>
-
-        {/* Right — the form */}
-        <form method="POST" action="/contact" noValidate
-          className="bg-white border border-gray-200 rounded-2xl p-8">
-          <fieldset className="border-none p-0 m-0">
-            <legend className="sr-only">Contact form</legend>
-
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Name</label>
-              <input id="name" name="name" type="text" autoComplete="name" required placeholder="Your full name"
-                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Email</label>
-              <input id="email" name="email" type="email" autoComplete="email" required placeholder="you@example.com"
-                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />
-            </div>
-
-            <div className="mb-4">
-              {/* Subject select: styled to match inputs — remove appearance-none only if you add a custom arrow icon */}
-              <label htmlFor="subject" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Subject</label>
-              <select id="subject" name="subject" required
-                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition appearance-none">
-                <option value="">Select a topic</option>
-                {TOPICS.map((t) => <option key={t}>{t}</option>)}
-              </select>
-            </div>
-
-            <div className="mb-6">
-              <label htmlFor="message" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-                Message
-                {/* Character minimum: guides users to write enough for a useful response */}
-                <span className="text-gray-400 font-normal normal-case tracking-normal ml-1">(min. 20 characters)</span>
-              </label>
-              {/* resize-y only — prevents horizontal stretching that breaks layouts */}
-              <textarea id="message" name="message" required minLength={20} rows={5}
-                placeholder="Tell us how we can help…"
-                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition resize-y leading-relaxed">
-              </textarea>
-            </div>
-
-          </fieldset>
-
-          <button type="submit"
-            className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold rounded-lg transition">
-            Send message
-          </button>
-        </form>
-
-      </div>
-    </section>
-  );
-}
-]=]),
+					t({
+						"// ContactForm — structural outline",
+						"// Two-column layout: contact info left, form right",
+						"",
+						'const TOPICS = ["General enquiry", "Sales", "Support", "Partnership"];',
+						"",
+						"export default function ContactSection() {",
+						"  return (",
+						'    <section aria-labelledby="contact-heading" className="bg-white py-16 px-6">',
+						'      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">',
+						"",
+						"        {/* Left — contact copy and details */}",
+						"        <div>",
+						'          <h2 id="contact-heading" className="text-3xl font-extrabold text-gray-900 tracking-tight mb-3">',
+						"            Get in touch",
+						"          </h2>",
+						'          <p className="text-[15px] text-gray-500 leading-relaxed mb-8">',
+						"            {/* Brief reassurance: response time sets expectations */}",
+						"            Have a question or want to work together? We'll get back to you within one business day.",
+						"          </p>",
+						'          <address style={{ fontStyle:"normal" }}>',
+						'            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-3">',
+						"              {/* Contact details: email, phone, location — only include what you'll actually respond to */}",
+						'              <li className="text-[13px] text-gray-600"><strong className="text-gray-900">Email:</strong> hello@brand.com</li>',
+						'              <li className="text-[13px] text-gray-600"><strong className="text-gray-900">Phone:</strong> +1 (555) 000-0000</li>',
+						'              <li className="text-[13px] text-gray-600"><strong className="text-gray-900">Office:</strong> 123 Main St, City, ST</li>',
+						"            </ul>",
+						"          </address>",
+						"        </div>",
+						"",
+						"        {/* Right — the form */}",
+						'        <form method="POST" action="/contact" noValidate',
+						'          className="bg-white border border-gray-200 rounded-2xl p-8">',
+						'          <fieldset className="border-none p-0 m-0">',
+						'            <legend className="sr-only">Contact form</legend>',
+						"",
+						'            <div className="mb-4">',
+						'              <label htmlFor="name" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Name</label>',
+						'              <input id="name" name="name" type="text" autoComplete="name" required placeholder="Your full name"',
+						'                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />',
+						"            </div>",
+						"",
+						'            <div className="mb-4">',
+						'              <label htmlFor="email" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Email</label>',
+						'              <input id="email" name="email" type="email" autoComplete="email" required placeholder="you@example.com"',
+						'                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />',
+						"            </div>",
+						"",
+						'            <div className="mb-4">',
+						"              {/* Subject select: styled to match inputs — remove appearance-none only if you add a custom arrow icon */}",
+						'              <label htmlFor="subject" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">Subject</label>',
+						'              <select id="subject" name="subject" required',
+						'                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition appearance-none">',
+						'                <option value="">Select a topic</option>',
+						"                {TOPICS.map((t) => <option key={t}>{t}</option>)}",
+						"              </select>",
+						"            </div>",
+						"",
+						'            <div className="mb-6">',
+						'              <label htmlFor="message" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">',
+						"                Message",
+						"                {/* Character minimum: guides users to write enough for a useful response */}",
+						'                <span className="text-gray-400 font-normal normal-case tracking-normal ml-1">(min. 20 characters)</span>',
+						"              </label>",
+						"              {/* resize-y only — prevents horizontal stretching that breaks layouts */}",
+						'              <textarea id="message" name="message" required minLength={20} rows={5}',
+						'                placeholder="Tell us how we can help…"',
+						'                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition resize-y leading-relaxed">',
+						"              </textarea>",
+						"            </div>",
+						"",
+						"          </fieldset>",
+						"",
+						'          <button type="submit"',
+						'            className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold rounded-lg transition">',
+						"            Send message",
+						"          </button>",
+						"        </form>",
+						"",
+						"      </div>",
+						"    </section>",
+						"  );",
+						"}",
+					}),
 				}
 			),
 			-- Input States
 			sn(
 				nil,
 				{
-					t([=[
-// Input States — structural reference
-// Copy the state pattern you need. All states shown with correct class combinations.
-
-export default function InputStatesReference() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6 font-sans">
-
-      {/* Default: the base state every input starts in */}
-      <div>
-        <label htmlFor="i-default" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-          Default
-        </label>
-        <input id="i-default" type="email" placeholder="you@example.com"
-          className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none transition" />
-      </div>
-
-      {/* Focus: applied automatically via CSS :focus — shown here for documentation */}
-      <div>
-        <label htmlFor="i-focus" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-          Focus
-        </label>
-        <input id="i-focus" type="email" defaultValue="jane@example.com"
-          className="w-full h-11 px-3.5 border-[1.5px] border-indigo-500 ring-2 ring-indigo-500/10 rounded-lg text-sm bg-white text-gray-900 outline-none transition" />
-        {/* In Tailwind: use focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 on the input */}
-      </div>
-
-      {/* Error: red border + ring + role="alert" on the message */}
-      <div>
-        <label htmlFor="i-error" className="block text-xs font-medium text-red-500 uppercase tracking-wide mb-1.5">
-          Error
-        </label>
-        <input id="i-error" type="email" defaultValue="not-an-email"
-          aria-invalid="true" aria-describedby="i-error-msg"
-          className="w-full h-11 px-3.5 border-[1.5px] border-red-400 ring-2 ring-red-400/10 rounded-lg text-sm bg-white text-gray-900 outline-none transition" />
-        {/* Error message: role="alert" announces it immediately when it appears */}
-        <p id="i-error-msg" role="alert" className="text-xs text-red-500 mt-1 flex items-center gap-1">
-          <span aria-hidden="true">⚠</span> Please enter a valid email address
-        </p>
-      </div>
-
-      {/* Success: green border + ring + confirmation message */}
-      <div>
-        <label htmlFor="i-success" className="block text-xs font-medium text-green-600 uppercase tracking-wide mb-1.5">
-          Success
-        </label>
-        <input id="i-success" type="email" defaultValue="jane@example.com"
-          aria-invalid="false"
-          className="w-full h-11 px-3.5 border-[1.5px] border-green-400 ring-2 ring-green-400/10 rounded-lg text-sm bg-white text-gray-900 outline-none transition" />
-        <p className="text-xs text-green-600 mt-1">✓ Looks good!</p>
-      </div>
-
-      {/* Disabled: lower opacity, not-allowed cursor, no interaction */}
-      <div>
-        <label htmlFor="i-disabled" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 opacity-50">
-          Disabled
-        </label>
-        <input id="i-disabled" type="email" defaultValue="jane@example.com"
-          disabled
-          className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-100 text-gray-400 outline-none opacity-50 cursor-not-allowed" />
-      </div>
-
-      {/* Read-only: visible but not editable — use for IDs, generated values */}
-      <div>
-        <label htmlFor="i-readonly" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-          Read-only
-        </label>
-        <input id="i-readonly" type="text" defaultValue="usr_a1b2c3d4e5"
-          readOnly
-          className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-500 outline-none cursor-default font-mono text-[13px]" />
-      </div>
-
-      {/* With helper text: appears before an error, gives context upfront */}
-      <div className="sm:col-span-2">
-        <label htmlFor="i-helper" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-          With helper text
-        </label>
-        <input id="i-helper" type="text" placeholder="jane_smith"
-          aria-describedby="i-helper-hint"
-          className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />
-        {/* Helper text: aria-describedby links it — appears below field, reads after label */}
-        <p id="i-helper-hint" className="text-xs text-gray-400 mt-1">
-          Letters, numbers and underscores only. Visible on your public profile.
-        </p>
-      </div>
-
-    </div>
-  );
-}
-]=]),
+					t({
+						"// Input States — structural reference",
+						"// Copy the state pattern you need. All states shown with correct class combinations.",
+						"",
+						"export default function InputStatesReference() {",
+						"  return (",
+						'    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6 font-sans">',
+						"",
+						"      {/* Default: the base state every input starts in */}",
+						"      <div>",
+						'        <label htmlFor="i-default" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">',
+						"          Default",
+						"        </label>",
+						'        <input id="i-default" type="email" placeholder="you@example.com"',
+						'          className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none transition" />',
+						"      </div>",
+						"",
+						"      {/* Focus: applied automatically via CSS :focus — shown here for documentation */}",
+						"      <div>",
+						'        <label htmlFor="i-focus" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">',
+						"          Focus",
+						"        </label>",
+						'        <input id="i-focus" type="email" defaultValue="jane@example.com"',
+						'          className="w-full h-11 px-3.5 border-[1.5px] border-indigo-500 ring-2 ring-indigo-500/10 rounded-lg text-sm bg-white text-gray-900 outline-none transition" />',
+						"        {/* In Tailwind: use focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 on the input */}",
+						"      </div>",
+						"",
+						'      {/* Error: red border + ring + role="alert" on the message */}',
+						"      <div>",
+						'        <label htmlFor="i-error" className="block text-xs font-medium text-red-500 uppercase tracking-wide mb-1.5">',
+						"          Error",
+						"        </label>",
+						'        <input id="i-error" type="email" defaultValue="not-an-email"',
+						'          aria-invalid="true" aria-describedby="i-error-msg"',
+						'          className="w-full h-11 px-3.5 border-[1.5px] border-red-400 ring-2 ring-red-400/10 rounded-lg text-sm bg-white text-gray-900 outline-none transition" />',
+						'        {/* Error message: role="alert" announces it immediately when it appears */}',
+						'        <p id="i-error-msg" role="alert" className="text-xs text-red-500 mt-1 flex items-center gap-1">',
+						'          <span aria-hidden="true">⚠</span> Please enter a valid email address',
+						"        </p>",
+						"      </div>",
+						"",
+						"      {/* Success: green border + ring + confirmation message */}",
+						"      <div>",
+						'        <label htmlFor="i-success" className="block text-xs font-medium text-green-600 uppercase tracking-wide mb-1.5">',
+						"          Success",
+						"        </label>",
+						'        <input id="i-success" type="email" defaultValue="jane@example.com"',
+						'          aria-invalid="false"',
+						'          className="w-full h-11 px-3.5 border-[1.5px] border-green-400 ring-2 ring-green-400/10 rounded-lg text-sm bg-white text-gray-900 outline-none transition" />',
+						'        <p className="text-xs text-green-600 mt-1">✓ Looks good!</p>',
+						"      </div>",
+						"",
+						"      {/* Disabled: lower opacity, not-allowed cursor, no interaction */}",
+						"      <div>",
+						'        <label htmlFor="i-disabled" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 opacity-50">',
+						"          Disabled",
+						"        </label>",
+						'        <input id="i-disabled" type="email" defaultValue="jane@example.com"',
+						"          disabled",
+						'          className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-100 text-gray-400 outline-none opacity-50 cursor-not-allowed" />',
+						"      </div>",
+						"",
+						"      {/* Read-only: visible but not editable — use for IDs, generated values */}",
+						"      <div>",
+						'        <label htmlFor="i-readonly" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">',
+						"          Read-only",
+						"        </label>",
+						'        <input id="i-readonly" type="text" defaultValue="usr_a1b2c3d4e5"',
+						"          readOnly",
+						'          className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-500 outline-none cursor-default font-mono text-[13px]" />',
+						"      </div>",
+						"",
+						"      {/* With helper text: appears before an error, gives context upfront */}",
+						'      <div className="sm:col-span-2">',
+						'        <label htmlFor="i-helper" className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">',
+						"          With helper text",
+						"        </label>",
+						'        <input id="i-helper" type="text" placeholder="jane_smith"',
+						'          aria-describedby="i-helper-hint"',
+						'          className="w-full h-11 px-3.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition" />',
+						"        {/* Helper text: aria-describedby links it — appears below field, reads after label */}",
+						'        <p id="i-helper-hint" className="text-xs text-gray-400 mt-1">',
+						"          Letters, numbers and underscores only. Visible on your public profile.",
+						"        </p>",
+						"      </div>",
+						"",
+						"    </div>",
+						"  );",
+						"}",
+					}),
 				}
 			),
 		}),
 	}),
 
-	-- ── NAVIGATION ──────────────────────────────
+	-- ── Cnavbar ── Navbar, Sidebar Nav
 	s("Cnavbar", {
 		c(1, {
 			-- Navbar
 			sn(
 				nil,
 				{
-					t([=[
-// Navbar — structural outline
-
-const LINKS = ["Home", "Features", "Pricing", "About"];
-
-export default function Navbar() {
-  return (
-    {/* sticky top-0 z-50: keeps the nav in view — critical for long pages */}
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <nav aria-label="Main navigation"
-        className="flex items-center justify-between px-6 h-[60px] max-w-5xl mx-auto w-full">
-
-        {/* Logo: always far left, links to home — don't place it anywhere else */}
-        <a href="/" aria-label="Go to homepage" className="flex items-center gap-2 no-underline">
-          {/* Logo mark: 28–32px. Paired with wordmark for clarity at small sizes */}
-          <div className="w-[30px] h-[30px] bg-indigo-600 rounded-lg flex items-center justify-center">
-            <span className="text-white text-[13px] font-bold">A</span>
-          </div>
-          {/* Wordmark: bold, tight tracking — legible at navbar scale */}
-          <span className="text-[15px] font-bold text-gray-900 tracking-tight">Brand</span>
-        </a>
-
-        {/* Nav links: centered visually between logo and actions — 4–6 items max */}
-        <ul role="list" className="flex items-center gap-1 list-none m-0 p-0">
-          {LINKS.map((link) => (
-            <li key={link}>
-              {/* Default link: muted color, subtle hover — active link should pop, not default */}
-              <a href="#"
-                className="block px-3 py-1.5 rounded-md text-[13px] font-normal text-gray-500 no-underline hover:text-gray-900 hover:bg-gray-100 transition-all">
-                {link}
-              </a>
-              {/* Active state classes: font-semibold text-indigo-600 bg-indigo-50 + aria-current="page" */}
-            </li>
-          ))}
-        </ul>
-
-        {/* Actions: far right — Log in is ghost, CTA is filled. One filled button max in a navbar */}
-        <div className="flex items-center gap-2">
-          {/* Ghost link: low commitment entry point — no bg, no border */}
-          <a href="/login" className="text-[13px] font-medium text-gray-700 px-3 py-1.5 no-underline">
-            Log in
-          </a>
-          {/* Primary CTA: the one thing you want the visitor to do — make it obvious */}
-          <a href="/signup" role="button"
-            className="text-[13px] font-semibold text-white bg-indigo-600 px-4 py-[7px] rounded-[7px] no-underline hover:bg-indigo-700 transition-all">
-            Get started
-          </a>
-        </div>
-
-      </nav>
-    </header>
-  );
-
-]=]),
+					t({
+						"// Navbar — structural outline",
+						"",
+						'const LINKS = ["Home", "Features", "Pricing", "About"];',
+						"",
+						"export default function Navbar() {",
+						"  return (",
+						"    {/* sticky top-0 z-50: keeps the nav in view — critical for long pages */}",
+						'    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">',
+						'      <nav aria-label="Main navigation"',
+						'        className="flex items-center justify-between px-6 h-[60px] max-w-5xl mx-auto w-full">',
+						"",
+						"        {/* Logo: always far left, links to home — don't place it anywhere else */}",
+						'        <a href="/" aria-label="Go to homepage" className="flex items-center gap-2 no-underline">',
+						"          {/* Logo mark: 28–32px. Paired with wordmark for clarity at small sizes */}",
+						'          <div className="w-[30px] h-[30px] bg-indigo-600 rounded-lg flex items-center justify-center">',
+						'            <span className="text-white text-[13px] font-bold">A</span>',
+						"          </div>",
+						"          {/* Wordmark: bold, tight tracking — legible at navbar scale */}",
+						'          <span className="text-[15px] font-bold text-gray-900 tracking-tight">Brand</span>',
+						"        </a>",
+						"",
+						"        {/* Nav links: centered visually between logo and actions — 4–6 items max */}",
+						'        <ul role="list" className="flex items-center gap-1 list-none m-0 p-0">',
+						"          {LINKS.map((link) => (",
+						"            <li key={link}>",
+						"              {/* Default link: muted color, subtle hover — active link should pop, not default */}",
+						'              <a href="#"',
+						'                className="block px-3 py-1.5 rounded-md text-[13px] font-normal text-gray-500 no-underline hover:text-gray-900 hover:bg-gray-100 transition-all">',
+						"                {link}",
+						"              </a>",
+						'              {/* Active state classes: font-semibold text-indigo-600 bg-indigo-50 + aria-current="page" */}',
+						"            </li>",
+						"          ))}",
+						"        </ul>",
+						"",
+						"        {/* Actions: far right — Log in is ghost, CTA is filled. One filled button max in a navbar */}",
+						'        <div className="flex items-center gap-2">',
+						"          {/* Ghost link: low commitment entry point — no bg, no border */}",
+						'          <a href="/login" className="text-[13px] font-medium text-gray-700 px-3 py-1.5 no-underline">',
+						"            Log in",
+						"          </a>",
+						"          {/* Primary CTA: the one thing you want the visitor to do — make it obvious */}",
+						'          <a href="/signup" role="button"',
+						'            className="text-[13px] font-semibold text-white bg-indigo-600 px-4 py-[7px] rounded-[7px] no-underline hover:bg-indigo-700 transition-all">',
+						"            Get started",
+						"          </a>",
+						"        </div>",
+						"",
+						"      </nav>",
+						"    </header>",
+						"  );",
+					}),
 				}
 			),
 			-- Sidebar Nav
 			sn(
 				nil,
 				{
-					t([=[
-// SidebarNav — structural outline
-// Wire active state with React Router useLocation + aria-current
-// Wire collapse toggle via useState, persist to localStorage
-
-const NAV_GROUPS = [
-  { group:"Main", items:[
-    { id:"dashboard", label:"Dashboard", icon:"M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", active:true },
-    { id:"projects",  label:"Projects",  icon:"M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" },
-    { id:"analytics", label:"Analytics", icon:"M18 20V10M12 20V4M6 20v-6" },
-    { id:"messages",  label:"Messages",  icon:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", badge:3 },
-  ]},
-  { group:"Settings", items:[
-    { id:"team",     label:"Team",     icon:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" },
-    { id:"billing",  label:"Billing",  icon:"M21 4H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" },
-    { id:"settings", label:"Settings", icon:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" },
-  ]},
-];
-
-export default function SidebarNav() {
-  return (
-    <aside aria-label="Dashboard sidebar"
-      className="w-[200px] bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">
-
-      {/* Brand + collapse toggle */}
-      <div className="h-14 border-b border-gray-200 flex items-center justify-between px-4 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-indigo-600 rounded-md flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-[11px] font-bold">A</span>
-          </div>
-          <span className="text-[13px] font-bold text-gray-900 whitespace-nowrap">Dashboard</span>
-        </div>
-        {/* Wire aria-expanded + width transition via useState */}
-        <button type="button" aria-label="Collapse sidebar" aria-expanded="true"
-          className="w-[26px] h-[26px] bg-gray-100 border-none rounded-md flex items-center justify-center cursor-pointer text-gray-500 hover:bg-gray-200 transition flex-shrink-0">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-      </div>
-
-      {/* Nav groups */}
-      <nav aria-label="Main navigation" className="flex-1 overflow-y-auto py-2.5">
-        {NAV_GROUPS.map(({ group, items }) => (
-          <div key={group} className="mb-1">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.07em] px-4 py-1.5 m-0">{group}</p>
-            <ul role="list" className="list-none m-0 p-0 px-1.5">
-              {items.map((item) => (
-                <li key={item.id}>
-                  {/* Replace with <NavLink> — aria-current driven by isActive prop */}
-                  <a href="#" aria-current={item.active ? "page" : undefined}
-                    className={"flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg no-underline text-[13px] transition-all " +
-                      (item.active
-                        ? "bg-indigo-50 text-indigo-600 font-semibold"
-                        : "text-gray-500 font-normal hover:bg-gray-100 hover:text-gray-900")}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="flex-shrink-0">
-                      <path d={item.icon}></path>
-                    </svg>
-                    <span className="flex-1 whitespace-nowrap">{item.label}</span>
-                    {item.badge && (
-                      <span className="text-[10px] font-bold bg-indigo-600 text-white px-1.5 py-px rounded-full flex-shrink-0">
-                        {item.badge}
-                      </span>
-                    )}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </nav>
-
-      {/* User footer — wire to real user data */}
-      <div className="border-t border-gray-200 p-2.5 flex-shrink-0">
-        <a href="/profile"
-          className="flex items-center gap-2 rounded-lg p-1.5 no-underline hover:bg-gray-50 transition">
-          {/* Swap initials div for <img> with real avatar */}
-          <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-[11px] font-bold">U</span>
-          </div>
-          <div className="text-left overflow-hidden">
-            <p className="text-[12px] font-semibold text-gray-900 m-0 whitespace-nowrap overflow-hidden text-ellipsis">User Name</p>
-            <p className="text-[11px] text-gray-400 m-0 whitespace-nowrap">user@email.com</p>
-          </div>
-        </a>
-      </div>
-
-    </aside>
-  );
-
-]=]),
+					t({
+						"// SidebarNav — structural outline",
+						"// Wire active state with React Router useLocation + aria-current",
+						"// Wire collapse toggle via useState, persist to localStorage",
+						"",
+						"const NAV_GROUPS = [",
+						'  { group:"Main", items:[',
+						'    { id:"dashboard", label:"Dashboard", icon:"M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", active:true },',
+						'    { id:"projects",  label:"Projects",  icon:"M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" },',
+						'    { id:"analytics", label:"Analytics", icon:"M18 20V10M12 20V4M6 20v-6" },',
+						'    { id:"messages",  label:"Messages",  icon:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", badge:3 },',
+						"  ]},",
+						'  { group:"Settings", items:[',
+						'    { id:"team",     label:"Team",     icon:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" },',
+						'    { id:"billing",  label:"Billing",  icon:"M21 4H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" },',
+						'    { id:"settings", label:"Settings", icon:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" },',
+						"  ]},",
+						"];",
+						"",
+						"export default function SidebarNav() {",
+						"  return (",
+						'    <aside aria-label="Dashboard sidebar"',
+						'      className="w-[200px] bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">',
+						"",
+						"      {/* Brand + collapse toggle */}",
+						'      <div className="h-14 border-b border-gray-200 flex items-center justify-between px-4 flex-shrink-0">',
+						'        <div className="flex items-center gap-2">',
+						'          <div className="w-6 h-6 bg-indigo-600 rounded-md flex items-center justify-center flex-shrink-0">',
+						'            <span className="text-white text-[11px] font-bold">A</span>',
+						"          </div>",
+						'          <span className="text-[13px] font-bold text-gray-900 whitespace-nowrap">Dashboard</span>',
+						"        </div>",
+						"        {/* Wire aria-expanded + width transition via useState */}",
+						'        <button type="button" aria-label="Collapse sidebar" aria-expanded="true"',
+						'          className="w-[26px] h-[26px] bg-gray-100 border-none rounded-md flex items-center justify-center cursor-pointer text-gray-500 hover:bg-gray-200 transition flex-shrink-0">',
+						'          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">',
+						'            <polyline points="15 18 9 12 15 6"></polyline>',
+						"          </svg>",
+						"        </button>",
+						"      </div>",
+						"",
+						"      {/* Nav groups */}",
+						'      <nav aria-label="Main navigation" className="flex-1 overflow-y-auto py-2.5">',
+						"        {NAV_GROUPS.map(({ group, items }) => (",
+						'          <div key={group} className="mb-1">',
+						'            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.07em] px-4 py-1.5 m-0">{group}</p>',
+						'            <ul role="list" className="list-none m-0 p-0 px-1.5">',
+						"              {items.map((item) => (",
+						"                <li key={item.id}>",
+						"                  {/* Replace with <NavLink> — aria-current driven by isActive prop */}",
+						'                  <a href="#" aria-current={item.active ? "page" : undefined}',
+						'                    className={"flex items-center gap-2.5 px-2.5 py-[7px] rounded-lg no-underline text-[13px] transition-all " +',
+						"                      (item.active",
+						'                        ? "bg-indigo-50 text-indigo-600 font-semibold"',
+						'                        : "text-gray-500 font-normal hover:bg-gray-100 hover:text-gray-900")}>',
+						'                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="flex-shrink-0">',
+						"                      <path d={item.icon}></path>",
+						"                    </svg>",
+						'                    <span className="flex-1 whitespace-nowrap">{item.label}</span>',
+						"                    {item.badge && (",
+						'                      <span className="text-[10px] font-bold bg-indigo-600 text-white px-1.5 py-px rounded-full flex-shrink-0">',
+						"                        {item.badge}",
+						"                      </span>",
+						"                    )}",
+						"                  </a>",
+						"                </li>",
+						"              ))}",
+						"            </ul>",
+						"          </div>",
+						"        ))}",
+						"      </nav>",
+						"",
+						"      {/* User footer — wire to real user data */}",
+						'      <div className="border-t border-gray-200 p-2.5 flex-shrink-0">',
+						'        <a href="/profile"',
+						'          className="flex items-center gap-2 rounded-lg p-1.5 no-underline hover:bg-gray-50 transition">',
+						"          {/* Swap initials div for <img> with real avatar */}",
+						'          <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0">',
+						'            <span className="text-white text-[11px] font-bold">U</span>',
+						"          </div>",
+						'          <div className="text-left overflow-hidden">',
+						'            <p className="text-[12px] font-semibold text-gray-900 m-0 whitespace-nowrap overflow-hidden text-ellipsis">User Name</p>',
+						'            <p className="text-[11px] text-gray-400 m-0 whitespace-nowrap">user@email.com</p>',
+						"          </div>",
+						"        </a>",
+						"      </div>",
+						"",
+						"    </aside>",
+						"  );",
+					}),
 				}
 			),
 		}),
 	}),
 
-	-- ── CARDS ───────────────────────────────────
+	-- ── Ccards ── Profile Card, Pricing Card
 	s("Ccards", {
 		c(1, {
 			-- Profile Card
 			sn(
 				nil,
 				{
-					t([=[
-// ProfileCard — structural outline
-
-export default function ProfileCard() {
-  return (
-    {/* overflow-hidden: clips the cover banner to the card's rounded corners cleanly */}
-    <article className="w-full max-w-xs bg-white border border-gray-200 rounded-2xl overflow-hidden">
-
-      {/* Cover banner: 80px — sets brand color before the user focuses on content */}
-      <div className="h-20 bg-gradient-to-r from-indigo-600 to-violet-600"></div>
-
-      {/* Avatar row: -mt-7 pulls avatar up over the banner — creates depth and visual interest */}
-      <div className="px-5 flex items-end justify-between -mt-7 mb-3">
-        {/* Avatar: 56px with white border — the border separates it from the banner color beneath */}
-        {/* Swap for <img src={avatarUrl} alt="Name" className="w-14 h-14 rounded-full object-cover border-[3px] border-white" /> */}
-        <div aria-label="User profile photo"
-          className="w-14 h-14 rounded-full border-[3px] border-white bg-indigo-600 flex items-center justify-center">
-          <span className="text-white text-lg font-bold">U</span>
-        </div>
-        {/* Follow button: top-right of the avatar row — primary action for this card */}
-        <button type="button"
-          className="text-xs font-semibold text-indigo-600 bg-indigo-50 border-none px-3.5 py-1.5 rounded-md cursor-pointer hover:bg-indigo-100 transition">
-          Follow
-        </button>
-      </div>
-
-      <div className="px-5 pb-5">
-        {/* Name: largest text in the card — the anchor the user reads first */}
-        <h2 className="text-base font-bold text-gray-900 mb-0.5">Full Name</h2>
-        {/* Role + location: secondary metadata, muted — context without competing with the name */}
-        <p className="text-[13px] text-gray-500 mb-2.5">Job Title · Location</p>
-        {/* Bio: keep to 2 lines max — any longer and users stop reading */}
-        <p className="text-[13px] text-gray-600 leading-relaxed mb-4">
-          Short bio. Keep it under two lines.
-        </p>
-
-        {/* Tags: small pills below bio — scannable summary of skills or interests */}
-        <ul role="list" className="flex flex-wrap gap-1.5 list-none m-0 p-0 mb-5">
-          {["Tag One", "Tag Two", "Tag Three"].map((tag) => (
-            <li key={tag}>
-              <span className="text-[11px] font-medium text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">
-                {tag}
-              </span>
-            </li>
-          ))}
-        </ul>
-
-        {/* Stats footer: 3 columns max — bordered dividers replace column gutters cleanly */}
-        <footer className="flex border-t border-gray-100 pt-4">
-          {[{ label:"Projects", value:"00" }, { label:"Followers", value:"000" }, { label:"Following", value:"00" }].map((stat, i) => (
-            <div key={stat.label} className={"flex-1 text-center" + (i < 2 ? " border-r border-gray-100" : "")}>
-              {/* Value: bold large — number is the signal, label is the context */}
-              <p className="text-[15px] font-bold text-gray-900 mb-0.5">{stat.value}</p>
-              <p className="text-[11px] text-gray-400">{stat.label}</p>
-            </div>
-          ))}
-        </footer>
-      </div>
-
-    </article>
-  );
-
-]=]),
+					t({
+						"// ProfileCard — structural outline",
+						"",
+						"export default function ProfileCard() {",
+						"  return (",
+						"    {/* overflow-hidden: clips the cover banner to the card's rounded corners cleanly */}",
+						'    <article className="w-full max-w-xs bg-white border border-gray-200 rounded-2xl overflow-hidden">',
+						"",
+						"      {/* Cover banner: 80px — sets brand color before the user focuses on content */}",
+						'      <div className="h-20 bg-gradient-to-r from-indigo-600 to-violet-600"></div>',
+						"",
+						"      {/* Avatar row: -mt-7 pulls avatar up over the banner — creates depth and visual interest */}",
+						'      <div className="px-5 flex items-end justify-between -mt-7 mb-3">',
+						"        {/* Avatar: 56px with white border — the border separates it from the banner color beneath */}",
+						'        {/* Swap for <img src={avatarUrl} alt="Name" className="w-14 h-14 rounded-full object-cover border-[3px] border-white" /> */}',
+						'        <div aria-label="User profile photo"',
+						'          className="w-14 h-14 rounded-full border-[3px] border-white bg-indigo-600 flex items-center justify-center">',
+						'          <span className="text-white text-lg font-bold">U</span>',
+						"        </div>",
+						"        {/* Follow button: top-right of the avatar row — primary action for this card */}",
+						'        <button type="button"',
+						'          className="text-xs font-semibold text-indigo-600 bg-indigo-50 border-none px-3.5 py-1.5 rounded-md cursor-pointer hover:bg-indigo-100 transition">',
+						"          Follow",
+						"        </button>",
+						"      </div>",
+						"",
+						'      <div className="px-5 pb-5">',
+						"        {/* Name: largest text in the card — the anchor the user reads first */}",
+						'        <h2 className="text-base font-bold text-gray-900 mb-0.5">Full Name</h2>',
+						"        {/* Role + location: secondary metadata, muted — context without competing with the name */}",
+						'        <p className="text-[13px] text-gray-500 mb-2.5">Job Title · Location</p>',
+						"        {/* Bio: keep to 2 lines max — any longer and users stop reading */}",
+						'        <p className="text-[13px] text-gray-600 leading-relaxed mb-4">',
+						"          Short bio. Keep it under two lines.",
+						"        </p>",
+						"",
+						"        {/* Tags: small pills below bio — scannable summary of skills or interests */}",
+						'        <ul role="list" className="flex flex-wrap gap-1.5 list-none m-0 p-0 mb-5">',
+						'          {["Tag One", "Tag Two", "Tag Three"].map((tag) => (',
+						"            <li key={tag}>",
+						'              <span className="text-[11px] font-medium text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">',
+						"                {tag}",
+						"              </span>",
+						"            </li>",
+						"          ))}",
+						"        </ul>",
+						"",
+						"        {/* Stats footer: 3 columns max — bordered dividers replace column gutters cleanly */}",
+						'        <footer className="flex border-t border-gray-100 pt-4">',
+						'          {[{ label:"Projects", value:"00" }, { label:"Followers", value:"000" }, { label:"Following", value:"00" }].map((stat, i) => (',
+						'            <div key={stat.label} className={"flex-1 text-center" + (i < 2 ? " border-r border-gray-100" : "")}>',
+						"              {/* Value: bold large — number is the signal, label is the context */}",
+						'              <p className="text-[15px] font-bold text-gray-900 mb-0.5">{stat.value}</p>',
+						'              <p className="text-[11px] text-gray-400">{stat.label}</p>',
+						"            </div>",
+						"          ))}",
+						"        </footer>",
+						"      </div>",
+						"",
+						"    </article>",
+						"  );",
+					}),
 				}
 			),
 			-- Pricing Card
 			sn(
 				nil,
 				{
-					t([=[
-// PricingSection — structural outline
-
-const PLANS = [
-  { id:"starter", name:"Starter", desc:"For individuals.",   monthly:"$0",  annually:"$0",  cta:"Get started free", ctaStyle:"outline", featured:false,
-    features:["1 project","5GB storage","Basic analytics","Email support"] },
-  { id:"pro",     name:"Pro",     desc:"Scale your work.",   monthly:"$19", annually:"$15", cta:"Start free trial", ctaStyle:"primary",  featured:true,
-    features:["Unlimited projects","50GB storage","Advanced analytics","Priority support","Custom domain","Team collaboration"] },
-  { id:"ent",     name:"Enterprise", desc:"For teams.",     monthly:"$49", annually:"$39", cta:"Contact sales",    ctaStyle:"outline",  featured:false,
-    features:["Everything in Pro","500GB storage","SSO & SAML","Dedicated manager","SLA guarantee","Custom integrations"] },
-];
-
-export default function PricingSection() {
-  return (
-    <section aria-labelledby="pricing-heading" className="py-16 px-4">
-      <header className="text-center mb-10">
-        {/* Section heading: clear and confident — avoid "Our Pricing", just say "Pricing" */}
-        <h2 id="pricing-heading" className="text-3xl font-extrabold text-gray-900 tracking-tight mb-4">
-          Simple pricing
-        </h2>
-        {/* Billing toggle: prominently placed before the cards — so prices update visually on switch */}
-        <div className="flex items-center justify-center gap-3 mt-2">
-          <span className="text-[13px] font-medium text-gray-900">Monthly</span>
-          <button type="button" role="switch" aria-checked="false"
-            className="relative w-11 h-6 bg-gray-300 rounded-full border-none cursor-pointer">
-            <span className="absolute top-[3px] left-[3px] w-[18px] h-[18px] bg-white rounded-full shadow-sm"></span>
-          </button>
-          <span className="text-[13px] font-medium text-gray-400">
-            Annually
-            {/* Savings badge: green — the positive signal that makes annual feel like the smart choice */}
-            <span className="text-[11px] font-semibold text-green-700 bg-green-100 px-1.5 py-0.5 rounded-full ml-1">–20%</span>
-          </span>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 max-w-4xl mx-auto">
-        {PLANS.map((plan) => (
-          {/* Featured card: filled brand color — it must be unmissably different from the others */}
-          <article key={plan.id} aria-label={plan.name + " plan"}
-            className={"rounded-[14px] p-6 relative flex flex-col " + (plan.featured ? "bg-indigo-600 border-2 border-indigo-600" : "bg-white border border-gray-200")}>
-            {/* Most popular badge: anchored above the card — position: absolute -top ensures it floats over */}
-            {plan.featured && (
-              <span className="absolute -top-[11px] left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 text-[10px] font-bold px-3 py-0.5 rounded-full uppercase whitespace-nowrap">
-                Most popular
-              </span>
-            )}
-            <header className="mb-4">
-              {/* Plan name: short single word — Starter, Pro, Enterprise. Avoid jargon */}
-              <h3 className={"text-[15px] font-bold mb-1 " + (plan.featured ? "text-white" : "text-gray-900")}>{plan.name}</h3>
-              <p className={"text-xs leading-relaxed " + (plan.featured ? "text-indigo-200" : "text-gray-500")}>{plan.desc}</p>
-            </header>
-            {/* Price: the largest text in the card — it's what the user came to see */}
-            <div className="mb-4">
-              <span className={"text-[30px] font-extrabold tracking-tight " + (plan.featured ? "text-white" : "text-gray-900")}>
-                {plan.monthly}
-              </span>
-              <span className={"text-[13px] ml-1 " + (plan.featured ? "text-indigo-200" : "text-gray-400")}>/mo</span>
-            </div>
-            {/* CTA: verb-led, outcome-focused — "Start free trial" > "Choose Pro" > "Subscribe" */}
-            <button type="button" className={"w-full py-2.5 rounded-lg text-[13px] font-semibold border-none cursor-pointer mb-4 transition-all " +
-              (plan.featured ? "bg-white text-indigo-600 hover:bg-indigo-50" :
-               plan.ctaStyle === "primary" ? "bg-indigo-600 text-white hover:bg-indigo-700" :
-               "bg-transparent text-indigo-600 border-[1.5px] border-indigo-600 hover:bg-indigo-50")}>
-              {plan.cta}
-            </button>
-            {/* Feature list: checkmarks signal inclusion — start with the most compelling feature */}
-            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-2 mt-auto">
-              {plan.features.map((f) => (
-                <li key={f} className={"flex items-center gap-2 text-xs " + (plan.featured ? "text-indigo-100" : "text-gray-600")}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-                    stroke={plan.featured ? "#a5b4fc" : "#4f46e5"} strokeWidth="2.5"
-                    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                  {f}
-                </li>
-              ))}
-            </ul>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-
-]=]),
+					t({
+						"// PricingSection — structural outline",
+						"",
+						"const PLANS = [",
+						'  { id:"starter", name:"Starter", desc:"For individuals.",   monthly:"$0",  annually:"$0",  cta:"Get started free", ctaStyle:"outline", featured:false,',
+						'    features:["1 project","5GB storage","Basic analytics","Email support"] },',
+						'  { id:"pro",     name:"Pro",     desc:"Scale your work.",   monthly:"$19", annually:"$15", cta:"Start free trial", ctaStyle:"primary",  featured:true,',
+						'    features:["Unlimited projects","50GB storage","Advanced analytics","Priority support","Custom domain","Team collaboration"] },',
+						'  { id:"ent",     name:"Enterprise", desc:"For teams.",     monthly:"$49", annually:"$39", cta:"Contact sales",    ctaStyle:"outline",  featured:false,',
+						'    features:["Everything in Pro","500GB storage","SSO & SAML","Dedicated manager","SLA guarantee","Custom integrations"] },',
+						"];",
+						"",
+						"export default function PricingSection() {",
+						"  return (",
+						'    <section aria-labelledby="pricing-heading" className="py-16 px-4">',
+						'      <header className="text-center mb-10">',
+						'        {/* Section heading: clear and confident — avoid "Our Pricing", just say "Pricing" */}',
+						'        <h2 id="pricing-heading" className="text-3xl font-extrabold text-gray-900 tracking-tight mb-4">',
+						"          Simple pricing",
+						"        </h2>",
+						"        {/* Billing toggle: prominently placed before the cards — so prices update visually on switch */}",
+						'        <div className="flex items-center justify-center gap-3 mt-2">',
+						'          <span className="text-[13px] font-medium text-gray-900">Monthly</span>',
+						'          <button type="button" role="switch" aria-checked="false"',
+						'            className="relative w-11 h-6 bg-gray-300 rounded-full border-none cursor-pointer">',
+						'            <span className="absolute top-[3px] left-[3px] w-[18px] h-[18px] bg-white rounded-full shadow-sm"></span>',
+						"          </button>",
+						'          <span className="text-[13px] font-medium text-gray-400">',
+						"            Annually",
+						"            {/* Savings badge: green — the positive signal that makes annual feel like the smart choice */}",
+						'            <span className="text-[11px] font-semibold text-green-700 bg-green-100 px-1.5 py-0.5 rounded-full ml-1">–20%</span>',
+						"          </span>",
+						"        </div>",
+						"      </header>",
+						"",
+						'      <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 max-w-4xl mx-auto">',
+						"        {PLANS.map((plan) => (",
+						"          {/* Featured card: filled brand color — it must be unmissably different from the others */}",
+						'          <article key={plan.id} aria-label={plan.name + " plan"}',
+						'            className={"rounded-[14px] p-6 relative flex flex-col " + (plan.featured ? "bg-indigo-600 border-2 border-indigo-600" : "bg-white border border-gray-200")}>',
+						"            {/* Most popular badge: anchored above the card — position: absolute -top ensures it floats over */}",
+						"            {plan.featured && (",
+						'              <span className="absolute -top-[11px] left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 text-[10px] font-bold px-3 py-0.5 rounded-full uppercase whitespace-nowrap">',
+						"                Most popular",
+						"              </span>",
+						"            )}",
+						'            <header className="mb-4">',
+						"              {/* Plan name: short single word — Starter, Pro, Enterprise. Avoid jargon */}",
+						'              <h3 className={"text-[15px] font-bold mb-1 " + (plan.featured ? "text-white" : "text-gray-900")}>{plan.name}</h3>',
+						'              <p className={"text-xs leading-relaxed " + (plan.featured ? "text-indigo-200" : "text-gray-500")}>{plan.desc}</p>',
+						"            </header>",
+						"            {/* Price: the largest text in the card — it's what the user came to see */}",
+						'            <div className="mb-4">',
+						'              <span className={"text-[30px] font-extrabold tracking-tight " + (plan.featured ? "text-white" : "text-gray-900")}>',
+						"                {plan.monthly}",
+						"              </span>",
+						'              <span className={"text-[13px] ml-1 " + (plan.featured ? "text-indigo-200" : "text-gray-400")}>/mo</span>',
+						"            </div>",
+						'            {/* CTA: verb-led, outcome-focused — "Start free trial" > "Choose Pro" > "Subscribe" */}',
+						'            <button type="button" className={"w-full py-2.5 rounded-lg text-[13px] font-semibold border-none cursor-pointer mb-4 transition-all " +',
+						'              (plan.featured ? "bg-white text-indigo-600 hover:bg-indigo-50" :',
+						'               plan.ctaStyle === "primary" ? "bg-indigo-600 text-white hover:bg-indigo-700" :',
+						'               "bg-transparent text-indigo-600 border-[1.5px] border-indigo-600 hover:bg-indigo-50")}>',
+						"              {plan.cta}",
+						"            </button>",
+						"            {/* Feature list: checkmarks signal inclusion — start with the most compelling feature */}",
+						'            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-2 mt-auto">',
+						"              {plan.features.map((f) => (",
+						'                <li key={f} className={"flex items-center gap-2 text-xs " + (plan.featured ? "text-indigo-100" : "text-gray-600")}>',
+						'                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"',
+						'                    stroke={plan.featured ? "#a5b4fc" : "#4f46e5"} strokeWidth="2.5"',
+						'                    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">',
+						'                    <polyline points="20 6 9 17 4 12"></polyline>',
+						"                  </svg>",
+						"                  {f}",
+						"                </li>",
+						"              ))}",
+						"            </ul>",
+						"          </article>",
+						"        ))}",
+						"      </div>",
+						"    </section>",
+						"  );",
+					}),
 				}
 			),
 		}),
 	}),
 
-	-- ── ELEMENTS ────────────────────────────────
-	-- Buttons
+	-- ── Cbuttons ── Buttons
 	s("Cbuttons", {
-		t([=[
-// Button reference — every variant with designer intent notes
-
-function LogInIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-      <polyline points="10 17 15 12 10 7" />
-      <line x1="15" y1="12" x2="3" y2="12" />
-    </svg>
-  );
-}
-
-export default function ButtonReference() {
-  return (
-    <div className="flex flex-col gap-8 p-8">
-
-      {/* Icon buttons: icon LEFT of label — the eye reads icon first, text confirms the action */}
-      <section aria-label="Icon buttons" className="flex flex-wrap items-center gap-3">
-        {/* Primary with icon: filled bg — the dominant action in its context */}
-        <button type="button" className="flex items-center gap-2 px-[18px] py-[9px] bg-indigo-600 text-white border-none rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">
-          <LogInIcon /> Sign in
-        </button>
-        {/* Outline with icon: border only — same weight as primary visually, lower commitment */}
-        <button type="button" className="flex items-center gap-2 px-[18px] py-[9px] bg-transparent text-indigo-600 border-[1.5px] border-indigo-600 rounded-lg text-sm font-semibold hover:bg-indigo-50 transition">
-          <LogInIcon /> Sign in
-        </button>
-        {/* Icon only: always add aria-label — the label IS the button for screen readers */}
-        <button type="button" aria-label="Sign in"
-          className="flex items-center justify-center w-10 h-10 bg-indigo-50 text-indigo-600 border-none rounded-lg hover:bg-indigo-100 transition">
-          <LogInIcon />
-        </button>
-      </section>
-
-      {/* Toggle switch: role="switch" + aria-checked — state must be reflected visually AND semantically */}
-      <section aria-label="Toggle" className="flex flex-wrap items-center gap-3">
-        {/* Track: pill shape, color communicates on/off — thumb slides inside */}
-        <button type="button" role="switch" aria-checked="true"
-          className="flex items-center gap-2.5 px-4 py-2 bg-indigo-50 text-indigo-600 border-[1.5px] border-indigo-200 rounded-lg text-sm font-semibold cursor-pointer">
-          <span className="relative inline-block w-9 h-5 bg-indigo-600 rounded-full flex-shrink-0">
-            {/* Thumb: white circle — right side = on, left side = off */}
-            <span className="absolute top-[3px] left-[19px] w-3.5 h-3.5 bg-white rounded-full shadow-sm"></span>
-          </span>
-          Enabled
-        </button>
-
-        {/* Pill group: segment control — clearly shows selected option, common for pricing toggles */}
-        <div className="flex bg-gray-100 rounded-lg p-[3px] gap-0.5">
-          {/* Inactive: transparent bg, muted text */}
-          <button type="button" aria-pressed="false"
-            className="px-3.5 py-1.5 rounded-md text-[13px] font-medium border-none cursor-pointer bg-transparent text-gray-500">
-            Monthly
-          </button>
-          {/* Active: white bg + shadow lifts it — creates a "selected card" feel */}
-          <button type="button" aria-pressed="true"
-            className="px-3.5 py-1.5 rounded-md text-[13px] font-medium border-none cursor-pointer bg-white text-gray-900 shadow-sm">
-            Annually
-          </button>
-        </div>
-      </section>
-
-      {/* Standard set: use ONE primary per page section — multiple primaries dilute hierarchy */}
-      <section aria-label="Standard buttons" className="flex flex-wrap items-center gap-3">
-        {/* Primary: high contrast fill — for the main action you want taken */}
-        <button type="button" className="px-5 py-[9px] bg-indigo-600 text-white border-none rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">Primary</button>
-        {/* Secondary: neutral fill — for supporting actions that aren't optional */}
-        <button type="button" className="px-5 py-[9px] bg-gray-100 text-gray-700 border-none rounded-lg text-sm font-semibold hover:bg-gray-200 transition">Secondary</button>
-        {/* Outline: border only — equal visual weight to secondary but feels more deliberate */}
-        <button type="button" className="px-5 py-[9px] bg-transparent text-indigo-600 border-[1.5px] border-indigo-600 rounded-lg text-sm font-semibold hover:bg-indigo-50 transition">Outline</button>
-        {/* Ghost: no border, no bg — for tertiary actions like cancel or back */}
-        <button type="button" className="px-5 py-[9px] bg-transparent text-gray-500 border-none rounded-lg text-sm font-medium hover:bg-gray-100 transition">Ghost</button>
-        {/* Danger: soft red — flags the action without screaming. Use for delete, remove, leave */}
-        <button type="button" className="px-5 py-[9px] bg-red-100 text-red-600 border-none rounded-lg text-sm font-semibold hover:bg-red-200 transition">Danger</button>
-        {/* Disabled: visually removed — opacity tells the user it exists but isn't available now */}
-        <button type="button" disabled className="px-5 py-[9px] bg-gray-100 text-gray-400 border-none rounded-lg text-sm font-semibold cursor-not-allowed opacity-70">Disabled</button>
-      </section>
-
-      {/* 3D buttons: shadow-[0_4px_0_shadow-color] = depth. active: classes snap it down on press — no JS needed */}
-      <section aria-label="3D buttons" className="flex flex-wrap items-center gap-3">
-        {/* Match shadow color to a darker shade of the button bg — creates realistic depth */}
-        <button type="button" className="px-[22px] py-[9px] bg-indigo-600 text-white border-none rounded-lg text-sm font-bold shadow-[0_4px_0_#3730a3] active:translate-y-[3px] active:shadow-[0_1px_0_#3730a3] transition-all duration-100">
-          Get Started
-        </button>
-        <button type="button" className="px-[22px] py-[9px] bg-gray-50 text-gray-700 border border-gray-200 rounded-lg text-sm font-bold shadow-[0_4px_0_#d1d5db] active:translate-y-[3px] active:shadow-[0_1px_0_#d1d5db] transition-all duration-100">
-          Learn More
-        </button>
-        <button type="button" className="px-[22px] py-[9px] bg-red-500 text-white border-none rounded-lg text-sm font-bold shadow-[0_4px_0_#b91c1c] active:translate-y-[3px] active:shadow-[0_1px_0_#b91c1c] transition-all duration-100">
-          Delete
-        </button>
-      </section>
-
-    </div>
-  );
-
-]=]),
+		t({
+			"// Button reference — every variant with designer intent notes",
+			"",
+			"function LogInIcon() {",
+			"  return (",
+			'    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"',
+			'      fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">',
+			'      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />',
+			'      <polyline points="10 17 15 12 10 7" />',
+			'      <line x1="15" y1="12" x2="3" y2="12" />',
+			"    </svg>",
+			"  );",
+			"}",
+			"",
+			"export default function ButtonReference() {",
+			"  return (",
+			'    <div className="flex flex-col gap-8 p-8">',
+			"",
+			"      {/* Icon buttons: icon LEFT of label — the eye reads icon first, text confirms the action */}",
+			'      <section aria-label="Icon buttons" className="flex flex-wrap items-center gap-3">',
+			"        {/* Primary with icon: filled bg — the dominant action in its context */}",
+			'        <button type="button" className="flex items-center gap-2 px-[18px] py-[9px] bg-indigo-600 text-white border-none rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">',
+			"          <LogInIcon /> Sign in",
+			"        </button>",
+			"        {/* Outline with icon: border only — same weight as primary visually, lower commitment */}",
+			'        <button type="button" className="flex items-center gap-2 px-[18px] py-[9px] bg-transparent text-indigo-600 border-[1.5px] border-indigo-600 rounded-lg text-sm font-semibold hover:bg-indigo-50 transition">',
+			"          <LogInIcon /> Sign in",
+			"        </button>",
+			"        {/* Icon only: always add aria-label — the label IS the button for screen readers */}",
+			'        <button type="button" aria-label="Sign in"',
+			'          className="flex items-center justify-center w-10 h-10 bg-indigo-50 text-indigo-600 border-none rounded-lg hover:bg-indigo-100 transition">',
+			"          <LogInIcon />",
+			"        </button>",
+			"      </section>",
+			"",
+			'      {/* Toggle switch: role="switch" + aria-checked — state must be reflected visually AND semantically */}',
+			'      <section aria-label="Toggle" className="flex flex-wrap items-center gap-3">',
+			"        {/* Track: pill shape, color communicates on/off — thumb slides inside */}",
+			'        <button type="button" role="switch" aria-checked="true"',
+			'          className="flex items-center gap-2.5 px-4 py-2 bg-indigo-50 text-indigo-600 border-[1.5px] border-indigo-200 rounded-lg text-sm font-semibold cursor-pointer">',
+			'          <span className="relative inline-block w-9 h-5 bg-indigo-600 rounded-full flex-shrink-0">',
+			"            {/* Thumb: white circle — right side = on, left side = off */}",
+			'            <span className="absolute top-[3px] left-[19px] w-3.5 h-3.5 bg-white rounded-full shadow-sm"></span>',
+			"          </span>",
+			"          Enabled",
+			"        </button>",
+			"",
+			"        {/* Pill group: segment control — clearly shows selected option, common for pricing toggles */}",
+			'        <div className="flex bg-gray-100 rounded-lg p-[3px] gap-0.5">',
+			"          {/* Inactive: transparent bg, muted text */}",
+			'          <button type="button" aria-pressed="false"',
+			'            className="px-3.5 py-1.5 rounded-md text-[13px] font-medium border-none cursor-pointer bg-transparent text-gray-500">',
+			"            Monthly",
+			"          </button>",
+			'          {/* Active: white bg + shadow lifts it — creates a "selected card" feel */}',
+			'          <button type="button" aria-pressed="true"',
+			'            className="px-3.5 py-1.5 rounded-md text-[13px] font-medium border-none cursor-pointer bg-white text-gray-900 shadow-sm">',
+			"            Annually",
+			"          </button>",
+			"        </div>",
+			"      </section>",
+			"",
+			"      {/* Standard set: use ONE primary per page section — multiple primaries dilute hierarchy */}",
+			'      <section aria-label="Standard buttons" className="flex flex-wrap items-center gap-3">',
+			"        {/* Primary: high contrast fill — for the main action you want taken */}",
+			'        <button type="button" className="px-5 py-[9px] bg-indigo-600 text-white border-none rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">Primary</button>',
+			"        {/* Secondary: neutral fill — for supporting actions that aren't optional */}",
+			'        <button type="button" className="px-5 py-[9px] bg-gray-100 text-gray-700 border-none rounded-lg text-sm font-semibold hover:bg-gray-200 transition">Secondary</button>',
+			"        {/* Outline: border only — equal visual weight to secondary but feels more deliberate */}",
+			'        <button type="button" className="px-5 py-[9px] bg-transparent text-indigo-600 border-[1.5px] border-indigo-600 rounded-lg text-sm font-semibold hover:bg-indigo-50 transition">Outline</button>',
+			"        {/* Ghost: no border, no bg — for tertiary actions like cancel or back */}",
+			'        <button type="button" className="px-5 py-[9px] bg-transparent text-gray-500 border-none rounded-lg text-sm font-medium hover:bg-gray-100 transition">Ghost</button>',
+			"        {/* Danger: soft red — flags the action without screaming. Use for delete, remove, leave */}",
+			'        <button type="button" className="px-5 py-[9px] bg-red-100 text-red-600 border-none rounded-lg text-sm font-semibold hover:bg-red-200 transition">Danger</button>',
+			"        {/* Disabled: visually removed — opacity tells the user it exists but isn't available now */}",
+			'        <button type="button" disabled className="px-5 py-[9px] bg-gray-100 text-gray-400 border-none rounded-lg text-sm font-semibold cursor-not-allowed opacity-70">Disabled</button>',
+			"      </section>",
+			"",
+			"      {/* 3D buttons: shadow-[0_4px_0_shadow-color] = depth. active: classes snap it down on press — no JS needed */}",
+			'      <section aria-label="3D buttons" className="flex flex-wrap items-center gap-3">',
+			"        {/* Match shadow color to a darker shade of the button bg — creates realistic depth */}",
+			'        <button type="button" className="px-[22px] py-[9px] bg-indigo-600 text-white border-none rounded-lg text-sm font-bold shadow-[0_4px_0_#3730a3] active:translate-y-[3px] active:shadow-[0_1px_0_#3730a3] transition-all duration-100">',
+			"          Get Started",
+			"        </button>",
+			'        <button type="button" className="px-[22px] py-[9px] bg-gray-50 text-gray-700 border border-gray-200 rounded-lg text-sm font-bold shadow-[0_4px_0_#d1d5db] active:translate-y-[3px] active:shadow-[0_1px_0_#d1d5db] transition-all duration-100">',
+			"          Learn More",
+			"        </button>",
+			'        <button type="button" className="px-[22px] py-[9px] bg-red-500 text-white border-none rounded-lg text-sm font-bold shadow-[0_4px_0_#b91c1c] active:translate-y-[3px] active:shadow-[0_1px_0_#b91c1c] transition-all duration-100">',
+			"          Delete",
+			"        </button>",
+			"      </section>",
+			"",
+			"    </div>",
+			"  );",
+		}),
 	}),
 
-	-- ── OVERLAYS ────────────────────────────────
-	-- Modal
+	-- ── Cmodal ── Modal
 	s("Cmodal", {
-		t([=[
-// Modal — structural outline (shown open)
-
-export default function Modal() {
-  return (
-    <>
-      <button type="button"
-        className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition cursor-pointer">
-        Open Modal
-      </button>
-
-      {/* Backdrop: semi-transparent black — dims the page to focus attention on the dialog */}
-      <div role="presentation"
-        className="fixed inset-0 bg-black/45 flex items-center justify-center z-50 p-4">
-
-        <div role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc"
-          className="bg-white rounded-[14px] p-8 w-full max-w-md shadow-2xl relative">
-
-          {/* Close button: top-right corner — the universal position users expect */}
-          <button type="button" aria-label="Close dialog"
-            className="absolute top-3.5 right-3.5 bg-gray-100 border-none rounded-md w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-200 cursor-pointer">
-            ✕
-          </button>
-
-          {/* Icon: 44px, brand-tinted bg — sets the emotional tone before the user reads a word */}
-          {/* Info: indigo  |  Success: green  |  Warning: amber  |  Danger: red */}
-          <div className="w-11 h-11 bg-indigo-50 rounded-xl flex items-center justify-center mb-4">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-          </div>
-
-          {/* Title: short and specific — "Delete project?" beats "Are you sure?" every time */}
-          <h2 id="modal-title" className="text-[17px] font-bold text-gray-900 mb-2">
-            Dialog title
-          </h2>
-          {/* Description: one or two sentences max — state the consequence, not the question */}
-          <p id="modal-desc" className="text-sm text-gray-500 leading-relaxed mb-6">
-            Supporting description. State what will happen, not just what they're confirming.
-          </p>
-
-          {/* Actions: right-aligned, Cancel LEFT of Confirm — users scan left, Cancel is the safe exit */}
-          <footer className="flex gap-2.5 justify-end">
-            {/* Cancel: neutral, low weight — always present, gives user a safe way out */}
-            <button type="button"
-              className="px-[18px] py-2 bg-gray-100 text-gray-700 border-none rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer">
-              Cancel
-            </button>
-            {/* Confirm: the consequential action — use red for destructive, indigo for neutral/positive */}
-            <button type="button"
-              className="px-[18px] py-2 bg-indigo-600 text-white border-none rounded-lg text-sm font-semibold hover:bg-indigo-700 cursor-pointer">
-              Confirm
-            </button>
-          </footer>
-
-        </div>
-      </div>
-    </>
-  );
-
-]=]),
+		t({
+			"// Modal — structural outline (shown open)",
+			"",
+			"export default function Modal() {",
+			"  return (",
+			"    <>",
+			'      <button type="button"',
+			'        className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition cursor-pointer">',
+			"        Open Modal",
+			"      </button>",
+			"",
+			"      {/* Backdrop: semi-transparent black — dims the page to focus attention on the dialog */}",
+			'      <div role="presentation"',
+			'        className="fixed inset-0 bg-black/45 flex items-center justify-center z-50 p-4">',
+			"",
+			'        <div role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc"',
+			'          className="bg-white rounded-[14px] p-8 w-full max-w-md shadow-2xl relative">',
+			"",
+			"          {/* Close button: top-right corner — the universal position users expect */}",
+			'          <button type="button" aria-label="Close dialog"',
+			'            className="absolute top-3.5 right-3.5 bg-gray-100 border-none rounded-md w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-200 cursor-pointer">',
+			"            ✕",
+			"          </button>",
+			"",
+			"          {/* Icon: 44px, brand-tinted bg — sets the emotional tone before the user reads a word */}",
+			"          {/* Info: indigo  |  Success: green  |  Warning: amber  |  Danger: red */}",
+			'          <div className="w-11 h-11 bg-indigo-50 rounded-xl flex items-center justify-center mb-4">',
+			'            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">',
+			'              <circle cx="12" cy="12" r="10"></circle>',
+			'              <line x1="12" y1="8" x2="12" y2="12"></line>',
+			'              <line x1="12" y1="16" x2="12.01" y2="16"></line>',
+			"            </svg>",
+			"          </div>",
+			"",
+			'          {/* Title: short and specific — "Delete project?" beats "Are you sure?" every time */}',
+			'          <h2 id="modal-title" className="text-[17px] font-bold text-gray-900 mb-2">',
+			"            Dialog title",
+			"          </h2>",
+			"          {/* Description: one or two sentences max — state the consequence, not the question */}",
+			'          <p id="modal-desc" className="text-sm text-gray-500 leading-relaxed mb-6">',
+			"            Supporting description. State what will happen, not just what they're confirming.",
+			"          </p>",
+			"",
+			"          {/* Actions: right-aligned, Cancel LEFT of Confirm — users scan left, Cancel is the safe exit */}",
+			'          <footer className="flex gap-2.5 justify-end">',
+			"            {/* Cancel: neutral, low weight — always present, gives user a safe way out */}",
+			'            <button type="button"',
+			'              className="px-[18px] py-2 bg-gray-100 text-gray-700 border-none rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer">',
+			"              Cancel",
+			"            </button>",
+			"            {/* Confirm: the consequential action — use red for destructive, indigo for neutral/positive */}",
+			'            <button type="button"',
+			'              className="px-[18px] py-2 bg-indigo-600 text-white border-none rounded-lg text-sm font-semibold hover:bg-indigo-700 cursor-pointer">',
+			"              Confirm",
+			"            </button>",
+			"          </footer>",
+			"",
+			"        </div>",
+			"      </div>",
+			"    </>",
+			"  );",
+		}),
 	}),
 
-	-- ── FEEDBACK ────────────────────────────────
-	-- Toast
+	-- ── Ctoast ── Toast
 	s("Ctoast", {
-		t([=[
-// Toast variants — all four types with designer notes
-
-const VARIANTS = [
-  { type:"success", title:"Changes saved",    message:"Your profile has been updated.", bg:"bg-green-50",  border:"border-green-200",  iconBg:"bg-green-100",  iconColor:"text-green-700",  titleColor:"text-green-800",  icon:"✓" },
-  { type:"error",   title:"Something wrong",  message:"Unable to process your request.", bg:"bg-red-50",    border:"border-red-200",    iconBg:"bg-red-100",    iconColor:"text-red-700",    titleColor:"text-red-800",    icon:"✕" },
-  { type:"info",    title:"Heads up",         message:"Your subscription renews in 3 days.", bg:"bg-blue-50",   border:"border-blue-200",   iconBg:"bg-blue-100",   iconColor:"text-blue-700",   titleColor:"text-blue-800",   icon:"i" },
-  { type:"warning", title:"Attention needed", message:"Some fields are incomplete.", bg:"bg-amber-50",  border:"border-amber-200",  iconBg:"bg-amber-100",  iconColor:"text-amber-700",  titleColor:"text-amber-800",  icon:"!" },
-];
-
-export default function ToastReference() {
-  return (
-    {/* max-w-sm: toasts should never exceed ~384px — they're notifications, not dialogs */}
-    {/* fixed bottom-4 right-4 z-50 in production — bottom-right is the universal toast position */}
-    <div role="region" aria-live="polite" aria-label="Notifications"
-      className="flex flex-col gap-2 max-w-sm">
-      {VARIANTS.map((v) => (
-        <div key={v.type} role="alert"
-          className={"flex items-start gap-3 px-3.5 py-3 border rounded-xl " + v.bg + " " + v.border}>
-          {/* Icon badge: 28px circle — color-coded so the type is readable before the text */}
-          <div className={"w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0 " + v.iconBg + " " + v.iconColor}>
-            {v.icon}
-          </div>
-          <div className="flex-1">
-            {/* Title: bold, semantic color — one line, states the outcome not the cause */}
-            <p className={"text-[13px] font-semibold mb-0.5 " + v.titleColor}>{v.title}</p>
-            {/* Message: 1–2 lines max — if it needs more, use a modal instead */}
-            <p className="text-xs text-gray-500 leading-relaxed">{v.message}</p>
-          </div>
-          {/* Dismiss: always present — users should always be able to clear a notification */}
-          <button type="button" aria-label={"Dismiss " + v.type + " notification"}
-            className="bg-transparent border-none text-gray-400 text-sm cursor-pointer flex-shrink-0 p-0 hover:text-gray-600">
-            ✕
-          </button>
-        </div>
-      ))}
-    </div>
-  );
-
-]=]),
+		t({
+			"// Toast variants — all four types with designer notes",
+			"",
+			"const VARIANTS = [",
+			'  { type:"success", title:"Changes saved",    message:"Your profile has been updated.", bg:"bg-green-50",  border:"border-green-200",  iconBg:"bg-green-100",  iconColor:"text-green-700",  titleColor:"text-green-800",  icon:"✓" },',
+			'  { type:"error",   title:"Something wrong",  message:"Unable to process your request.", bg:"bg-red-50",    border:"border-red-200",    iconBg:"bg-red-100",    iconColor:"text-red-700",    titleColor:"text-red-800",    icon:"✕" },',
+			'  { type:"info",    title:"Heads up",         message:"Your subscription renews in 3 days.", bg:"bg-blue-50",   border:"border-blue-200",   iconBg:"bg-blue-100",   iconColor:"text-blue-700",   titleColor:"text-blue-800",   icon:"i" },',
+			'  { type:"warning", title:"Attention needed", message:"Some fields are incomplete.", bg:"bg-amber-50",  border:"border-amber-200",  iconBg:"bg-amber-100",  iconColor:"text-amber-700",  titleColor:"text-amber-800",  icon:"!" },',
+			"];",
+			"",
+			"export default function ToastReference() {",
+			"  return (",
+			"    {/* max-w-sm: toasts should never exceed ~384px — they're notifications, not dialogs */}",
+			"    {/* fixed bottom-4 right-4 z-50 in production — bottom-right is the universal toast position */}",
+			'    <div role="region" aria-live="polite" aria-label="Notifications"',
+			'      className="flex flex-col gap-2 max-w-sm">',
+			"      {VARIANTS.map((v) => (",
+			'        <div key={v.type} role="alert"',
+			'          className={"flex items-start gap-3 px-3.5 py-3 border rounded-xl " + v.bg + " " + v.border}>',
+			"          {/* Icon badge: 28px circle — color-coded so the type is readable before the text */}",
+			'          <div className={"w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0 " + v.iconBg + " " + v.iconColor}>',
+			"            {v.icon}",
+			"          </div>",
+			'          <div className="flex-1">',
+			"            {/* Title: bold, semantic color — one line, states the outcome not the cause */}",
+			'            <p className={"text-[13px] font-semibold mb-0.5 " + v.titleColor}>{v.title}</p>',
+			"            {/* Message: 1–2 lines max — if it needs more, use a modal instead */}",
+			'            <p className="text-xs text-gray-500 leading-relaxed">{v.message}</p>',
+			"          </div>",
+			"          {/* Dismiss: always present — users should always be able to clear a notification */}",
+			'          <button type="button" aria-label={"Dismiss " + v.type + " notification"}',
+			'            className="bg-transparent border-none text-gray-400 text-sm cursor-pointer flex-shrink-0 p-0 hover:text-gray-600">',
+			"            ✕",
+			"          </button>",
+			"        </div>",
+			"      ))}",
+			"    </div>",
+			"  );",
+		}),
 	}),
 
-	-- ── DATA ────────────────────────────────────
-	-- Table
+	-- ── Ctable ── Table
 	s("Ctable", {
-		t([=[
-// DataTable — structural outline
-// Replace TABLE_DATA with your API response. Same shape, just map over it.
-
-const TABLE_DATA = [
-  { id:"001", name:"Acme Corp",        status:"Active",   plan:"Pro",        amount:"$240.00", date:"Apr 12, 2026" },
-  { id:"002", name:"Globex Inc",       status:"Pending",  plan:"Starter",    amount:"$0.00",   date:"Apr 14, 2026" },
-  { id:"003", name:"Initech LLC",      status:"Active",   plan:"Enterprise", amount:"$588.00", date:"Apr 15, 2026" },
-  { id:"004", name:"Umbrella Ltd",     status:"Inactive", plan:"Pro",        amount:"$228.00", date:"Apr 10, 2026" },
-  { id:"005", name:"Stark Industries", status:"Active",   plan:"Enterprise", amount:"$468.00", date:"Apr 18, 2026" },
-];
-
-const STATUS_CLASSES = {
-  Active:   "bg-green-100 text-green-700",
-  Pending:  "bg-amber-100 text-amber-700",
-  Inactive: "bg-gray-100 text-gray-500",
-};
-
-export default function DataTable() {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-
-      {/* Toolbar — add search, filter, or export controls here */}
-      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-        <div>
-          <h2 className="text-[15px] font-bold text-gray-900 mb-0.5">Customers</h2>
-          <p className="text-[13px] text-gray-400">A list of all registered accounts</p>
-        </div>
-        <button type="button"
-          className="px-4 py-2 bg-indigo-600 text-white border-none rounded-lg text-[13px] font-semibold hover:bg-indigo-700 transition cursor-pointer">
-          Add customer
-        </button>
-      </div>
-
-      {/* overflow-x-auto prevents table from breaking layout on small screens */}
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-[13px]">
-
-          {/* caption is sr-only — describes the table to screen readers */}
-          <caption className="sr-only">Customer accounts — name, status, plan, amount, and date</caption>
-
-          <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              {["ID", "Customer", "Status", "Plan", "Amount", "Date"].map((h) => (
-                <th key={h} scope="col"
-                  className={"px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap " + (h === "Amount" ? "text-right" : "text-left")}>
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-
-          <tbody>
-            {TABLE_DATA.map((row, i) => (
-              <tr key={row.id} className={"border-b border-gray-100 " + (i % 2 === 0 ? "bg-white" : "bg-gray-50/50")}>
-                <td className="px-5 py-3 text-gray-400 font-mono text-xs">{row.id}</td>
-                <td className="px-5 py-3 font-medium text-gray-900">{row.name}</td>
-                <td className="px-5 py-3">
-                  <span className={"text-[11px] font-semibold px-2.5 py-0.5 rounded-full " + STATUS_CLASSES[row.status]}>
-                    {row.status}
-                  </span>
-                </td>
-                <td className="px-5 py-3 text-gray-600">{row.plan}</td>
-                <td className="px-5 py-3 text-right font-semibold text-gray-900 font-mono">{row.amount}</td>
-                <td className="px-5 py-3 text-gray-500 whitespace-nowrap">{row.date}</td>
-              </tr>
-            ))}
-          </tbody>
-
-          {/* tfoot — totals, summaries, or pagination info */}
-          <tfoot>
-            <tr className="border-t-2 border-gray-200 bg-gray-50">
-              <td colSpan={4} className="px-5 py-2.5 text-xs text-gray-400">
-                Showing {TABLE_DATA.length} results
-              </td>
-              <td className="px-5 py-2.5 text-right font-bold text-gray-900 font-mono text-[13px]">$1,524.00</td>
-              <td></td>
-            </tr>
-          </tfoot>
-
-        </table>
-      </div>
-    </div>
-  );
-
-]=]),
+		t({
+			"// DataTable — structural outline",
+			"// Replace TABLE_DATA with your API response. Same shape, just map over it.",
+			"",
+			"const TABLE_DATA = [",
+			'  { id:"001", name:"Acme Corp",        status:"Active",   plan:"Pro",        amount:"$240.00", date:"Apr 12, 2026" },',
+			'  { id:"002", name:"Globex Inc",       status:"Pending",  plan:"Starter",    amount:"$0.00",   date:"Apr 14, 2026" },',
+			'  { id:"003", name:"Initech LLC",      status:"Active",   plan:"Enterprise", amount:"$588.00", date:"Apr 15, 2026" },',
+			'  { id:"004", name:"Umbrella Ltd",     status:"Inactive", plan:"Pro",        amount:"$228.00", date:"Apr 10, 2026" },',
+			'  { id:"005", name:"Stark Industries", status:"Active",   plan:"Enterprise", amount:"$468.00", date:"Apr 18, 2026" },',
+			"];",
+			"",
+			"const STATUS_CLASSES = {",
+			'  Active:   "bg-green-100 text-green-700",',
+			'  Pending:  "bg-amber-100 text-amber-700",',
+			'  Inactive: "bg-gray-100 text-gray-500",',
+			"};",
+			"",
+			"export default function DataTable() {",
+			"  return (",
+			'    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">',
+			"",
+			"      {/* Toolbar — add search, filter, or export controls here */}",
+			'      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">',
+			"        <div>",
+			'          <h2 className="text-[15px] font-bold text-gray-900 mb-0.5">Customers</h2>',
+			'          <p className="text-[13px] text-gray-400">A list of all registered accounts</p>',
+			"        </div>",
+			'        <button type="button"',
+			'          className="px-4 py-2 bg-indigo-600 text-white border-none rounded-lg text-[13px] font-semibold hover:bg-indigo-700 transition cursor-pointer">',
+			"          Add customer",
+			"        </button>",
+			"      </div>",
+			"",
+			"      {/* overflow-x-auto prevents table from breaking layout on small screens */}",
+			'      <div className="overflow-x-auto">',
+			'        <table className="w-full border-collapse text-[13px]">',
+			"",
+			"          {/* caption is sr-only — describes the table to screen readers */}",
+			'          <caption className="sr-only">Customer accounts — name, status, plan, amount, and date</caption>',
+			"",
+			"          <thead>",
+			'            <tr className="bg-gray-50 border-b border-gray-200">',
+			'              {["ID", "Customer", "Status", "Plan", "Amount", "Date"].map((h) => (',
+			'                <th key={h} scope="col"',
+			'                  className={"px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap " + (h === "Amount" ? "text-right" : "text-left")}>',
+			"                  {h}",
+			"                </th>",
+			"              ))}",
+			"            </tr>",
+			"          </thead>",
+			"",
+			"          <tbody>",
+			"            {TABLE_DATA.map((row, i) => (",
+			'              <tr key={row.id} className={"border-b border-gray-100 " + (i % 2 === 0 ? "bg-white" : "bg-gray-50/50")}>',
+			'                <td className="px-5 py-3 text-gray-400 font-mono text-xs">{row.id}</td>',
+			'                <td className="px-5 py-3 font-medium text-gray-900">{row.name}</td>',
+			'                <td className="px-5 py-3">',
+			'                  <span className={"text-[11px] font-semibold px-2.5 py-0.5 rounded-full " + STATUS_CLASSES[row.status]}>',
+			"                    {row.status}",
+			"                  </span>",
+			"                </td>",
+			'                <td className="px-5 py-3 text-gray-600">{row.plan}</td>',
+			'                <td className="px-5 py-3 text-right font-semibold text-gray-900 font-mono">{row.amount}</td>',
+			'                <td className="px-5 py-3 text-gray-500 whitespace-nowrap">{row.date}</td>',
+			"              </tr>",
+			"            ))}",
+			"          </tbody>",
+			"",
+			"          {/* tfoot — totals, summaries, or pagination info */}",
+			"          <tfoot>",
+			'            <tr className="border-t-2 border-gray-200 bg-gray-50">',
+			'              <td colSpan={4} className="px-5 py-2.5 text-xs text-gray-400">',
+			"                Showing {TABLE_DATA.length} results",
+			"              </td>",
+			'              <td className="px-5 py-2.5 text-right font-bold text-gray-900 font-mono text-[13px]">$1,524.00</td>',
+			"              <td></td>",
+			"            </tr>",
+			"          </tfoot>",
+			"",
+			"        </table>",
+			"      </div>",
+			"    </div>",
+			"  );",
+		}),
 	}),
 
-	-- ── LAYOUT ──────────────────────────────────
+	-- ── Clayout ── Hero Section, Feature Section, Dashboard Layout, Section Divider, Footer, Layout Patterns
 	s("Clayout", {
 		c(1, {
 			-- Hero Section
 			sn(
 				nil,
 				{
-					t([=[
-// HeroSection — structural outline, centered stacked layout
-
-export default function HeroSection() {
-  return (
-    <section aria-labelledby="hero-heading" className="bg-white">
-      {/* max-w-3xl mx-auto: constrains the hero width so text doesn't stretch across a 4k screen */}
-      <div className="flex flex-col items-center text-center px-6 pt-20 pb-16 max-w-3xl mx-auto">
-
-        {/* Badge: optional — use for launch announcements, beta tags, or a key differentiator */}
-        <div className="inline-flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 rounded-full px-3 py-1 mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 flex-shrink-0" aria-hidden="true"></span>
-          <span className="text-xs font-semibold text-indigo-600">Your announcement here</span>
-        </div>
-
-        {/* Headline: the single most important line on the page — 6–10 words, active voice */}
-        {/* clamp: fluid font that scales between 32px mobile and 52px desktop without media queries */}
-        <h1 id="hero-heading"
-          className="text-[clamp(32px,6vw,52px)] font-extrabold text-gray-900 leading-[1.12] tracking-[-1.5px] mb-5 max-w-2xl">
-          Your headline —
-          {/* Accent span: highlight the most powerful word or phrase — one per headline max */}
-          <span className="text-indigo-600"> key phrase</span>
-        </h1>
-
-        {/* Subheadline: expands on the headline promise — max-w-xl keeps ~65 char line length */}
-        {/* Don't repeat the headline. Add a new dimension: who it's for, how it works, or what's unique */}
-        <p className="text-lg text-gray-500 leading-relaxed mb-8 max-w-xl">
-          Supporting description. One to two sentences. What do users get, and why now?
-        </p>
-
-        {/* CTA group: primary + secondary side by side — one dominant action, one softer alternative */}
-        {/* Rule: never more than 2 CTAs in a hero — more options = less action */}
-        <div role="group" aria-label="Primary actions" className="flex flex-wrap items-center justify-center gap-3 mb-12">
-          {/* Primary CTA: high contrast fill, verb-first — "Get started" not "Learn more about getting started" */}
-          <a href="/signup" role="button"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl text-[15px] font-bold no-underline hover:bg-indigo-700 transition-all">
-            Get started free
-            {/* Arrow icon: signals forward motion — adds energy to the CTA */}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </a>
-          {/* Secondary CTA: outline/ghost — gives hesitant users a low-commitment path */}
-          <a href="/components"
-            className="inline-flex items-center px-6 py-3 bg-transparent text-gray-700 border-[1.5px] border-gray-200 rounded-xl text-[15px] font-semibold no-underline hover:border-gray-400 transition-all">
-            View components
-          </a>
-        </div>
-
-        {/* Social proof: avatar stack + number — builds trust before the screenshot */}
-        {/* Position: below CTAs so it doesn't distract from the primary action */}
-        <div className="flex items-center gap-4 flex-wrap justify-center">
-          {/* Avatar stack: real faces > initials — use actual user avatars if you have them */}
-          <div className="flex" aria-hidden="true">
-            {["#4f46e5","#7c3aed","#db2777","#ea580c"].map((bg, i) => (
-              <div key={i} style={{ background:bg }}
-                className={"w-7 h-7 rounded-full border-2 border-white flex items-center justify-center " + (i > 0 ? "-ml-2" : "")}>
-                <span className="text-white text-[10px] font-bold">{String.fromCharCode(65+i)}</span>
-              </div>
-            ))}
-          </div>
-          {/* Social proof copy: specific number > vague claim. "2,400+" > "thousands of" */}
-          <p className="text-[13px] text-gray-500">
-            <strong className="text-gray-900">X,000+</strong> users already building
-          </p>
-        </div>
-      </div>
-
-      {/* Screenshot: full container width — the product visual should be the widest element */}
-      {/* aspect-video keeps 16:9 without a fixed height value */}
-      <figure className="px-6 pb-16 max-w-4xl mx-auto">
-        <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
-          {/* Replace with real screenshot — should show the product at its most impressive state */}
-          <p className="text-sm text-gray-400">Product screenshot / demo</p>
-        </div>
-        <figcaption className="sr-only">Screenshot of the product dashboard</figcaption>
-      </figure>
-    </section>
-  );
-
-]=]),
+					t({
+						"// HeroSection — structural outline, centered stacked layout",
+						"",
+						"export default function HeroSection() {",
+						"  return (",
+						'    <section aria-labelledby="hero-heading" className="bg-white">',
+						"      {/* max-w-3xl mx-auto: constrains the hero width so text doesn't stretch across a 4k screen */}",
+						'      <div className="flex flex-col items-center text-center px-6 pt-20 pb-16 max-w-3xl mx-auto">',
+						"",
+						"        {/* Badge: optional — use for launch announcements, beta tags, or a key differentiator */}",
+						'        <div className="inline-flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 rounded-full px-3 py-1 mb-6">',
+						'          <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 flex-shrink-0" aria-hidden="true"></span>',
+						'          <span className="text-xs font-semibold text-indigo-600">Your announcement here</span>',
+						"        </div>",
+						"",
+						"        {/* Headline: the single most important line on the page — 6–10 words, active voice */}",
+						"        {/* clamp: fluid font that scales between 32px mobile and 52px desktop without media queries */}",
+						'        <h1 id="hero-heading"',
+						'          className="text-[clamp(32px,6vw,52px)] font-extrabold text-gray-900 leading-[1.12] tracking-[-1.5px] mb-5 max-w-2xl">',
+						"          Your headline —",
+						"          {/* Accent span: highlight the most powerful word or phrase — one per headline max */}",
+						'          <span className="text-indigo-600"> key phrase</span>',
+						"        </h1>",
+						"",
+						"        {/* Subheadline: expands on the headline promise — max-w-xl keeps ~65 char line length */}",
+						"        {/* Don't repeat the headline. Add a new dimension: who it's for, how it works, or what's unique */}",
+						'        <p className="text-lg text-gray-500 leading-relaxed mb-8 max-w-xl">',
+						"          Supporting description. One to two sentences. What do users get, and why now?",
+						"        </p>",
+						"",
+						"        {/* CTA group: primary + secondary side by side — one dominant action, one softer alternative */}",
+						"        {/* Rule: never more than 2 CTAs in a hero — more options = less action */}",
+						'        <div role="group" aria-label="Primary actions" className="flex flex-wrap items-center justify-center gap-3 mb-12">',
+						'          {/* Primary CTA: high contrast fill, verb-first — "Get started" not "Learn more about getting started" */}',
+						'          <a href="/signup" role="button"',
+						'            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl text-[15px] font-bold no-underline hover:bg-indigo-700 transition-all">',
+						"            Get started free",
+						"            {/* Arrow icon: signals forward motion — adds energy to the CTA */}",
+						'            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">',
+						'              <line x1="5" y1="12" x2="19" y2="12"></line>',
+						'              <polyline points="12 5 19 12 12 19"></polyline>',
+						"            </svg>",
+						"          </a>",
+						"          {/* Secondary CTA: outline/ghost — gives hesitant users a low-commitment path */}",
+						'          <a href="/components"',
+						'            className="inline-flex items-center px-6 py-3 bg-transparent text-gray-700 border-[1.5px] border-gray-200 rounded-xl text-[15px] font-semibold no-underline hover:border-gray-400 transition-all">',
+						"            View components",
+						"          </a>",
+						"        </div>",
+						"",
+						"        {/* Social proof: avatar stack + number — builds trust before the screenshot */}",
+						"        {/* Position: below CTAs so it doesn't distract from the primary action */}",
+						'        <div className="flex items-center gap-4 flex-wrap justify-center">',
+						"          {/* Avatar stack: real faces > initials — use actual user avatars if you have them */}",
+						'          <div className="flex" aria-hidden="true">',
+						'            {["#4f46e5","#7c3aed","#db2777","#ea580c"].map((bg, i) => (',
+						"              <div key={i} style={{ background:bg }}",
+						'                className={"w-7 h-7 rounded-full border-2 border-white flex items-center justify-center " + (i > 0 ? "-ml-2" : "")}>',
+						'                <span className="text-white text-[10px] font-bold">{String.fromCharCode(65+i)}</span>',
+						"              </div>",
+						"            ))}",
+						"          </div>",
+						'          {/* Social proof copy: specific number > vague claim. "2,400+" > "thousands of" */}',
+						'          <p className="text-[13px] text-gray-500">',
+						'            <strong className="text-gray-900">X,000+</strong> users already building',
+						"          </p>",
+						"        </div>",
+						"      </div>",
+						"",
+						"      {/* Screenshot: full container width — the product visual should be the widest element */}",
+						"      {/* aspect-video keeps 16:9 without a fixed height value */}",
+						'      <figure className="px-6 pb-16 max-w-4xl mx-auto">',
+						'        <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden aspect-video flex items-center justify-center">',
+						"          {/* Replace with real screenshot — should show the product at its most impressive state */}",
+						'          <p className="text-sm text-gray-400">Product screenshot / demo</p>',
+						"        </div>",
+						'        <figcaption className="sr-only">Screenshot of the product dashboard</figcaption>',
+						"      </figure>",
+						"    </section>",
+						"  );",
+					}),
 				}
 			),
 			-- Feature Section
 			sn(
 				nil,
 				{
-					t([=[
-// FeatureSection — structural outline
-
-const FEATURES = [
-  { icon:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z", title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },
-  { icon:"M4 17l6 6 10-13",                              title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },
-  { icon:"M18 20V10M12 20V4M6 20v-6",                   title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },
-  { icon:"M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z", title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },
-  { icon:"M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z", title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },
-  { icon:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2",  title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },
-];
-
-export default function FeatureSection() {
-  return (
-    <section aria-labelledby="features-heading" className="bg-white py-20 px-6">
-
-      <header className="text-center mb-12 max-w-xl mx-auto">
-        {/* Eyebrow: ALL CAPS, brand color — sets context before the heading, optional */}
-        <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-2.5">
-          Why choose us
-        </p>
-        {/* Section heading: should complete a thought the hero started — not just a label */}
-        <h2 id="features-heading" className="text-[clamp(24px,4vw,36px)] font-extrabold text-gray-900 tracking-tight mb-3">
-          Section heading
-        </h2>
-        {/* Subheadline: optional — only add if the heading alone doesn't give enough context */}
-        <p className="text-[15px] text-gray-500 leading-relaxed">
-          Supporting subheadline. One or two sentences.
-        </p>
-      </header>
-
-      {/* Grid: auto-fits columns — 6 items fits cleanly in 2 or 3 col layouts */}
-      {/* More than 6 features overwhelms — consider grouping or trimming */}
-      <ul role="list" className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-5 max-w-5xl mx-auto list-none m-0 p-0">
-        {FEATURES.map((f, i) => (
-          <li key={i}>
-            <article className="p-5 bg-gray-50 border border-gray-100 rounded-xl h-full">
-              {/* Icon container: 40px — visual anchor, gives the eye somewhere to land before reading */}
-              {/* Keep all icons the same visual weight — outline style at 17px works across icon sets */}
-              <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d={f.icon}></path>
-                </svg>
-              </div>
-              {/* Feature title: 3–5 words — noun phrase, not a sentence. "Accessible by default" not "We make accessible components" */}
-              <h3 className="text-[14px] font-bold text-gray-900 mb-1.5">{f.title}</h3>
-              {/* Feature desc: 1–2 sentences — focus on outcome, not mechanism */}
-              <p className="text-[13px] text-gray-500 leading-relaxed m-0">{f.desc}</p>
-            </article>
-          </li>
-        ))}
-      </ul>
-
-    </section>
-  );
-
-]=]),
+					t({
+						"// FeatureSection — structural outline",
+						"",
+						"const FEATURES = [",
+						'  { icon:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z", title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },',
+						'  { icon:"M4 17l6 6 10-13",                              title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },',
+						'  { icon:"M18 20V10M12 20V4M6 20v-6",                   title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },',
+						'  { icon:"M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z", title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },',
+						'  { icon:"M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z", title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },',
+						'  { icon:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2",  title:"Feature title", desc:"Benefit-led description. What does the user gain? One to two sentences max." },',
+						"];",
+						"",
+						"export default function FeatureSection() {",
+						"  return (",
+						'    <section aria-labelledby="features-heading" className="bg-white py-20 px-6">',
+						"",
+						'      <header className="text-center mb-12 max-w-xl mx-auto">',
+						"        {/* Eyebrow: ALL CAPS, brand color — sets context before the heading, optional */}",
+						'        <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-2.5">',
+						"          Why choose us",
+						"        </p>",
+						"        {/* Section heading: should complete a thought the hero started — not just a label */}",
+						'        <h2 id="features-heading" className="text-[clamp(24px,4vw,36px)] font-extrabold text-gray-900 tracking-tight mb-3">',
+						"          Section heading",
+						"        </h2>",
+						"        {/* Subheadline: optional — only add if the heading alone doesn't give enough context */}",
+						'        <p className="text-[15px] text-gray-500 leading-relaxed">',
+						"          Supporting subheadline. One or two sentences.",
+						"        </p>",
+						"      </header>",
+						"",
+						"      {/* Grid: auto-fits columns — 6 items fits cleanly in 2 or 3 col layouts */}",
+						"      {/* More than 6 features overwhelms — consider grouping or trimming */}",
+						'      <ul role="list" className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-5 max-w-5xl mx-auto list-none m-0 p-0">',
+						"        {FEATURES.map((f, i) => (",
+						"          <li key={i}>",
+						'            <article className="p-5 bg-gray-50 border border-gray-100 rounded-xl h-full">',
+						"              {/* Icon container: 40px — visual anchor, gives the eye somewhere to land before reading */}",
+						"              {/* Keep all icons the same visual weight — outline style at 17px works across icon sets */}",
+						'              <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-4">',
+						'                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">',
+						"                  <path d={f.icon}></path>",
+						"                </svg>",
+						"              </div>",
+						'              {/* Feature title: 3–5 words — noun phrase, not a sentence. "Accessible by default" not "We make accessible components" */}',
+						'              <h3 className="text-[14px] font-bold text-gray-900 mb-1.5">{f.title}</h3>',
+						"              {/* Feature desc: 1–2 sentences — focus on outcome, not mechanism */}",
+						'              <p className="text-[13px] text-gray-500 leading-relaxed m-0">{f.desc}</p>',
+						"            </article>",
+						"          </li>",
+						"        ))}",
+						"      </ul>",
+						"",
+						"    </section>",
+						"  );",
+					}),
 				}
 			),
 			-- Dashboard Layout
 			sn(
 				nil,
 				{
-					t([=[
-// DashboardLayout — structural outline
-
-const NAV  = ["Overview","Analytics","Customers","Products","Settings"];
-const METRICS = [
-  { label:"Revenue",    value:"—", change:"—", up:true  },
-  { label:"Users",      value:"—", change:"—", up:true  },
-  { label:"Conversion", value:"—", change:"—", up:false },
-  { label:"Avg Session",value:"—", change:"—", up:true  },
-];
-const ACTIVITY = [
-  { user:"User A", action:"Action description", time:"Xm ago", dateTime:"2026-01-01T00:00:00" },
-  { user:"User B", action:"Action description", time:"Xm ago", dateTime:"2026-01-01T00:00:00" },
-  { user:"User C", action:"Action description", time:"Xh ago", dateTime:"2026-01-01T00:00:00" },
-];
-
-export default function DashboardLayout() {
-  return (
-    <div className="bg-gray-50 min-h-screen flex flex-col">
-
-      {/* Top navbar: h-14 (56px) — the standard app bar height. Tight enough to not waste screen space */}
-      <header className="bg-white border-b border-gray-200 px-5 h-14 flex items-center justify-between flex-shrink-0">
-        {/* Brand: far left, logo mark + name — same pattern as the marketing navbar */}
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-indigo-600 rounded-md flex items-center justify-center">
-            <span className="text-white text-[11px] font-bold">A</span>
-          </div>
-          <span className="text-[13px] font-bold text-gray-900">Dashboard</span>
-        </div>
-        {/* User avatar: far right — always in the top-right corner in app interfaces */}
-        {/* Add notification bell to the left of the avatar */}
-        <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center" aria-label="User menu">
-          <span className="text-white text-xs font-bold">U</span>
-        </div>
-      </header>
-
-      <div className="flex flex-1">
-
-        {/* Sidebar: w-44 (176px) — standard sidebar width. Narrow enough not to crowd content */}
-        <aside aria-label="Dashboard navigation"
-          className="w-44 bg-white border-r border-gray-200 py-4 flex-shrink-0">
-          {/* Nav links: left-border active indicator — more visible than background alone at narrow widths */}
-          {NAV.map((item) => (
-            <a key={item} href="#"
-              aria-current={item === "Overview" ? "page" : undefined}
-              className={"block w-full px-4 py-2 text-[13px] border-l-2 no-underline transition-all " +
-                (item === "Overview"
-                  ? "text-indigo-600 font-semibold bg-indigo-50 border-l-indigo-600"
-                  : "text-gray-500 font-normal bg-transparent border-l-transparent hover:bg-gray-50")}>
-              {item}
-            </a>
-          ))}
-        </aside>
-
-        <main className="flex-1 p-6 min-w-0">
-
-          {/* Page heading row: title left, primary action right — the standard dashboard header pattern */}
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              {/* h1: the current view name — updates per route in a real SPA */}
-              <h1 className="text-[16px] font-bold text-gray-900 mb-0.5">Overview</h1>
-              <p className="text-xs text-gray-400">Date range — replace with real range picker</p>
-            </div>
-            {/* Page-level CTA: top-right of content — Export, Add, Create depending on the view */}
-            <button type="button"
-              className="px-4 py-2 bg-indigo-600 text-white border-none rounded-lg text-[13px] font-semibold hover:bg-indigo-700 transition cursor-pointer">
-              Export
-            </button>
-          </div>
-
-          {/* Metric cards: 4 is the sweet spot — more than 5 starts to feel overwhelming */}
-          {/* Value large + bold, label small + muted, change color-coded green/red */}
-          <div role="list" className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-3 mb-5">
-            {METRICS.map((m) => (
-              <div key={m.label} role="listitem"
-                className="bg-white border border-gray-200 rounded-xl px-4 py-3">
-                <p className="text-[11px] text-gray-400 font-medium mb-1">{m.label}</p>
-                {/* Value: largest text in the card — the number is the message */}
-                <p className="text-[18px] font-extrabold text-gray-900 tracking-tight mb-1">{m.value}</p>
-                {/* Change: green = good, red = needs attention — don't use red for neutral negative */}
-                <p className={"text-[11px] font-semibold " + (m.up ? "text-green-600" : "text-red-500")}>
-                  {m.change}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Activity feed: <ol> not <ul> — chronological order is meaningful */}
-          <section aria-labelledby="activity-heading"
-            className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <header className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-              <h2 id="activity-heading" className="text-[13px] font-bold text-gray-900">Recent activity</h2>
-              {/* "View all" link: right-aligned, low weight — doesn't compete with the feed itself */}
-              <a href="#" className="text-xs text-indigo-600 font-medium">View all</a>
-            </header>
-            <ol className="list-none m-0 p-0">
-              {ACTIVITY.map((a, i) => (
-                <li key={i} className={"flex items-center gap-3 px-4 py-3 " + (i < ACTIVITY.length - 1 ? "border-b border-gray-50" : "")}>
-                  {/* User avatar: 28px circle — identifies who took the action at a glance */}
-                  <div className="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                    <span className="text-[10px] font-bold text-indigo-600">{a.user.slice(-1)}</span>
-                  </div>
-                  {/* Action: bold user name, regular action text — name draws the eye, text gives context */}
-                  <p className="flex-1 text-[12px] text-gray-700 m-0 whitespace-nowrap overflow-hidden text-ellipsis">
-                    <strong>{a.user}</strong> — {a.action}
-                  </p>
-                  {/* Timestamp: right-aligned, muted — always present but never the focus */}
-                  <time dateTime={a.dateTime} className="text-[11px] text-gray-400 whitespace-nowrap">
-                    {a.time}
-                  </time>
-                </li>
-              ))}
-            </ol>
-          </section>
-
-        </main>
-      </div>
-    </div>
-  );
-
-]=]),
+					t({
+						"// DashboardLayout — structural outline",
+						"",
+						'const NAV  = ["Overview","Analytics","Customers","Products","Settings"];',
+						"const METRICS = [",
+						'  { label:"Revenue",    value:"—", change:"—", up:true  },',
+						'  { label:"Users",      value:"—", change:"—", up:true  },',
+						'  { label:"Conversion", value:"—", change:"—", up:false },',
+						'  { label:"Avg Session",value:"—", change:"—", up:true  },',
+						"];",
+						"const ACTIVITY = [",
+						'  { user:"User A", action:"Action description", time:"Xm ago", dateTime:"2026-01-01T00:00:00" },',
+						'  { user:"User B", action:"Action description", time:"Xm ago", dateTime:"2026-01-01T00:00:00" },',
+						'  { user:"User C", action:"Action description", time:"Xh ago", dateTime:"2026-01-01T00:00:00" },',
+						"];",
+						"",
+						"export default function DashboardLayout() {",
+						"  return (",
+						'    <div className="bg-gray-50 min-h-screen flex flex-col">',
+						"",
+						"      {/* Top navbar: h-14 (56px) — the standard app bar height. Tight enough to not waste screen space */}",
+						'      <header className="bg-white border-b border-gray-200 px-5 h-14 flex items-center justify-between flex-shrink-0">',
+						"        {/* Brand: far left, logo mark + name — same pattern as the marketing navbar */}",
+						'        <div className="flex items-center gap-2">',
+						'          <div className="w-6 h-6 bg-indigo-600 rounded-md flex items-center justify-center">',
+						'            <span className="text-white text-[11px] font-bold">A</span>',
+						"          </div>",
+						'          <span className="text-[13px] font-bold text-gray-900">Dashboard</span>',
+						"        </div>",
+						"        {/* User avatar: far right — always in the top-right corner in app interfaces */}",
+						"        {/* Add notification bell to the left of the avatar */}",
+						'        <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center" aria-label="User menu">',
+						'          <span className="text-white text-xs font-bold">U</span>',
+						"        </div>",
+						"      </header>",
+						"",
+						'      <div className="flex flex-1">',
+						"",
+						"        {/* Sidebar: w-44 (176px) — standard sidebar width. Narrow enough not to crowd content */}",
+						'        <aside aria-label="Dashboard navigation"',
+						'          className="w-44 bg-white border-r border-gray-200 py-4 flex-shrink-0">',
+						"          {/* Nav links: left-border active indicator — more visible than background alone at narrow widths */}",
+						"          {NAV.map((item) => (",
+						'            <a key={item} href="#"',
+						'              aria-current={item === "Overview" ? "page" : undefined}',
+						'              className={"block w-full px-4 py-2 text-[13px] border-l-2 no-underline transition-all " +',
+						'                (item === "Overview"',
+						'                  ? "text-indigo-600 font-semibold bg-indigo-50 border-l-indigo-600"',
+						'                  : "text-gray-500 font-normal bg-transparent border-l-transparent hover:bg-gray-50")}>',
+						"              {item}",
+						"            </a>",
+						"          ))}",
+						"        </aside>",
+						"",
+						'        <main className="flex-1 p-6 min-w-0">',
+						"",
+						"          {/* Page heading row: title left, primary action right — the standard dashboard header pattern */}",
+						'          <div className="flex items-center justify-between mb-5">',
+						"            <div>",
+						"              {/* h1: the current view name — updates per route in a real SPA */}",
+						'              <h1 className="text-[16px] font-bold text-gray-900 mb-0.5">Overview</h1>',
+						'              <p className="text-xs text-gray-400">Date range — replace with real range picker</p>',
+						"            </div>",
+						"            {/* Page-level CTA: top-right of content — Export, Add, Create depending on the view */}",
+						'            <button type="button"',
+						'              className="px-4 py-2 bg-indigo-600 text-white border-none rounded-lg text-[13px] font-semibold hover:bg-indigo-700 transition cursor-pointer">',
+						"              Export",
+						"            </button>",
+						"          </div>",
+						"",
+						"          {/* Metric cards: 4 is the sweet spot — more than 5 starts to feel overwhelming */}",
+						"          {/* Value large + bold, label small + muted, change color-coded green/red */}",
+						'          <div role="list" className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-3 mb-5">',
+						"            {METRICS.map((m) => (",
+						'              <div key={m.label} role="listitem"',
+						'                className="bg-white border border-gray-200 rounded-xl px-4 py-3">',
+						'                <p className="text-[11px] text-gray-400 font-medium mb-1">{m.label}</p>',
+						"                {/* Value: largest text in the card — the number is the message */}",
+						'                <p className="text-[18px] font-extrabold text-gray-900 tracking-tight mb-1">{m.value}</p>',
+						"                {/* Change: green = good, red = needs attention — don't use red for neutral negative */}",
+						'                <p className={"text-[11px] font-semibold " + (m.up ? "text-green-600" : "text-red-500")}>',
+						"                  {m.change}",
+						"                </p>",
+						"              </div>",
+						"            ))}",
+						"          </div>",
+						"",
+						"          {/* Activity feed: <ol> not <ul> — chronological order is meaningful */}",
+						'          <section aria-labelledby="activity-heading"',
+						'            className="bg-white border border-gray-200 rounded-xl overflow-hidden">',
+						'            <header className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">',
+						'              <h2 id="activity-heading" className="text-[13px] font-bold text-gray-900">Recent activity</h2>',
+						'              {/* "View all" link: right-aligned, low weight — doesn\'t compete with the feed itself */}',
+						'              <a href="#" className="text-xs text-indigo-600 font-medium">View all</a>',
+						"            </header>",
+						'            <ol className="list-none m-0 p-0">',
+						"              {ACTIVITY.map((a, i) => (",
+						'                <li key={i} className={"flex items-center gap-3 px-4 py-3 " + (i < ACTIVITY.length - 1 ? "border-b border-gray-50" : "")}>',
+						"                  {/* User avatar: 28px circle — identifies who took the action at a glance */}",
+						'                  <div className="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0" aria-hidden="true">',
+						'                    <span className="text-[10px] font-bold text-indigo-600">{a.user.slice(-1)}</span>',
+						"                  </div>",
+						"                  {/* Action: bold user name, regular action text — name draws the eye, text gives context */}",
+						'                  <p className="flex-1 text-[12px] text-gray-700 m-0 whitespace-nowrap overflow-hidden text-ellipsis">',
+						"                    <strong>{a.user}</strong> — {a.action}",
+						"                  </p>",
+						"                  {/* Timestamp: right-aligned, muted — always present but never the focus */}",
+						'                  <time dateTime={a.dateTime} className="text-[11px] text-gray-400 whitespace-nowrap">',
+						"                    {a.time}",
+						"                  </time>",
+						"                </li>",
+						"              ))}",
+						"            </ol>",
+						"          </section>",
+						"",
+						"        </main>",
+						"      </div>",
+						"    </div>",
+						"  );",
+					}),
 				}
 			),
 			-- Section Divider
 			sn(
 				nil,
 				{
-					t([=[
-// Section Dividers — structural outline
-// Five patterns. Use the one that matches your context.
-
-// ── 1. Simple semantic line ───────────────────────────────
-// Use for true thematic breaks between content sections
-export function SimpleDivider() {
-  return <hr aria-hidden="true" className="border-none border-t border-gray-200 my-8" />;
-}
-
-
-// ── 2. Label divider ──────────────────────────────────────
-// Use when the section shift has a named topic
-export function LabelDivider({ label = "Section title" }) {
-  return (
-    <div className="flex items-center gap-3 my-8">
-      <span className="flex-1 h-px bg-gray-200" role="presentation"></span>
-      <span className="text-xs font-semibold text-gray-400 whitespace-nowrap">{label}</span>
-      <span className="flex-1 h-px bg-gray-200" role="presentation"></span>
-    </div>
-  );
-}
-
-
-// ── 3. Icon divider ───────────────────────────────────────
-// Use for visual breaks between feature sections
-export function IconDivider() {
-  return (
-    <div className="flex items-center gap-3 my-8" aria-hidden="true">
-      <span className="flex-1 h-px bg-gray-200" role="presentation"></span>
-      <span className="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-        {/* Swap SVG path for any icon */}
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="16"></line>
-          <line x1="8" y1="12" x2="16" y2="12"></line>
-        </svg>
-      </span>
-      <span className="flex-1 h-px bg-gray-200" role="presentation"></span>
-    </div>
-  );
-}
-
-
-// ── 4. Thick accent divider ───────────────────────────────
-// Use for major page-level section breaks with brand color
-export function AccentDivider() {
-  return (
-    <div role="separator" aria-hidden="true"
-      className="h-[3px] bg-gradient-to-r from-indigo-600 to-violet-600 rounded-sm my-12">
-    </div>
-  );
-}
-
-
-// ── 5. Spacer ─────────────────────────────────────────────
-// Invisible vertical rhythm — no visual line
-export function SpacerDivider({ className = "my-8" }) {
-  return <div role="separator" aria-hidden="true" className={className}></div>;
-
-]=]),
+					t({
+						"// Section Dividers — structural outline",
+						"// Five patterns. Use the one that matches your context.",
+						"",
+						"// ── 1. Simple semantic line ───────────────────────────────",
+						"// Use for true thematic breaks between content sections",
+						"export function SimpleDivider() {",
+						'  return <hr aria-hidden="true" className="border-none border-t border-gray-200 my-8" />;',
+						"}",
+						"",
+						"",
+						"// ── 2. Label divider ──────────────────────────────────────",
+						"// Use when the section shift has a named topic",
+						'export function LabelDivider({ label = "Section title" }) {',
+						"  return (",
+						'    <div className="flex items-center gap-3 my-8">',
+						'      <span className="flex-1 h-px bg-gray-200" role="presentation"></span>',
+						'      <span className="text-xs font-semibold text-gray-400 whitespace-nowrap">{label}</span>',
+						'      <span className="flex-1 h-px bg-gray-200" role="presentation"></span>',
+						"    </div>",
+						"  );",
+						"}",
+						"",
+						"",
+						"// ── 3. Icon divider ───────────────────────────────────────",
+						"// Use for visual breaks between feature sections",
+						"export function IconDivider() {",
+						"  return (",
+						'    <div className="flex items-center gap-3 my-8" aria-hidden="true">',
+						'      <span className="flex-1 h-px bg-gray-200" role="presentation"></span>',
+						'      <span className="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">',
+						"        {/* Swap SVG path for any icon */}",
+						'        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">',
+						'          <circle cx="12" cy="12" r="10"></circle>',
+						'          <line x1="12" y1="8" x2="12" y2="16"></line>',
+						'          <line x1="8" y1="12" x2="16" y2="12"></line>',
+						"        </svg>",
+						"      </span>",
+						'      <span className="flex-1 h-px bg-gray-200" role="presentation"></span>',
+						"    </div>",
+						"  );",
+						"}",
+						"",
+						"",
+						"// ── 4. Thick accent divider ───────────────────────────────",
+						"// Use for major page-level section breaks with brand color",
+						"export function AccentDivider() {",
+						"  return (",
+						'    <div role="separator" aria-hidden="true"',
+						'      className="h-[3px] bg-gradient-to-r from-indigo-600 to-violet-600 rounded-sm my-12">',
+						"    </div>",
+						"  );",
+						"}",
+						"",
+						"",
+						"// ── 5. Spacer ─────────────────────────────────────────────",
+						"// Invisible vertical rhythm — no visual line",
+						'export function SpacerDivider({ className = "my-8" }) {',
+						'  return <div role="separator" aria-hidden="true" className={className}></div>;',
+					}),
 				}
 			),
 			-- Footer
 			sn(
 				nil,
 				{
-					t([=[
-// ── Variant 1: Basic footer ───────────────────────────────────────────
-
-const NAV_LINKS   = ["Features", "Pricing", "Docs", "Blog", "About"];
-const LEGAL_LINKS = ["Privacy", "Terms", "Cookies"];
-
-export function BasicFooter() {
-  return (
-    <footer role="contentinfo" className="bg-white border-t border-gray-200">
-      {/* Single bar: brand left, nav links right — the minimal footer for apps and small sites */}
-      <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-5 max-w-6xl mx-auto">
-
-        {/* Logo: same mark as the navbar — brand consistency across top and bottom of page */}
-        <a href="/" aria-label="Go to homepage" className="flex items-center gap-2 no-underline">
-          <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
-            <span className="text-white text-[11px] font-bold">A</span>
-          </div>
-          <span className="text-[14px] font-bold text-gray-900">Brand</span>
-        </a>
-
-        {/* Nav links: 4–6 max — secondary pages users look for before leaving (docs, blog, about) */}
-        <nav aria-label="Footer navigation">
-          <ul role="list" className="flex flex-wrap gap-1 list-none m-0 p-0">
-            {NAV_LINKS.map((link) => (
-              <li key={link}>
-                <a href="#"
-                  className="text-[13px] text-gray-500 no-underline px-2.5 py-1.5 rounded-md hover:text-gray-900 hover:bg-gray-100 transition-colors">
-                  {link}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-      </div>
-
-      {/* Bottom bar: copyright left, legal links right — the required minimum for any public site */}
-      <div className="flex items-center justify-between flex-wrap gap-2 px-6 py-4 max-w-6xl mx-auto border-t border-gray-100">
-        {/* new Date().getFullYear(): always current year — never hardcode the year */}
-        <small className="text-xs text-gray-400">
-        </small>
-        {/* Legal links: same muted style as copyright — important but not primary navigation */}
-        <nav aria-label="Legal links">
-          <ul role="list" className="flex gap-4 list-none m-0 p-0">
-            {LEGAL_LINKS.map((l) => (
-              <li key={l}>
-                <a href="#" className="text-xs text-gray-400 no-underline hover:text-gray-600 transition-colors">{l}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </footer>
-  );
-}
-
-
-// ── Variant 2: Multi-column footer ────────────────────────────────────────
-
-const LINKS = {
-  Product:   ["Features", "Pricing", "Changelog", "Roadmap"],
-  Resources: ["Docs", "Components", "Blog", "Tutorials"],
-  Company:   ["About", "Careers", "Press", "Contact"],
-  Legal:     ["Privacy", "Terms", "Cookies", "Licences"],
-};
-const SOCIAL = [
-  { label:"GitHub",  href:"https://github.com",  icon:"M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" },
-  { label:"Twitter", href:"https://twitter.com", icon:"M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" },
-];
-
-export function FullFooter() {
-  return (
-    <footer role="contentinfo" className="bg-gray-900">
-      {/* grid-cols-[2fr_repeat(4,1fr)]: brand column is twice as wide — gives it visual anchor weight */}
-      <div className="px-8 py-12 grid grid-cols-[2fr_repeat(4,1fr)] gap-8 max-w-6xl mx-auto">
-
-        {/* Brand column: logo + tagline + social icons — the identity anchor of the footer */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            {/* Logo mark: same as navbar — consistent brand at both ends of the page */}
-            <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-[11px] font-bold">A</span>
-            </div>
-            <span className="text-[14px] font-bold text-white">Brand</span>
-          </div>
-          {/* Tagline: 1–2 sentences — elevator pitch for users who scroll to the footer first */}
-          <p className="text-[13px] text-gray-400 leading-relaxed mb-5 max-w-[200px]">
-            Your tagline here. Keep it to two lines max.
-          </p>
-          {/* Social icons: 32px squares — large enough to tap on mobile, small enough not to dominate */}
-          <nav aria-label="Social media links" className="flex gap-2.5">
-            {SOCIAL.map((s) => (
-              <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noreferrer"
-                className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center no-underline hover:bg-gray-700 transition">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d={s.icon}></path>
-                </svg>
-              </a>
-            ))}
-          </nav>
-        </div>
-
-        {/* Link columns: each group is a separate nav landmark — 4 groups max before it feels cluttered */}
-        {Object.entries(LINKS).map(([group, links]) => (
-          <nav key={group} aria-label={group + " links"}>
-            {/* Column heading: ALL CAPS small — visually separates categories without large text */}
-            <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4">{group}</h3>
-            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-2.5">
-              {/* 4–6 links per column — more than 6 looks like a sitemap, not a footer */}
-              {links.map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-[13px] text-gray-400 no-underline hover:text-white transition-colors">
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))}
-
-      </div>
-
-      {/* Bottom bar: thinner border separates it from the link grid above */}
-      <div className="border-t border-gray-800 px-8 py-4 flex items-center justify-between flex-wrap gap-3 max-w-6xl mx-auto">
-        <small className="text-xs text-gray-500">
-        </small>
-        <div className="flex gap-4">
-          {["Privacy", "Terms", "Cookies"].map((l) => (
-            <a key={l} href="#" className="text-xs text-gray-500 no-underline hover:text-gray-300 transition-colors">{l}</a>
-          ))}
-        </div>
-      </div>
-    </footer>
-  );
-        </small>
-        <nav aria-label="Legal links">
-          <ul role="list" className="flex gap-4 list-none m-0 p-0">
-            {LEGAL_LINKS.map((l) => (
-              <li key={l}>
-                <a href="#" className="text-xs text-gray-400 no-underline hover:text-gray-600 transition-colors">{l}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </footer>
-  );
-}
-
-
-// ── Variant 2: Multi-column footer ─────────────────────────────────────────
-
-const LINKS = {
-  Product:   ["Features", "Pricing", "Changelog", "Roadmap"],
-  Resources: ["Docs", "Components", "Blog", "Tutorials"],
-  Company:   ["About", "Careers", "Press", "Contact"],
-  Legal:     ["Privacy", "Terms", "Cookies", "Licences"],
-};
-const SOCIAL = [
-  { label:"GitHub",  href:"https://github.com",  icon:"M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" },
-  { label:"Twitter", href:"https://twitter.com", icon:"M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" },
-];
-
-export function FullFooter() {
-  return (
-    <footer role="contentinfo" className="bg-gray-900">
-      <div className="px-8 py-12 grid grid-cols-[2fr_repeat(4,1fr)] gap-8 max-w-6xl mx-auto">
-
-        {/* Brand column */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-[11px] font-bold">A</span>
-            </div>
-            <span className="text-[14px] font-bold text-white">Brand</span>
-          </div>
-          {/* Tagline — one or two sentences */}
-          <p className="text-[13px] text-gray-400 leading-relaxed mb-5 max-w-[200px]">
-            Your brand tagline goes here.
-          </p>
-          {/* Social icons — add more by extending SOCIAL array */}
-          <nav aria-label="Social media links" className="flex gap-2.5">
-            {SOCIAL.map((s) => (
-              <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noreferrer"
-                className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center no-underline hover:bg-gray-700 transition">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d={s.icon}></path>
-                </svg>
-              </a>
-            ))}
-          </nav>
-        </div>
-
-        {/* Link columns — add/remove groups from LINKS object */}
-        {Object.entries(LINKS).map(([group, links]) => (
-          <nav key={group} aria-label={group + " links"}>
-            <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4">{group}</h3>
-            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-2.5">
-              {links.map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-[13px] text-gray-400 no-underline hover:text-white transition-colors">
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))}
-
-      </div>
-
-      {/* Bottom bar */}
-      <div className="border-t border-gray-800 px-8 py-4 flex items-center justify-between flex-wrap gap-3 max-w-6xl mx-auto">
-        <small className="text-xs text-gray-500">
-        </small>
-        <div className="flex gap-4">
-          {["Privacy", "Terms", "Cookies"].map((l) => (
-            <a key={l} href="#" className="text-xs text-gray-500 no-underline hover:text-gray-300 transition-colors">{l}</a>
-          ))}
-        </div>
-      </div>
-    </footer>
-  );
-        </small>
-        <nav aria-label="Legal links">
-          <ul role="list" className="flex gap-4 list-none m-0 p-0">
-            {LEGAL_LINKS.map((l) => (
-              <li key={l}><a href="#" className="text-xs text-gray-400 no-underline hover:text-gray-600 transition-colors">{l}</a></li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </footer>
-  );
-}
-
-
-// ── Variant 2: Multi-column footer (full site footer) ──────────────────────
-// Brand column + link groups + social icons + bottom bar
-
-const LINKS = {
-  Product:   ["Features", "Pricing", "Changelog", "Roadmap"],
-  Resources: ["Docs", "Components", "Blog", "Tutorials"],
-  Company:   ["About", "Careers", "Press", "Contact"],
-  Legal:     ["Privacy", "Terms", "Cookies", "Licences"],
-};
-const SOCIAL = [
-  { label:"GitHub",   href:"https://github.com",  icon:"M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" },
-  { label:"Twitter",  href:"https://twitter.com", icon:"M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" },
-];
-
-export default function FullFooter() {
-  return (
-    <footer role="contentinfo" className="bg-gray-900">
-      <div className="px-8 py-12 grid grid-cols-[2fr_repeat(4,1fr)] gap-8 max-w-6xl mx-auto">
-
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-[11px] font-bold">A</span>
-            </div>
-            <span className="text-[14px] font-bold text-white">Brand</span>
-          </div>
-          <p className="text-[13px] text-gray-400 leading-relaxed mb-5 max-w-[200px]">
-            Your brand tagline or short description goes here.
-          </p>
-          <nav aria-label="Social media links" className="flex gap-2.5">
-            {SOCIAL.map((s) => (
-              <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noreferrer"
-                className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center no-underline hover:bg-gray-700 transition">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d={s.icon} />
-                </svg>
-              </a>
-            ))}
-          </nav>
-        </div>
-
-        {Object.entries(LINKS).map(([group, links]) => (
-          <nav key={group} aria-label={\\\`\${group} links\\\`}>
-            <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4">{group}</h3>
-            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-2.5">
-              {links.map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-[13px] text-gray-400 no-underline hover:text-white transition-colors">{link}</a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))}
-
-      </div>
-      <div className="border-t border-gray-800 px-8 py-4 flex items-center justify-between flex-wrap gap-3 max-w-6xl mx-auto">
-        <small className="text-xs text-gray-500">{\\\`© \${new Date().getFullYear()} Brand. All rights reserved.\\\`}</small>
-        <div className="flex gap-4">
-          {["Privacy", "Terms", "Cookies"].map((l) => (
-            <a key={l} href="#" className="text-xs text-gray-500 no-underline hover:text-gray-300 transition-colors">{l}</a>
-          ))}
-        </div>
-      </div>
-    </footer>
-  );
-
-]=]),
+					t({
+						"// ── Variant 1: Basic footer ───────────────────────────────────────────",
+						"",
+						'const NAV_LINKS   = ["Features", "Pricing", "Docs", "Blog", "About"];',
+						'const LEGAL_LINKS = ["Privacy", "Terms", "Cookies"];',
+						"",
+						"export function BasicFooter() {",
+						"  return (",
+						'    <footer role="contentinfo" className="bg-white border-t border-gray-200">',
+						"      {/* Single bar: brand left, nav links right — the minimal footer for apps and small sites */}",
+						'      <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-5 max-w-6xl mx-auto">',
+						"",
+						"        {/* Logo: same mark as the navbar — brand consistency across top and bottom of page */}",
+						'        <a href="/" aria-label="Go to homepage" className="flex items-center gap-2 no-underline">',
+						'          <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">',
+						'            <span className="text-white text-[11px] font-bold">A</span>',
+						"          </div>",
+						'          <span className="text-[14px] font-bold text-gray-900">Brand</span>',
+						"        </a>",
+						"",
+						"        {/* Nav links: 4–6 max — secondary pages users look for before leaving (docs, blog, about) */}",
+						'        <nav aria-label="Footer navigation">',
+						'          <ul role="list" className="flex flex-wrap gap-1 list-none m-0 p-0">',
+						"            {NAV_LINKS.map((link) => (",
+						"              <li key={link}>",
+						'                <a href="#"',
+						'                  className="text-[13px] text-gray-500 no-underline px-2.5 py-1.5 rounded-md hover:text-gray-900 hover:bg-gray-100 transition-colors">',
+						"                  {link}",
+						"                </a>",
+						"              </li>",
+						"            ))}",
+						"          </ul>",
+						"        </nav>",
+						"",
+						"      </div>",
+						"",
+						"      {/* Bottom bar: copyright left, legal links right — the required minimum for any public site */}",
+						'      <div className="flex items-center justify-between flex-wrap gap-2 px-6 py-4 max-w-6xl mx-auto border-t border-gray-100">',
+						"        {/* new Date().getFullYear(): always current year — never hardcode the year */}",
+						'        <small className="text-xs text-gray-400">',
+						"        </small>",
+						"        {/* Legal links: same muted style as copyright — important but not primary navigation */}",
+						'        <nav aria-label="Legal links">',
+						'          <ul role="list" className="flex gap-4 list-none m-0 p-0">',
+						"            {LEGAL_LINKS.map((l) => (",
+						"              <li key={l}>",
+						'                <a href="#" className="text-xs text-gray-400 no-underline hover:text-gray-600 transition-colors">{l}</a>',
+						"              </li>",
+						"            ))}",
+						"          </ul>",
+						"        </nav>",
+						"      </div>",
+						"    </footer>",
+						"  );",
+						"}",
+						"",
+						"",
+						"// ── Variant 2: Multi-column footer ────────────────────────────────────────",
+						"",
+						"const LINKS = {",
+						'  Product:   ["Features", "Pricing", "Changelog", "Roadmap"],',
+						'  Resources: ["Docs", "Components", "Blog", "Tutorials"],',
+						'  Company:   ["About", "Careers", "Press", "Contact"],',
+						'  Legal:     ["Privacy", "Terms", "Cookies", "Licences"],',
+						"};",
+						"const SOCIAL = [",
+						'  { label:"GitHub",  href:"https://github.com",  icon:"M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" },',
+						'  { label:"Twitter", href:"https://twitter.com", icon:"M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" },',
+						"];",
+						"",
+						"export function FullFooter() {",
+						"  return (",
+						'    <footer role="contentinfo" className="bg-gray-900">',
+						"      {/* grid-cols-[2fr_repeat(4,1fr)]: brand column is twice as wide — gives it visual anchor weight */}",
+						'      <div className="px-8 py-12 grid grid-cols-[2fr_repeat(4,1fr)] gap-8 max-w-6xl mx-auto">',
+						"",
+						"        {/* Brand column: logo + tagline + social icons — the identity anchor of the footer */}",
+						"        <div>",
+						'          <div className="flex items-center gap-2 mb-4">',
+						"            {/* Logo mark: same as navbar — consistent brand at both ends of the page */}",
+						'            <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">',
+						'              <span className="text-white text-[11px] font-bold">A</span>',
+						"            </div>",
+						'            <span className="text-[14px] font-bold text-white">Brand</span>',
+						"          </div>",
+						"          {/* Tagline: 1–2 sentences — elevator pitch for users who scroll to the footer first */}",
+						'          <p className="text-[13px] text-gray-400 leading-relaxed mb-5 max-w-[200px]">',
+						"            Your tagline here. Keep it to two lines max.",
+						"          </p>",
+						"          {/* Social icons: 32px squares — large enough to tap on mobile, small enough not to dominate */}",
+						'          <nav aria-label="Social media links" className="flex gap-2.5">',
+						"            {SOCIAL.map((s) => (",
+						'              <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noreferrer"',
+						'                className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center no-underline hover:bg-gray-700 transition">',
+						'                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">',
+						"                  <path d={s.icon}></path>",
+						"                </svg>",
+						"              </a>",
+						"            ))}",
+						"          </nav>",
+						"        </div>",
+						"",
+						"        {/* Link columns: each group is a separate nav landmark — 4 groups max before it feels cluttered */}",
+						"        {Object.entries(LINKS).map(([group, links]) => (",
+						'          <nav key={group} aria-label={group + " links"}>',
+						"            {/* Column heading: ALL CAPS small — visually separates categories without large text */}",
+						'            <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4">{group}</h3>',
+						'            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-2.5">',
+						"              {/* 4–6 links per column — more than 6 looks like a sitemap, not a footer */}",
+						"              {links.map((link) => (",
+						"                <li key={link}>",
+						'                  <a href="#" className="text-[13px] text-gray-400 no-underline hover:text-white transition-colors">',
+						"                    {link}",
+						"                  </a>",
+						"                </li>",
+						"              ))}",
+						"            </ul>",
+						"          </nav>",
+						"        ))}",
+						"",
+						"      </div>",
+						"",
+						"      {/* Bottom bar: thinner border separates it from the link grid above */}",
+						'      <div className="border-t border-gray-800 px-8 py-4 flex items-center justify-between flex-wrap gap-3 max-w-6xl mx-auto">',
+						'        <small className="text-xs text-gray-500">',
+						"        </small>",
+						'        <div className="flex gap-4">',
+						'          {["Privacy", "Terms", "Cookies"].map((l) => (',
+						'            <a key={l} href="#" className="text-xs text-gray-500 no-underline hover:text-gray-300 transition-colors">{l}</a>',
+						"          ))}",
+						"        </div>",
+						"      </div>",
+						"    </footer>",
+						"  );",
+						"        </small>",
+						'        <nav aria-label="Legal links">',
+						'          <ul role="list" className="flex gap-4 list-none m-0 p-0">',
+						"            {LEGAL_LINKS.map((l) => (",
+						"              <li key={l}>",
+						'                <a href="#" className="text-xs text-gray-400 no-underline hover:text-gray-600 transition-colors">{l}</a>',
+						"              </li>",
+						"            ))}",
+						"          </ul>",
+						"        </nav>",
+						"      </div>",
+						"    </footer>",
+						"  );",
+						"}",
+						"",
+						"",
+						"// ── Variant 2: Multi-column footer ─────────────────────────────────────────",
+						"",
+						"const LINKS = {",
+						'  Product:   ["Features", "Pricing", "Changelog", "Roadmap"],',
+						'  Resources: ["Docs", "Components", "Blog", "Tutorials"],',
+						'  Company:   ["About", "Careers", "Press", "Contact"],',
+						'  Legal:     ["Privacy", "Terms", "Cookies", "Licences"],',
+						"};",
+						"const SOCIAL = [",
+						'  { label:"GitHub",  href:"https://github.com",  icon:"M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" },',
+						'  { label:"Twitter", href:"https://twitter.com", icon:"M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" },',
+						"];",
+						"",
+						"export function FullFooter() {",
+						"  return (",
+						'    <footer role="contentinfo" className="bg-gray-900">',
+						'      <div className="px-8 py-12 grid grid-cols-[2fr_repeat(4,1fr)] gap-8 max-w-6xl mx-auto">',
+						"",
+						"        {/* Brand column */}",
+						"        <div>",
+						'          <div className="flex items-center gap-2 mb-4">',
+						'            <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">',
+						'              <span className="text-white text-[11px] font-bold">A</span>',
+						"            </div>",
+						'            <span className="text-[14px] font-bold text-white">Brand</span>',
+						"          </div>",
+						"          {/* Tagline — one or two sentences */}",
+						'          <p className="text-[13px] text-gray-400 leading-relaxed mb-5 max-w-[200px]">',
+						"            Your brand tagline goes here.",
+						"          </p>",
+						"          {/* Social icons — add more by extending SOCIAL array */}",
+						'          <nav aria-label="Social media links" className="flex gap-2.5">',
+						"            {SOCIAL.map((s) => (",
+						'              <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noreferrer"',
+						'                className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center no-underline hover:bg-gray-700 transition">',
+						'                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">',
+						"                  <path d={s.icon}></path>",
+						"                </svg>",
+						"              </a>",
+						"            ))}",
+						"          </nav>",
+						"        </div>",
+						"",
+						"        {/* Link columns — add/remove groups from LINKS object */}",
+						"        {Object.entries(LINKS).map(([group, links]) => (",
+						'          <nav key={group} aria-label={group + " links"}>',
+						'            <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4">{group}</h3>',
+						'            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-2.5">',
+						"              {links.map((link) => (",
+						"                <li key={link}>",
+						'                  <a href="#" className="text-[13px] text-gray-400 no-underline hover:text-white transition-colors">',
+						"                    {link}",
+						"                  </a>",
+						"                </li>",
+						"              ))}",
+						"            </ul>",
+						"          </nav>",
+						"        ))}",
+						"",
+						"      </div>",
+						"",
+						"      {/* Bottom bar */}",
+						'      <div className="border-t border-gray-800 px-8 py-4 flex items-center justify-between flex-wrap gap-3 max-w-6xl mx-auto">',
+						'        <small className="text-xs text-gray-500">',
+						"        </small>",
+						'        <div className="flex gap-4">',
+						'          {["Privacy", "Terms", "Cookies"].map((l) => (',
+						'            <a key={l} href="#" className="text-xs text-gray-500 no-underline hover:text-gray-300 transition-colors">{l}</a>',
+						"          ))}",
+						"        </div>",
+						"      </div>",
+						"    </footer>",
+						"  );",
+						"        </small>",
+						'        <nav aria-label="Legal links">',
+						'          <ul role="list" className="flex gap-4 list-none m-0 p-0">',
+						"            {LEGAL_LINKS.map((l) => (",
+						'              <li key={l}><a href="#" className="text-xs text-gray-400 no-underline hover:text-gray-600 transition-colors">{l}</a></li>',
+						"            ))}",
+						"          </ul>",
+						"        </nav>",
+						"      </div>",
+						"    </footer>",
+						"  );",
+						"}",
+						"",
+						"",
+						"// ── Variant 2: Multi-column footer (full site footer) ──────────────────────",
+						"// Brand column + link groups + social icons + bottom bar",
+						"",
+						"const LINKS = {",
+						'  Product:   ["Features", "Pricing", "Changelog", "Roadmap"],',
+						'  Resources: ["Docs", "Components", "Blog", "Tutorials"],',
+						'  Company:   ["About", "Careers", "Press", "Contact"],',
+						'  Legal:     ["Privacy", "Terms", "Cookies", "Licences"],',
+						"};",
+						"const SOCIAL = [",
+						'  { label:"GitHub",   href:"https://github.com",  icon:"M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" },',
+						'  { label:"Twitter",  href:"https://twitter.com", icon:"M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" },',
+						"];",
+						"",
+						"export default function FullFooter() {",
+						"  return (",
+						'    <footer role="contentinfo" className="bg-gray-900">',
+						'      <div className="px-8 py-12 grid grid-cols-[2fr_repeat(4,1fr)] gap-8 max-w-6xl mx-auto">',
+						"",
+						"        <div>",
+						'          <div className="flex items-center gap-2 mb-4">',
+						'            <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">',
+						'              <span className="text-white text-[11px] font-bold">A</span>',
+						"            </div>",
+						'            <span className="text-[14px] font-bold text-white">Brand</span>',
+						"          </div>",
+						'          <p className="text-[13px] text-gray-400 leading-relaxed mb-5 max-w-[200px]">',
+						"            Your brand tagline or short description goes here.",
+						"          </p>",
+						'          <nav aria-label="Social media links" className="flex gap-2.5">',
+						"            {SOCIAL.map((s) => (",
+						'              <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noreferrer"',
+						'                className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center no-underline hover:bg-gray-700 transition">',
+						'                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">',
+						"                  <path d={s.icon} />",
+						"                </svg>",
+						"              </a>",
+						"            ))}",
+						"          </nav>",
+						"        </div>",
+						"",
+						"        {Object.entries(LINKS).map(([group, links]) => (",
+						"          <nav key={group} aria-label={\\\\\\`\\${group} links\\\\\\`}>",
+						'            <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4">{group}</h3>',
+						'            <ul role="list" className="list-none m-0 p-0 flex flex-col gap-2.5">',
+						"              {links.map((link) => (",
+						"                <li key={link}>",
+						'                  <a href="#" className="text-[13px] text-gray-400 no-underline hover:text-white transition-colors">{link}</a>',
+						"                </li>",
+						"              ))}",
+						"            </ul>",
+						"          </nav>",
+						"        ))}",
+						"",
+						"      </div>",
+						'      <div className="border-t border-gray-800 px-8 py-4 flex items-center justify-between flex-wrap gap-3 max-w-6xl mx-auto">',
+						'        <small className="text-xs text-gray-500">{\\\\\\`© \\${new Date().getFullYear()} Brand. All rights reserved.\\\\\\`}</small>',
+						'        <div className="flex gap-4">',
+						'          {["Privacy", "Terms", "Cookies"].map((l) => (',
+						'            <a key={l} href="#" className="text-xs text-gray-500 no-underline hover:text-gray-300 transition-colors">{l}</a>',
+						"          ))}",
+						"        </div>",
+						"      </div>",
+						"    </footer>",
+						"  );",
+					}),
 				}
 			),
 			-- Layout Patterns
 			sn(
 				nil,
 				{
-					t([=[
-// Layout patterns — structural outlines only
-// These are the skeleton layouts. Fill in your content.
-
-
-// ── 1. Full-page center ───────────────────────────────────
-// For login, sign-up, onboarding, error pages
-// min-h-screen flex items-center justify-center = the three classes that center anything
-
-export function FullPageCenter() {
-  return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      {/* w-full + max-w-* = responsive card that caps at a sensible width */}
-      <section className="w-full max-w-sm bg-white rounded-2xl p-10 shadow-sm">
-        {/* your card content */}
-      </section>
-    </main>
-  );
-}
-// max-w variants: max-w-xs=320px  max-w-sm=384px  max-w-md=448px  max-w-lg=512px
-
-
-// ── 2. Centered stacked hero ──────────────────────────────
-// flex flex-col items-center text-center = stack + center everything
-// max-w on wrapper, then progressively narrower on each text element
-
-export function CenteredHero() {
-  return (
-    <section aria-labelledby="hero-heading" className="bg-white">
-      <div className="flex flex-col items-center text-center px-6 py-20 max-w-3xl mx-auto">
-
-        {/* h1 gets widest max-w */}
-        <h1 id="hero-heading" className="text-5xl font-extrabold tracking-tight max-w-2xl mb-5">
-          Your headline
-        </h1>
-
-        {/* p gets narrower max-w than h1 — keeps line length comfortable */}
-        <p className="text-lg text-gray-500 max-w-xl mb-8">
-          Supporting copy.
-        </p>
-
-        {/* CTA row — flex items-center keeps buttons aligned */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-          <a href="#">Primary CTA</a>
-          <a href="#">Secondary CTA</a>
-        </div>
-
-        {/* Screenshot — w-full stretches to container max-w */}
-        <figure className="w-full">
-          <img src="..." alt="..." className="w-full rounded-2xl" />
-          <figcaption className="sr-only">Description for screen readers</figcaption>
-        </figure>
-
-      </div>
-    </section>
-  );
-}
-
-
-// ── 3. Two-column hero — text left, visual right ──────────
-// grid grid-cols-1 md:grid-cols-2 = 1 col mobile, 2 col desktop
-// items-center = vertically aligns columns to each other
-
-export function TwoColumnHero() {
-  return (
-    <section className="bg-white">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto px-6 py-20">
-
-        {/* Left — text, no centering needed */}
-        <div>
-          <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight mb-5">
-            Your headline
-          </h1>
-          <p className="text-lg text-gray-500 leading-relaxed mb-8">
-            Supporting copy.
-          </p>
-          <div className="flex items-center gap-3">
-            <a href="#">Primary CTA</a>
-            <a href="#">Secondary CTA</a>
-          </div>
-        </div>
-
-        {/* Right — visual. aspect-video = 16:9 without a fixed height */}
-        <div className="rounded-2xl overflow-hidden bg-gray-100 aspect-video">
-          <img src="..." alt="Product screenshot" className="w-full h-full object-cover" />
-        </div>
-
-      </div>
-    </section>
-  );
-}
-
-
-// ── 4. Two-column — visual left, text right ───────────────
-
-// Option A: swap JSX order — grid fills left-to-right
-export function TwoColumnHeroFlipped() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <div>{/* visual = left column */}</div>
-      <div>{/* text = right column */}</div>
-    </div>
-  );
-}
-
-// Option B: CSS order utilities — controls visual vs DOM order separately
-// Use when visual should be ABOVE text on mobile, RIGHT on desktop
-export function TwoColumnHeroOrderSwap() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <div className="order-last md:order-first">
-        {/* text: last on mobile → left on desktop */}
-      </div>
-      <div className="order-first md:order-last">
-        {/* visual: first on mobile → right on desktop */}
-      </div>
-    </div>
-  );
-
-]=]),
+					t({
+						"// Layout patterns — structural outlines only",
+						"// These are the skeleton layouts. Fill in your content.",
+						"",
+						"",
+						"// ── 1. Full-page center ───────────────────────────────────",
+						"// For login, sign-up, onboarding, error pages",
+						"// min-h-screen flex items-center justify-center = the three classes that center anything",
+						"",
+						"export function FullPageCenter() {",
+						"  return (",
+						'    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">',
+						"      {/* w-full + max-w-* = responsive card that caps at a sensible width */}",
+						'      <section className="w-full max-w-sm bg-white rounded-2xl p-10 shadow-sm">',
+						"        {/* your card content */}",
+						"      </section>",
+						"    </main>",
+						"  );",
+						"}",
+						"// max-w variants: max-w-xs=320px  max-w-sm=384px  max-w-md=448px  max-w-lg=512px",
+						"",
+						"",
+						"// ── 2. Centered stacked hero ──────────────────────────────",
+						"// flex flex-col items-center text-center = stack + center everything",
+						"// max-w on wrapper, then progressively narrower on each text element",
+						"",
+						"export function CenteredHero() {",
+						"  return (",
+						'    <section aria-labelledby="hero-heading" className="bg-white">',
+						'      <div className="flex flex-col items-center text-center px-6 py-20 max-w-3xl mx-auto">',
+						"",
+						"        {/* h1 gets widest max-w */}",
+						'        <h1 id="hero-heading" className="text-5xl font-extrabold tracking-tight max-w-2xl mb-5">',
+						"          Your headline",
+						"        </h1>",
+						"",
+						"        {/* p gets narrower max-w than h1 — keeps line length comfortable */}",
+						'        <p className="text-lg text-gray-500 max-w-xl mb-8">',
+						"          Supporting copy.",
+						"        </p>",
+						"",
+						"        {/* CTA row — flex items-center keeps buttons aligned */}",
+						'        <div className="flex flex-wrap items-center justify-center gap-3 mb-12">',
+						'          <a href="#">Primary CTA</a>',
+						'          <a href="#">Secondary CTA</a>',
+						"        </div>",
+						"",
+						"        {/* Screenshot — w-full stretches to container max-w */}",
+						'        <figure className="w-full">',
+						'          <img src="..." alt="..." className="w-full rounded-2xl" />',
+						'          <figcaption className="sr-only">Description for screen readers</figcaption>',
+						"        </figure>",
+						"",
+						"      </div>",
+						"    </section>",
+						"  );",
+						"}",
+						"",
+						"",
+						"// ── 3. Two-column hero — text left, visual right ──────────",
+						"// grid grid-cols-1 md:grid-cols-2 = 1 col mobile, 2 col desktop",
+						"// items-center = vertically aligns columns to each other",
+						"",
+						"export function TwoColumnHero() {",
+						"  return (",
+						'    <section className="bg-white">',
+						'      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto px-6 py-20">',
+						"",
+						"        {/* Left — text, no centering needed */}",
+						"        <div>",
+						'          <h1 className="text-5xl font-extrabold text-gray-900 tracking-tight mb-5">',
+						"            Your headline",
+						"          </h1>",
+						'          <p className="text-lg text-gray-500 leading-relaxed mb-8">',
+						"            Supporting copy.",
+						"          </p>",
+						'          <div className="flex items-center gap-3">',
+						'            <a href="#">Primary CTA</a>',
+						'            <a href="#">Secondary CTA</a>',
+						"          </div>",
+						"        </div>",
+						"",
+						"        {/* Right — visual. aspect-video = 16:9 without a fixed height */}",
+						'        <div className="rounded-2xl overflow-hidden bg-gray-100 aspect-video">',
+						'          <img src="..." alt="Product screenshot" className="w-full h-full object-cover" />',
+						"        </div>",
+						"",
+						"      </div>",
+						"    </section>",
+						"  );",
+						"}",
+						"",
+						"",
+						"// ── 4. Two-column — visual left, text right ───────────────",
+						"",
+						"// Option A: swap JSX order — grid fills left-to-right",
+						"export function TwoColumnHeroFlipped() {",
+						"  return (",
+						'    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">',
+						"      <div>{/* visual = left column */}</div>",
+						"      <div>{/* text = right column */}</div>",
+						"    </div>",
+						"  );",
+						"}",
+						"",
+						"// Option B: CSS order utilities — controls visual vs DOM order separately",
+						"// Use when visual should be ABOVE text on mobile, RIGHT on desktop",
+						"export function TwoColumnHeroOrderSwap() {",
+						"  return (",
+						'    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">',
+						'      <div className="order-last md:order-first">',
+						"        {/* text: last on mobile → left on desktop */}",
+						"      </div>",
+						'      <div className="order-first md:order-last">',
+						"        {/* visual: first on mobile → right on desktop */}",
+						"      </div>",
+						"    </div>",
+						"  );",
+					}),
 				}
 			),
 		}),
