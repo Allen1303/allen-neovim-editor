@@ -19,7 +19,7 @@
     "body": [
       "export default function ${1:${TM_FILENAME_BASE}}() {",
       "  return (",
-      "    <div className=\"${2:container}\">",
+      "    <div className=\"${2:}\">",
       "      $0",
       "    </div>",
       "  );",
