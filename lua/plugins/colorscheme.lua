@@ -139,13 +139,19 @@ return {
 		"olimorris/onedarkpro.nvim",
 		lazy = true,
 		opts = {
+			-- Atom One Dark comment gray (One Dark Pro uses a lighter #7f848e)
+			colors = {
+				onedark = { comment = "#5c6370" },
+			},
+			-- Atom One Dark styles: italic comments, nothing else bold or italic
+			-- (styles are global, so onedark_vivid / onedark_dark follow too)
 			styles = {
 				comments = "italic",
-				keywords = "bold",
-				functions = "italic",
+				keywords = "NONE",
+				functions = "NONE",
 				variables = "NONE",
 				strings = "NONE",
-				types = "bold",
+				types = "NONE",
 			},
 			options = {
 				transparency = true,
@@ -162,8 +168,9 @@ return {
 				nvim_cmp = true,
 				nvim_notify = true,
 				trouble = true,
-				["bufferline.nvim"] = true,
-				["nvim-dap-ui"] = true,
+				-- Keys must match onedarkpro's highlights/plugins/*.lua file names;
+				-- it has no bufferline integration
+				nvim_dap_ui = true,
 			},
 			highlights = {
 				NormalFloat = { bg = "NONE" },

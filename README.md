@@ -277,11 +277,11 @@ On first launch:
 
 ## 🎨 Themes
 
-Switch themes with `:colorscheme <name>`:
+Switch themes with `:colorscheme <name>`, or browse them with a live preview using `<leader>fC` (`:Telescope colorscheme`):
 
 | Name                           | Command                            |
 | ------------------------------ | ---------------------------------- |
 | Catppuccin Macchiato (default) | `:colorscheme catppuccin`          |
 | TokyoNight Storm               | `:colorscheme tokyonight`          |
-| OneDark Darker                 | `:colorscheme onedark`             |
+| Atom One Dark                  | `:colorscheme onedark`             |
 | Monokai Pro Octagon            | `:colorscheme monokai-pro-octagon` |

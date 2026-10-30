@@ -16,6 +16,7 @@
 | `<leader>fc` | Commands                           | telescope         |
 | `<leader>fd` | Dashboard                          | dashboard         |
 | `<leader>fp` | Projects                           | telescope/project |
+| `<leader>fC` | Colorschemes (live preview)        | telescope         |
 | `<leader>e`  | Explorer CWD                       | mini.files        |
 | `<leader>E`  | Explorer (reveal file)             | mini.files        |
 | `<C-j>`      | Move selection down                |

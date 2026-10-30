@@ -12,7 +12,8 @@ return {
 			-- ADD: native fzf sorter — massive performance improvement on large projects
 			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 		},
-		-- Telescope loads only when a keymap is triggered
+		-- Telescope loads when a keymap is triggered or :Telescope is typed
+		cmd = "Telescope",
 		keys = {
 			-- ── Core pickers ───────────────────────────────────────────
 			{
@@ -70,6 +71,13 @@ return {
 					require("telescope").extensions.projects.projects()
 				end,
 				desc = "Telescope: projects",
+			},
+			{
+				"<leader>fC",
+				function()
+					require("telescope.builtin").colorscheme()
+				end,
+				desc = "Telescope: colorschemes (live preview)",
 			},
 
 			-- ADD: git pickers (complement gitsigns buffer-local keymaps)
@@ -133,6 +141,27 @@ return {
 
 		config = function(_, opts)
 			local telescope = require("telescope")
+
+			-- Colorscheme picker: preview themes as you move through the list.
+			-- Lazy-loaded themes are missing from getcompletion("", "color") until
+			-- they load, so list every installed plugin's colors/ files up front.
+			local function installed_colorschemes()
+				local names = {}
+				for _, plugin in pairs(require("lazy.core.config").plugins) do
+					for _, file in ipairs(vim.fn.glob(plugin.dir .. "/colors/*.{lua,vim}", false, true)) do
+						table.insert(names, vim.fn.fnamemodify(file, ":t:r"))
+					end
+				end
+				table.sort(names)
+				return names
+			end
+
+			opts.pickers = opts.pickers or {}
+			opts.pickers.colorscheme = {
+				enable_preview = true,
+				colors = installed_colorschemes(),
+			}
+
 			telescope.setup(opts)
 
 			-- ADD: load fzf native sorter for faster fuzzy matching
